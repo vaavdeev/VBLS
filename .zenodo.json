@@ -1,0 +1,32 @@
+{
+  "title": "VBLS — Verification Scripts",
+  "description": "Reproducibility scripts and data for the empirical verification program of the VBLS monograph: <em>Viability Boundaries of Living Systems — A Phenomenological Thermodynamic Theory</em>. Covers human lifespan calibration, cross-species allometric scaling, telomere shortening, somatic mutation accumulation, VO2max decline, and fish growth dynamics.",
+  "creators": [
+    {
+      "name": "Avdeev, Vasiliy",
+      "orcid": "0009-0003-2256-8094"
+    }
+  ],
+  "license": "CC-BY-NC-ND-4.0",
+  "upload_type": "software",
+  "access_right": "open",
+  "keywords": [
+    "theoretical biology",
+    "living systems",
+    "nonequilibrium thermodynamics",
+    "biological aging",
+    "allometric scaling",
+    "structural entropy",
+    "viability boundary",
+    "lifespan modeling",
+    "finite lifetime theorem",
+    "phenomenological theory"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.20161329",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint"
+    }
+  ]
+}
