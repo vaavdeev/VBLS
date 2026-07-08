@@ -31,7 +31,6 @@ Each folder has its own `README.md` with the exact script→figure mapping and r
 | `anage_final.py` | Calibrates the class invariant ℬ* on 306 Mammalia species (Appendix C, §C.9.2); reads `anage_data.csv` in this same directory. |
 | `anage_data.csv` | AnAge Build 14 (semicolon-delimited) — shared input for `anage_final.py` and `lifetime_near_Mmin.py`. |
 | `lifetime_near_Mmin.py` / `.png` | Numerical verification of t_B vs. repair capacity ρ near the viability boundary ℳ_min (§15.2.2, Appendix A remark). |
-| `Living_systems_Tb.xlsx` | Raw t_B estimates for the catalog of living/non-living structures discussed in Appendix C. |
 
 ## Citation
 

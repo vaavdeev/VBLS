@@ -29,12 +29,15 @@ Supplementary Table 4: somatic substitution burden per crypt vs age.
 | `cagan_fig1_trajectories.png/.pdf` | Fig. 17.3.1 — Σ(t) trajectories per species |
 | `cagan_fig2_sigma_star.png/.pdf` | Fig. 17.3.2 — Universal Σ* |
 | `cagan_fig3_rateXtmax.png/.pdf` | Fig. 17.3.3 — Rate × T_max invariant |
-| `cagan_fig4_human.png/.pdf` | Human Σ(t) detail — not embedded in monograph (deferred by the author for a future figure slot) |
 
 ## Run
 
 ```bash
-python cagan_verification.py    # figures 1, 2, 4
+python cagan_verification.py    # figures 1, 2
 python cagan_rateXtmax.py       # figure 3 (rate × T_max analysis)
 ```
-Both scripts read `Table_4.csv` from the same directory.
+Both scripts read `Table_4.csv` from the same directory. `cagan_verification.py` also produces a fourth, human-detail figure (Σ(t) over all 28 crypts) that is not embedded anywhere in the monograph text and is not included in this repository.
+
+## Excluded from this repository
+
+- `cagan_fig4_human.pdf`/`.png` — not cited or embedded anywhere in the monograph text.

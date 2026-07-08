@@ -33,21 +33,10 @@
 python mass_cod_EN.py
 ```
 
----
-
-## Supplementary scripts (not embedded in the current monograph text)
-
-Kept in the repository as supporting material, not required to reproduce Рис. D.4.1:
-
-| File | What it does |
-|---|---|
-| `vbls_datras_analysis.py` | Length-based VBGF/VBLS fit on the same DATRAS cod data; source of α = 0.042 yr⁻¹, the value `mass_cod_EN.py` fixes its memory parameter to. **Not runnable as-is in this repository**: it reads from a path (`/home/claude/cod_datras_clean.csv`) outside this repo, an intermediate cleaned file not included here. Its output figure `vbls_datras_real.png` is retained for reference. |
-| `vbls_longevity_4species.py` / `.png` | Comparison of long-lived, indeterminate-growth fish (Greenland shark, Atlantic cod, rockfish, kaluga, orange roughy) using literature values (Nielsen et al. 2016 *Science* for the Greenland shark, among others). Real published data, not synthetic; not cited in the current monograph text. |
-| `vbls_maturation_3species.py` / `.png` | Growth deceleration at maturity in three species (Atlantic cod, European plaice, walleye), using published survey data (ICES AFWG 2023; Beverton & Holt 1957; Guy et al. 2002). Real published data, not synthetic; not cited in the current monograph text. |
-
 ## Excluded from this repository
 
 - `DATRAS_dataproducts_units.pdf` — ICES technical documentation, distributed under separate terms that prohibit reproduction without permission (unlike the "Data" itself, which is CC BY 4.0). Not read by any script here; see the [DATRAS data portal](https://www.ices.dk/data/data-portals/Pages/DATRAS.aspx) instead.
 - A synthetic-data proof-of-concept script (`vbls_fish_comparison.py`, `np.random.seed`-generated, not real measurements) and its figures, superseded by `mass_cod_EN.py`.
 - `vbls_halibut_iphc.py`/`.png` — the halibut analysis the monograph explicitly describes as not carried out (§D.4.8, missing individual identifiers in the IPHC data); `iphc-2025-tsd-031.xlsx` itself is kept (see Data table above).
 - `vbls_two_species_EN.py`/`.png`, `vbls_vs_vbgf_cod.png`, `vbls_repro_analytical.png` — outputs of the excluded synthetic/halibut scripts above.
+- `vbls_datras_analysis.py`/`vbls_datras_real.png`, `vbls_longevity_4species.py`/`.png`, `vbls_maturation_3species.py`/`.png` — not cited anywhere in the monograph text; not part of the published verification.
