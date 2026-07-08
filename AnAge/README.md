@@ -41,12 +41,7 @@ python attenuation_bias.py  # attenuation bias simulation
 ```
 All three scripts read `anage_data.csv` from the same directory.
 
----
-
-## Supplementary material: PGLS analysis of σ₀ vs. body mass ("P4")
-
-The files `P4_RESULTS.md`, `_check_r.R`, and the `p4_*` scripts/outputs are a phylogenetically-controlled (PGLS) exploratory analysis of how σ₀ scales with body mass, using the `datelife`/`ape`/`nlme` R ecosystem. **This analysis is not part of the current monograph** — it is not cited or discussed anywhere in the published text, and `P4_RESULTS.md` itself references a working file ("РЕПАРАЦИЯ.md") that no longer exists in this project. It is kept in this repository as a basis for possible future work, not as a verified or citable result. Do not treat any number in `P4_RESULTS.md` as an endorsed VBLS prediction.
-
 ## Excluded from this repository
 
 - `drugage.csv`, `observations.xlsx`, `release.html` — unrelated third-party datasets (DrugAge database, a different taxon table) not read by any script in this folder and not cited in the monograph.
+- A phylogenetically-controlled (PGLS) exploratory test of whether σ₀ scales with body mass, using the `datelife`/`ape`/`nlme` R ecosystem: the prediction did not hold up and this line of work has been discontinued by the author. Not part of this repository.
