@@ -1,0 +1,10 @@
+﻿Species;Telomere_Length_at_Young_Age_kb;Rate_Telomere_Shortening_bp_year;Maximum_Lifespan_years;Average_Lifespan;Lifespan_if_telomeres_shortened_to_0_kb_linearly
+Mouse;50;7000;4;2;7
+Goat;10.4;363;20.8;16.5;29
+Audouins_gull;35;771;25;21;45
+Reindeer;19.8;531;21.8;15;37
+Griffon_vulture;19.8;209;41.4;37;95
+Bottlenose_dolphin;90.7;766;51.6;17;118
+American_flamingo;21;105;60;40;200
+Sumatran_elephant;36.3;109;65.5;60;333
+Human;15;71;122.5;79;211

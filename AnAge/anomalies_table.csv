@@ -1,0 +1,196 @@
+﻿Genus;Species;Common name;Class;Order;M_kg;T_obs;T_allom;ratio;log_ratio;param;mechanism
+Plethodon;cinereus;Eastern red-backed salamander;Amphibia;Caudata;0.001;25.0;2.61;9.577;0.981;—;—
+Sphenodon;punctatus;Tuatara;Reptilia;Rhynchocephalia;0.43;90.0;10.397;8.656;0.937;nu0 down;"Tuatara: relict reptilian metabolism, body temperature ~12-18C; New Zealand isolation"
+Somniosus;microcephalus;Greenland shark;Chondrichthyes;Squaliformes;400.0;392.0;46.154;8.493;0.929;nu0 down down (T down down);"Polar waters (~0C): nu0 suppressed by 2-3 orders of magnitude compared to endotherms; ectotherm + slow growth"
+Myotis;lucifugus;Little brown bat;Mammalia;Chiroptera;0.006;34.0;4.066;8.362;0.922;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
+Aldabrachelys;gigantea;Aldabra giant tortoise;Reptilia;Testudines;110.0;255.0;34.83;7.321;0.865;nu0 down + sigma0 down;Tortoises: extremely slow metabolism, ectotherm, powerful antioxidant defense in shell
+Ambystoma;tigrinum;Tiger salamander;Amphibia;Caudata;0.003;25.0;3.574;6.995;0.845;—;—
+Anaxyrus;americanus;American toad;Amphibia;Anura;0.022;36.0;5.416;6.647;0.823;—;—
+Ambystoma;maculatum;Spotted salamander;Amphibia;Caudata;0.013;32.0;4.832;6.623;0.821;—;—
+Plecotus;auritus;Brown big-eared bat;Mammalia;Chiroptera;0.01;30.0;4.598;6.524;0.815;nu0 down;"Long hibernation: nu0_eff ~ nu0 * (1 - f_hibern), f_hibern ~ 0.6; effective lifespan extended"
+Alligator;mississippiensis;American alligator;Reptilia;Crocodilia;1.079;77.0;12.707;6.06;0.782;—;—
+Chrysemys;picta;Painted turtle;Reptilia;Testudines;0.4;61.0;10.234;5.96;0.775;—;—
+Fringilla;coelebs;Chaffinch;Aves;Passeriformes;0.021;29.0;5.383;5.388;0.731;—;—
+Plethodon;glutinosus;Northern slimy salamander;Amphibia;Caudata;0.004;20.1;3.79;5.304;0.725;—;—
+Corvus;corax;Common raven;Aves;Passeriformes;1.203;69.0;13.012;5.303;0.725;—;—
+Heterocephalus;glaber;Naked mole-rat;Mammalia;Rodentia;0.035;31.0;6.028;5.143;0.711;rho up + sigma0 down;"Naked mole-rat: highly efficient DNA repair (PARP1 x3), conformationally stable ribosomes, no accumulation of oxidized proteins; low ROS from hypoxic adaptation"
+Desmodus;rotundus;Vampire bat;Mammalia;Chiroptera;0.029;29.2;5.792;5.041;0.703;sigma0_eff down;Vampire bat: flight + specific immune regulation
+Serinus;canaria;House canary;Aves;Passeriformes;0.013;24.0;4.872;4.926;0.692;—;—
+Cacatua;galerita;Sulphur-crested cockatoo;Aves;Psittaciformes;0.776;57.0;11.826;4.82;0.683;—;—
+Gygis;alba;White tern;Aves;Charadriiformes;0.098;35.9;7.533;4.766;0.678;—;—
+Miniopterus;schreibersii;Schreibers's long-fingered bat;Mammalia;Chiroptera;0.011;22.0;4.666;4.715;0.674;—;—
+Phoebastria;immutabilis;Laysan albatross;Aves;Procellariiformes;2.522;70.0;15.291;4.578;0.661;—;—
+Cardinalis;cardinalis;Northern cardinal;Aves;Passeriformes;0.041;28.5;6.228;4.576;0.66;—;—
+Salamandra;salamandra;European fire salamander;Amphibia;Caudata;0.019;24.0;5.273;4.552;0.658;—;—
+Trachemys;scripta;Common slider;Reptilia;Testudines;0.24;41.3;9.156;4.511;0.654;—;—
+Xenopus;laevis;African clawed frog;Amphibia;Anura;0.064;30.3;6.854;4.421;0.646;—;—
+Sylvia;borin;Garden warbler;Aves;Passeriformes;0.025;24.0;5.581;4.3;0.633;—;—
+Eolophus;roseicapilla;Galah;Aves;Psittaciformes;0.269;40.0;9.384;4.263;0.63;—;—
+Haematopus;ostralegus;Eurasian oystercatcher;Aves;Charadriiformes;0.449;43.3;10.496;4.126;0.615;—;—
+Prunella;modularis;Hedge sparrow;Aves;Passeriformes;0.017;20.8;5.127;4.057;0.608;—;—
+Pteropus;giganteus;Indian flying fox;Mammalia;Chiroptera;0.562;44.0;11.023;3.992;0.601;sigma0_eff down;"Same flight mechanism; large fruit bats. Additionally: IFN-alpha constitutively active — reduced inflammatory response lowers sigma0"
+Zenaida;macroura;Mourning dove;Aves;Columbiformes;0.123;31.3;7.914;3.955;0.597;—;—
+Larus;argentatus;Herring gull;Aves;Charadriiformes;1.0;49.0;12.498;3.921;0.593;—;—
+Eptesicus;fuscus;Big brown bat;Mammalia;Chiroptera;0.013;19.0;4.872;3.899;0.591;sigma0_eff down + nu0 down;"Annual hibernation (~5 months) reduces effective nu0; antioxidant protection during flight"
+Homo;sapiens;Human;Mammalia;Primates;70.0;122.5;31.561;3.881;0.589;rho up (social);"Human: medicine, social protection, neural repair; effective rho significantly exceeds biological minimum. Anomaly ~4x matches the role of cultural rho accumulation"
+Melopsittacus;undulatus;Budgerigar;Aves;Psittaciformes;0.025;21.0;5.601;3.749;0.574;—;—
+Erithacus;rubecula;European robin;Aves;Passeriformes;0.018;19.3;5.179;3.726;0.571;—;—
+Macrotus;californicus;California leaf-nosed bat;Mammalia;Chiroptera;0.012;17.0;4.738;3.588;0.555;—;—
+Myotis;yumanensis;Yuma myotis;Mammalia;Chiroptera;0.005;14.0;3.936;3.557;0.551;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
+Passerculus;sandwichensis;Savannah sparrow;Aves;Passeriformes;0.016;18.0;5.066;3.553;0.551;—;—
+Alcedo;atthis;Common kingfisher;Aves;Coraciiformes;0.034;21.0;5.99;3.506;0.545;—;—
+Uria;aalge;Common murre;Aves;Charadriiformes;0.956;42.8;12.376;3.458;0.539;—;—
+Carollia;perspicillata;Seba's short-tailed bat;Mammalia;Chiroptera;0.015;17.0;4.995;3.404;0.532;—;—
+Apus;apus;Common swift;Aves;Apodiformes;0.045;21.1;6.353;3.321;0.521;—;—
+Rhinella;marina;Cane toad;Amphibia;Anura;0.105;24.8;7.646;3.244;0.511;—;—
+Larus;canus;Mew gull;Aves;Charadriiformes;0.431;33.7;10.402;3.24;0.51;—;—
+Anous;stolidus;Brown noddy, or Noddy tern;Aves;Charadriiformes;0.139;26.2;8.124;3.225;0.509;—;—
+Sturnus;vulgaris;European starling;Aves;Passeriformes;0.075;22.9;7.105;3.223;0.508;—;—
+Ficedula;hypoleuca;European pied flycatcher;Aves;Passeriformes;0.012;15.0;4.738;3.166;0.5;—;—
+Tachyglossus;aculeatus;Short-beaked echidna;Mammalia;Monotremata;2.909;49.5;15.774;3.138;0.497;nu0 down + T down;"Monotremes: low body temperature (30C vs 37C), torpor; van t Hoff rule: x2-3 per 10C"
+Bulweria;bulwerii;Bulwer's petrel;Aves;Procellariiformes;0.087;22.9;7.338;3.121;0.494;—;—
+Hirundo;rustica;Barn swallow;Aves;Passeriformes;0.018;16.0;5.205;3.074;0.488;—;—
+Amphiuma;means;Two-toed amphiuma;Amphibia;Caudata;0.199;27.0;8.789;3.072;0.487;—;—
+Myiopsitta;monachus;Monk parakeet;Aves;Psittaciformes;0.08;22.1;7.213;3.064;0.486;—;—
+Larus;delawarensis;Ring-billed gull;Aves;Charadriiformes;0.439;31.8;10.444;3.045;0.484;—;—
+Desmognathus;quadramaculatus;Black-bellied salamander;Amphibia;Caudata;0.014;15.0;4.935;3.04;0.483;—;—
+Anas;penelope;Eurasian wigeon;Aves;Anseriformes;0.723;35.2;11.644;3.023;0.48;—;—
+Aquila;chrysaetos;Golden eagle;Aves;Accipitriformes;3.0;48.0;15.881;3.023;0.48;—;—
+Pteropus;rodricensis;Rodriguez flying fox;Mammalia;Chiroptera;0.254;28.0;9.274;3.019;0.48;sigma0_eff down;"Same flight mechanism; large fruit bats. Additionally: IFN-alpha constitutively active — reduced inflammatory response lowers sigma0"
+Cheirogaleus;medius;Fat-tailed dwarf lemur;Mammalia;Primates;0.3;29.0;9.612;3.017;0.48;—;—
+Arenaria;interpres;Ruddy turnstone;Aves;Charadriiformes;0.09;22.3;7.393;3.016;0.479;—;—
+Artibeus;jamaicensis;Jamaican fruit-eating bat;Mammalia;Chiroptera;0.046;19.2;6.389;3.005;0.478;—;—
+Asio;otus;Long-eared owl;Aves;Strigiformes;0.252;27.8;9.254;3.004;0.478;—;—
+Anas;crecca;Green-winged teal;Aves;Anseriformes;0.25;27.1;9.238;2.934;0.467;—;—
+Cryptobranchus;alleganiensis;Hellbender;Amphibia;Caudata;0.358;29.0;9.99;2.903;0.463;—;—
+Larus;occidentalis;Western gull;Aves;Charadriiformes;0.761;33.9;11.775;2.879;0.459;—;—
+Tolypeutes;matacus;Southern three-banded armadillo;Mammalia;Cingulata;1.16;36.8;12.909;2.851;0.455;—;—
+Macroderma;gigas;Australian false vampire bat;Mammalia;Chiroptera;0.126;22.6;7.956;2.841;0.453;—;—
+Thalassarche;chrysostoma;Grey-headed albatross;Aves;Procellariiformes;3.753;47.2;16.675;2.831;0.452;—;—
+Turdus;iliacus;Redwing;Aves;Passeriformes;0.058;18.8;6.717;2.799;0.447;—;—
+Zonotrichia;albicollis;White-throated sparrow;Aves;Passeriformes;0.02;14.9;5.337;2.792;0.446;—;—
+Rousettus;aegyptiacus;Egyptian rousette;Mammalia;Chiroptera;0.146;22.9;8.215;2.787;0.445;—;—
+Mniotilta;varia;Black-and-white warbler;Aves;Passeriformes;0.008;12.2;4.385;2.782;0.444;—;—
+Fringilla;montifringilla;Brambling;Aves;Passeriformes;0.021;14.8;5.383;2.75;0.439;—;—
+Glaucomys;volans;Southern flying squirrel;Mammalia;Rodentia;0.067;19.0;6.941;2.737;0.437;—;—
+Antrozous;pallidus;Pallid bat;Mammalia;Chiroptera;0.022;14.8;5.438;2.722;0.435;—;—
+Molothrus;ater;Brown-headed cowbird;Aves;Passeriformes;0.042;16.9;6.277;2.692;0.43;—;—
+Poecile;atricapillus;Black-capped chickadee;Aves;Passeriformes;0.01;12.4;4.608;2.691;0.43;—;—
+Natrix;natrix;European grass snake;Reptilia;Squamata;0.094;20.0;7.467;2.679;0.428;—;—
+Geranoaetus;melanoleucus;Black-chested buzzard-eagle;Aves;Accipitriformes;2.86;42.0;15.716;2.672;0.427;—;—
+Spinus;tristis;American goldfinch;Aves;Passeriformes;0.014;13.0;4.896;2.655;0.424;—;—
+Motacilla;alba;White wagtail;Aves;Passeriformes;0.018;13.7;5.205;2.632;0.42;—;—
+Callithrix;jacchus;White-tufted-ear marmoset;Mammalia;Primates;0.19;22.8;8.701;2.62;0.418;—;—
+Perodicticus;potto;Potto;Mammalia;Primates;0.969;32.4;12.411;2.611;0.417;—;—
+Loxia;curvirostra;Red crossbill;Aves;Passeriformes;0.039;16.1;6.174;2.608;0.416;—;—
+Turdus;philomelos;Song thrush;Aves;Passeriformes;0.063;17.7;6.835;2.59;0.413;—;—
+Hesperiphona;vespertina;Evening grosbeak;Aves;Passeriformes;0.054;17.0;6.627;2.565;0.409;—;—
+Potos;flavus;Kinkajou;Mammalia;Carnivora;2.318;38.4;15.012;2.558;0.408;—;—
+Archilochus;colubris;Ruby-throated hummingbird;Aves;Apodiformes;0.003;9.1;3.571;2.548;0.406;—;—
+Pernis;apivorus;European honey buzzard, or Western honey-buzzard;Aves;Accipitriformes;0.652;29.0;11.385;2.547;0.406;—;—
+Phylloscopus;trochilus;Willow warbler;Aves;Passeriformes;0.011;11.8;4.647;2.539;0.405;—;—
+Diomedea;exulans;Wandering albatross;Aves;Procellariiformes;8.13;50.0;19.737;2.533;0.404;—;—
+Passer;montanus;Eurasian tree sparrow;Aves;Passeriformes;0.018;13.1;5.173;2.532;0.404;—;—
+Empidonax;virescens;Acadian flycatcher;Aves;Passeriformes;0.012;12.1;4.79;2.526;0.402;—;—
+Saimiri;sciureus;South American squirrel monkey;Mammalia;Primates;0.837;30.2;12.021;2.512;0.4;—;—
+Spalax;ehrenbergi;Palestine mole rat;Mammalia;Rodentia;0.134;20.2;8.06;2.506;0.399;—;—
+Scolopax;minor;American woodcock;Aves;Charadriiformes;0.157;20.9;8.343;2.505;0.399;—;—
+Accipiter;nisus;Eurasian sparrowhawk;Aves;Accipitriformes;0.135;20.2;8.076;2.501;0.398;—;—
+Acrocephalus;schoenobaenus;Sedge warbler;Aves;Passeriformes;0.012;11.8;4.72;2.5;0.398;—;—
+Myiarchus;crinitus;Great crested flycatcher;Aves;Passeriformes;0.034;14.9;5.975;2.494;0.397;—;—
+Anthus;pratensis;Meadow pipit;Aves;Passeriformes;0.019;13.1;5.26;2.49;0.396;—;—
+Aegithalos;caudatus;Long-tailed tit;Aves;Passeriformes;0.009;11.1;4.464;2.487;0.396;—;—
+Tiliqua;scincoides;Australian blue-tongued lizard;Reptilia;Squamata;0.493;26.6;10.712;2.483;0.395;—;—
+Spizella;passerina;Chipping sparrow;Aves;Passeriformes;0.012;11.8;4.756;2.481;0.395;—;—
+Geothlypis;trichas;Common yellowthroat;Aves;Passeriformes;0.011;11.5;4.637;2.48;0.394;—;—
+Acanthis;flammea;Common redpoll;Aves;Passeriformes;0.014;12.2;4.927;2.476;0.394;—;—
+Phyllostomus;hastatus;Greater spear-nosed bat;Mammalia;Chiroptera;0.084;18.0;7.286;2.47;0.393;—;—
+Tadarida;brasiliensis;Brazilian free-tailed bat;Mammalia;Chiroptera;0.013;12.0;4.872;2.463;0.391;—;—
+Aotus;trivirgatus;Northern night monkey;Mammalia;Primates;0.914;30.1;12.257;2.456;0.39;—;—
+Boa;constrictor;Boa constrictor;Reptilia;Squamata;3.532;40.4;16.456;2.455;0.39;—;—
+Megascops;asio;Eastern screech-owl;Aves;Strigiformes;0.166;20.7;8.449;2.45;0.389;—;—
+Lithobates;catesbeianus;American bullfrog;Amphibia;Anura;0.051;16.0;6.537;2.448;0.389;—;—
+Melanerpes;formicivorus;Acorn woodpecker;Aves;Piciformes;0.073;17.2;7.063;2.435;0.387;—;—
+Echinops;telfairi;Lesser hedgehog tenrec;Mammalia;Afrosoricida;0.116;19.0;7.819;2.43;0.386;—;—
+Choloepus;hoffmanni;Hoffmann's two-toed sloth;Mammalia;Pilosa;4.005;41.0;16.914;2.424;0.385;—;—
+Glossophaga;soricina;Pallas's long-tongued bat;Mammalia;Chiroptera;0.01;11.0;4.538;2.424;0.385;—;—
+Nucifraga;caryocatactes;Spotted nutcracker;Aves;Passeriformes;0.147;19.9;8.228;2.419;0.384;—;—
+Cebuella;pygmaea;Pygmy marmoset;Mammalia;Primates;0.111;18.6;7.734;2.405;0.381;—;—
+Selasphorus;rufus;Rufous hummingbird;Aves;Apodiformes;0.004;8.9;3.708;2.4;0.38;—;—
+Platyrrhinus;lineatus;White-lined broad-nosed bat;Mammalia;Chiroptera;0.022;13.0;5.432;2.393;0.379;—;—
+Pica;hudsonia;Black-billed magpie;Aves;Passeriformes;0.159;20.0;8.368;2.39;0.378;—;—
+Muscicapa;striata;Spotted flycatcher;Aves;Passeriformes;0.014;11.8;4.958;2.38;0.377;—;—
+Myotis;velifer;Cave myotis;Mammalia;Chiroptera;0.012;11.3;4.756;2.376;0.376;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
+Zonotrichia;leucophrys;White-crowned sparrow;Aves;Passeriformes;0.026;13.3;5.644;2.356;0.372;—;—
+Emberiza;schoeniclus;Reed bunting;Aves;Passeriformes;0.018;12.2;5.179;2.356;0.372;—;—
+Eulemur;fulvus;Brown lemur;Mammalia;Primates;2.374;35.5;15.091;2.352;0.372;—;—
+Corvus;frugilegus;Rook;Aves;Passeriformes;0.39;23.8;10.178;2.338;0.369;—;—
+Uria;lomvia;Thick-billed murre;Aves;Charadriiformes;0.989;29.0;12.468;2.326;0.367;—;—
+Emberiza;citrinella;Yellowhammer;Aves;Passeriformes;0.027;13.2;5.677;2.325;0.366;—;—
+Anas;platyrhynchos;Mallard;Aves;Anseriformes;1.02;29.1;12.552;2.318;0.365;—;—
+Apteryx;australis;Brown kiwi;Aves;Apterygiformes;2.38;35.0;15.099;2.318;0.365;—;—
+Icterus;galbula;Baltimore oriole;Aves;Passeriformes;0.038;14.0;6.108;2.292;0.36;—;—
+Loris;tardigradus;Red slender loris, or Slender loris;Mammalia;Primates;0.284;21.6;9.498;2.274;0.357;—;—
+Saguinus;geoffroyi;Geoffroy's tamarin;Mammalia;Primates;0.225;20.5;9.028;2.271;0.356;—;—
+Psaltriparus;minimus;Bushtit;Aves;Passeriformes;0.006;9.1;4.019;2.264;0.355;—;—
+Strix;occidentalis;Spotted owl;Aves;Strigiformes;0.571;25.0;11.06;2.26;0.354;—;—
+Sciurus;carolinensis;Eastern gray squirrel;Mammalia;Rodentia;0.44;23.6;10.449;2.259;0.354;—;—
+Himatione;sanguinea;Apapane;Aves;Passeriformes;0.014;11.0;4.888;2.25;0.352;—;—
+Hippolais;icterina;Icterine warbler;Aves;Passeriformes;0.012;10.8;4.807;2.247;0.352;—;—
+Spinus;pinus;Pine siskin;Aves;Passeriformes;0.014;11.0;4.927;2.232;0.349;—;—
+Petaurus;breviceps;Sugar glider;Mammalia;Diprotodontia;0.129;17.8;8.001;2.225;0.347;—;—
+Sturnira;lilium;Little yellow-shouldered bat;Mammalia;Chiroptera;0.021;12.0;5.405;2.22;0.346;—;—
+Setophaga;caerulescens;Black-throated blue warbler;Aves;Passeriformes;0.009;10.0;4.517;2.214;0.345;—;—
+Barnardius;zonarius;Port Lincoln ringneck;Aves;Psittaciformes;0.137;17.9;8.102;2.209;0.344;—;—
+Aegolius;acadicus;Northern saw-whet owl;Aves;Strigiformes;0.124;17.5;7.928;2.207;0.344;—;—
+Picoides;pubescens;Downy woodpecker;Aves;Piciformes;0.022;11.9;5.421;2.195;0.341;—;—
+Micrathene;whitneyi;Elf owl;Aves;Strigiformes;0.046;14.0;6.383;2.193;0.341;—;—
+Calypte;anna;Anna's hummingbird;Aves;Apodiformes;0.005;8.5;3.902;2.179;0.338;—;—
+Anas;rubripes;American black duck;Aves;Anseriformes;0.904;26.6;12.226;2.176;0.338;—;—
+Junco;hyemalis;Dark-eyed junco;Aves;Passeriformes;0.018;11.3;5.205;2.171;0.337;—;—
+Lonchura;striata;White-rumped munia;Aves;Passeriformes;0.01;10.0;4.608;2.17;0.336;—;—
+Haemorhous;mexicanus;House finch;Aves;Passeriformes;0.02;11.6;5.349;2.169;0.336;—;—
+Garrulus;glandarius;Eurasian jay;Aves;Passeriformes;0.153;17.9;8.3;2.157;0.334;—;—
+Charadrius;dubius;Little ringed plover;Aves;Charadriiformes;0.036;13.0;6.054;2.147;0.332;—;—
+Aix;sponsa;Wood duck;Aves;Anseriformes;0.448;22.5;10.491;2.145;0.331;—;—
+Melospiza;melodia;Song sparrow;Aves;Passeriformes;0.019;11.3;5.273;2.143;0.331;—;—
+Setophaga;pinus;Pine warbler;Aves;Passeriformes;0.012;10.2;4.764;2.141;0.331;—;—
+Bubo;virginianus;Great horned owl;Aves;Strigiformes;1.45;29.0;13.553;2.14;0.33;—;—
+Setophaga;coronata;Yellow-rumped (myrtle) warbler;Aves;Passeriformes;0.012;10.0;4.72;2.118;0.326;—;—
+Pteropus;poliocephalus;Gray-headed flying fox;Mammalia;Chiroptera;0.598;23.6;11.172;2.112;0.325;sigma0_eff down;"Same flight mechanism; large fruit bats. Additionally: IFN-alpha constitutively active — reduced inflammatory response lowers sigma0"
+Acrocephalus;palustris;Marsh warbler;Aves;Passeriformes;0.011;9.8;4.656;2.105;0.323;—;—
+Dipsosaurus;dorsalis;Desert iguana;Reptilia;Squamata;0.07;14.6;6.988;2.089;0.32;—;—
+Seiurus;aurocapilla;Ovenbird;Aves;Passeriformes;0.019;11.0;5.266;2.089;0.32;—;—
+Vermivora;cyanoptera;Blue-winged warbler;Aves;Passeriformes;0.008;9.0;4.337;2.075;0.317;—;—
+Riparia;riparia;Bank swallow;Aves;Passeriformes;0.014;10.1;4.896;2.063;0.314;—;—
+Carlito;syrichta;Philippine tarsier;Mammalia;Primates;0.113;16.0;7.769;2.059;0.314;—;—
+Anas;clypeata;Northern shoveler;Aves;Anseriformes;0.554;22.6;10.988;2.057;0.313;—;—
+Melozone;fusca;Canyon towhee;Aves;Passeriformes;0.044;12.8;6.315;2.027;0.307;—;—
+Nycticebus;coucang;Slow loris;Mammalia;Primates;1.129;25.8;12.832;2.011;0.303;—;—
+Galago;senegalensis;Senegal galago;Mammalia;Primates;0.172;17.1;8.509;2.01;0.303;—;—
+Isoodon;macrourus;Northern brown bandicoot;Mammalia;Peramelemorphia;1.551;6.8;13.753;0.494;-0.306;—;—
+Dicrostonyx;groenlandicus;Collared lemming;Mammalia;Rodentia;0.057;3.3;6.687;0.494;-0.307;—;—
+Perameles;nasuta;Long-nosed bandicoot;Mammalia;Peramelemorphia;0.645;5.6;11.358;0.493;-0.307;—;—
+Cannomys;badius;Lesser bamboo rat;Mammalia;Rodentia;0.344;4.8;9.903;0.485;-0.315;—;—
+Perdix;perdix;Grey partridge;Aves;Galliformes;0.501;5.2;10.749;0.484;-0.315;—;—
+Dasyurus;maculatus;Tiger quoll, or Australian tiger cat;Mammalia;Dasyuromorphia;1.782;6.8;14.176;0.48;-0.319;—;—
+Antechinus;swainsonii;Dusky antechinus;Mammalia;Dasyuromorphia;0.067;3.3;6.93;0.476;-0.322;—;—
+Dasyurus;geoffroii;Western quoll;Mammalia;Dasyuromorphia;1.327;6.2;13.292;0.466;-0.331;—;—
+Lemmus;lemmus;Norway lemming;Mammalia;Rodentia;0.08;3.3;7.205;0.458;-0.339;—;—
+Raphicerus;campestris;Steenbok;Mammalia;Artiodactyla;9.6;9.3;20.465;0.454;-0.343;—;—
+Bos;taurus;Domestic cattle;Mammalia;Artiodactyla;347.0;20.0;44.745;0.447;-0.35;—;—
+Rattus;norvegicus;Norway rat;Mammalia;Rodentia;0.207;3.8;8.864;0.429;-0.368;—;—
+Didelphis;virginiana;Virginia opossum;Mammalia;Didelphimorphia;2.847;6.6;15.7;0.42;-0.376;rho down + sigma0 up;"Opossums: rapid sexual maturity, high reproductive rate; classic r-strategist — evolutionarily low rho"
+Blarina;brevicauda;Northern short-tailed shrew;Mammalia;Soricomorpha;0.021;2.2;5.377;0.409;-0.388;—;—
+Condylura;cristata;Star-nosed mole;Mammalia;Soricomorpha;0.049;2.5;6.475;0.386;-0.413;—;—
+Philander;opossum;Gray four-eyed opossum;Mammalia;Didelphimorphia;0.751;4.4;11.741;0.375;-0.426;—;—
+Crocidura;flavescens;Greater red musk shrew;Mammalia;Soricomorpha;0.033;2.2;5.948;0.37;-0.432;sigma0 up;"Shrews: record metabolism (~35 W/kg), heart 1200 bpm; sigma0 maximal among Mammalia"
+Cricetus;cricetus;Black-bellied hamster;Mammalia;Rodentia;0.365;3.6;10.034;0.359;-0.445;—;—
+Galea;musteloides;Common yellow-toothed cavy;Mammalia;Rodentia;0.322;3.5;9.762;0.359;-0.445;—;—
+Hemicentetes;semispinosus;Streaked tenrec;Mammalia;Afrosoricida;0.116;2.7;7.819;0.345;-0.462;—;—
+Arvicola;amphibius;European water vole;Mammalia;Rodentia;0.095;2.5;7.475;0.334;-0.476;—;—
+Didelphis;marsupialis;Southern opossum;Mammalia;Didelphimorphia;1.244;4.2;13.108;0.32;-0.494;rho down + sigma0 up;"Opossums: rapid sexual maturity, high reproductive rate; classic r-strategist — evolutionarily low rho"
+Metachirus;nudicaudatus;Brown four-eyed opossum;Mammalia;Didelphimorphia;0.336;3.0;9.853;0.304;-0.516;—;—
+Echymipera;rufescens;Long-nosed echymipera;Mammalia;Peramelemorphia;0.887;3.1;12.174;0.255;-0.594;—;—
+Chironectes;minimus;Water opossum (yapok);Mammalia;Didelphimorphia;0.94;3.1;12.332;0.251;-0.6;—;—
+Lutreolina;crassicaudata;Lutrine opossum;Mammalia;Didelphimorphia;0.812;2.9;11.943;0.243;-0.615;—;—

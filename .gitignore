@@ -1,0 +1,13 @@
+# Not part of the public verification set (see README.md)
+НЕ_трогать_каталог/
+ВЕРИФИКАЦИЯ.txt
+check_formula_refs.py
+
+# Internal session artifacts (GitHub-prep audit), not for publication
+_AUDIT_RAW_*.json
+_AUDIT_REPORT_*.md
+
+# Python / Jupyter junk
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
