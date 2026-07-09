@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<!--
+  Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+  LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
+  SPDX-License-Identifier: CC-BY-NC-ND-4.0
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VBLS — Periodic Table of Living Structures</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vbls_table.css">
+<style>/* inline overrides only */
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">
+      Table of Living Structures
+      <span class="mmin-badge">𝓜<sub>min</sub></span>
+    </div>
+    <div class="header-sub">VBLS · Viability Boundaries of Living Systems · Classification by γ criterion and memory type η<sub>abs</sub></div>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    <span class="theme-icon" id="themeIcon">☀</span>
+    <span id="themeLabel">Light theme</span>
+  </button>
+</div>
+
+<!-- ══ LEGEND ══ -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>γ ≫ 1 · far above</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>γ > 1 · near boundary</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div>γ ≈ 1 · at 𝓜<sub>min</sub></div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c4)"></div>γ ~ 0.1–0.3 · below type I</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div>γ ~ 0 · below type II</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c6)"></div>γ = 0 · organelle</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c7)"></div>outside (𝒮)</div>
+  <span class="legend-sep">·</span>
+  <div class="legend-item" style="font-style:italic">click cell → species list</div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:transparent;border:1.5px dashed rgba(130,200,130,0.6);border-radius:2px"></div>◈ predicted by theory
+  </div>
+  <div class="legend-item"><span class="retro-badge" style="margin-left:0">retrospect.</span> was (𝒮), entered dormancy</div>
+  <div class="legend-item"><span class="prosp-badge" style="margin-left:0">prospect.</span> not yet became (𝒮)</div>
+</div>
+
+<!-- ══ TABLE ══ -->
+<div class="table-wrapper">
+
+  <!-- SUPER-HEADER row -->
+  <div class="col-superheader-row">
+    <div class="super-empty"></div>
+    <div class="super-header">
+      <div class="super-header-label">Horizontal axis</div>
+      <div class="super-header-desc">System position relative to the dissipative viability boundary 𝓜<sub>min</sub> — determined by parameter γ = Φ<sub>in</sub><sup>(aut)</sup> / Φ<sub>in</sub><sup>min</sup>(θ)</div>
+      <div class="super-arrow">
+        <span class="super-arrow-label-left">autonomous life</span>
+        <div class="super-arrow-line"></div>
+        <span class="super-arrow-label-right">below boundary →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLUMN HEADERS -->
+  <div class="col-headers">
+    <div class="ch-empty"></div>
+    <div class="col-header ch1"><span class="col-num">I</span><span class="col-gamma">γ ≫ 1</span><span class="col-desc">Far above 𝓜<sub>min</sub></span></div>
+    <div class="col-header ch2"><span class="col-num">II</span><span class="col-gamma">γ > 1</span><span class="col-desc">Near 𝓜<sub>min</sub></span></div>
+    <div class="col-header ch3"><span class="col-num">III</span><span class="col-gamma">γ ≈ 1</span><span class="col-desc">★ At 𝓜<sub>min</sub></span></div>
+    <div class="col-header ch4"><span class="col-num">IV</span><span class="col-gamma">γ ~ 0.1–0.3</span><span class="col-desc">Below · type I</span></div>
+    <div class="col-header ch5"><span class="col-num">V</span><span class="col-gamma">γ ~ 0–0.05</span><span class="col-desc">Below · type II</span></div>
+    <div class="col-header ch6"><span class="col-num">VI</span><span class="col-gamma">γ = 0</span><span class="col-desc">Organelle</span></div>
+    <div class="col-header ch7"><span class="col-num">VII</span><span class="col-gamma">—</span><span class="col-desc">Outside (𝒮)</span></div>
+  </div>
+
+  <!-- MAIN GRID (built by JS) -->
+  <div class="table-grid" id="grid"></div>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="footer">
+  VBLS · 2025–2026 · k<sub>B</sub>T = 4.28×10⁻²¹ J · β<sub>cell</sub> = 60 000 · T = 310 K (Mammalia) · (est.) = order-of-magnitude estimate
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <div style="position:relative">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-topbar" id="modal-topbar"></div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').textContent  = isDark ? '☾' : '☀';
+  document.getElementById('themeLabel').textContent = isDark ? 'Dark theme' : 'Light theme';
+}
+
+// ══════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════
+const COL_COLORS = ['','#00e5ff','#1de9b6','#ffd600','#ff6d00','#f44336','#ce93d8','#78909c'];
+const COL_CHIPS  = ['','chip-s1','chip-s2','chip-s3','chip-s4','chip-s5','chip-s6','chip-s7'];
+
+const ROWS = [
+  { title: "FULL MEMORY",      cond: "α > 0\nτ_div/τ_regen ≫ 1",  desc: "Damage history accumulates and degrades η_abs" },
+  { title: "FROZEN",           cond: "Mech A: τ_div/τ_regen ≪ 1\nMech B: small α_bact",  desc: "Lineage does not age via E-channel — kinematically (fast eukaryotes) or parametrically (prokaryotes)" },
+  { title: "BORROWED",         cond: "κ > 0\nfrom host",      desc: "Memory and reserve attractor (R_bal^eff) sustained by another system's resources" },
+  { title: "NO MEMORY",        cond: "α ≈ 0",                 desc: "Integral barrier III is physically inactive" },
+  { title: "ANABIOSIS / OUT",  cond: "Φ_in → 0\noutside (𝒮)", desc: "Dynamics frozen or variables E,R,η undefined" },
+];
+
+const GROUPS = {
+  "1-1": { name: "Eukaryotes with full memory",           desc: "Multicellular · α > 0 · τ_div/τ_regen ≫ 1", hint: "ℬ/ℏ scale →" },
+  "1-2": { name: "Natural minima with full memory",       desc: "Smallest autonomous genome (M. genitalium) · radiation-conditional boundary (Cladosporium)" },
+  "2-1": { name: "Prokaryotes with frozen memory",        desc: "γ ≫ 1 · frozen via Mechanism B (α_bact ≪ α_euk)" },
+  "2-2": { name: "Ultra-minimal free-living",             desc: "Oligotrophs near 𝓜min" },
+  "2-3": { name: "𝓜min boundary — verified",              desc: "τ_div ≈ τ_regen · experimental limit" },
+  "2-4": { name: "Parasites with frozen memory",          desc: "γ < 1 · R_bal(own) < R*" },
+  "3-4": { name: "Eukaryote with borrowed memory",         desc: "α(own) > 0 retained, but powered by host · R_bal(own) < R* · R_bal(eff) > R*" },
+  "3-5": { name: "Hyper-reduced endosymbionts",           desc: "Genome < 200 genes · ρ ≈ 0 · type II" },
+  "4-1": { name: "Mutator lineages",                      desc: "γ ≫ 1 at α ≈ 0 · R- and I-barriers independent" },
+  "4-4": { name: "Host-dependent parasites without memory", desc: "α(own) ≈ 0, no memory machinery at all · R_bal(own) < R*" },
+  "4-5": { name: "Ultra-reduced symbionts",               desc: "Record-small genomes · collective R_bal only" },
+  "4-6": { name: "Organelles",                            desc: "γ(own) = 0 · cell subsystems" },
+  "4-7": { name: "Outside (𝒮) — pre-biological models",    desc: "Approaching 𝓜min from below · E,R,η undefined or ρ=0" },
+  "5-1": { name: "Retrospective anabiants",               desc: "Were (𝒮) · entered dormancy · Φ_in → 0 · only ν₀" },
+  "5-3": { name: "Prospective anabiants",                 desc: "Not yet (𝒮) · parameters ready · awaiting Φ_in" },
+  "5-7": { name: "Sub-biological agents",                 desc: "Viruses, viroids, prions · E,R,η undefined · below ribozyme limit" },
+};
+
+const CELLS = {
+  "1-1": [
+  // ─── AnAge data (B*=0.32 J·s·kg^-5/4) + human cell · sorted by log₁₀(ℬ/ℏ) ───
+  {name:"Lesser horseshoe bat", italic:true, order:"Chiroptera", mass_g:4.6, log_B:30.56,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁰·⁶", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Rhinolophus hipposideros. Chiroptera — biological anomaly: flight reduces effective predation mortality, systematically increasing T_max at small M and pushing ℬ above the allometric trend."},
+  {name:"Western barbastelle", italic:true, order:"Chiroptera", mass_g:10.2, log_B:31.00,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Barbastella barbastellus. Long-lived temperate-zone bat. Like other Chiroptera — T_max disproportionately large for body mass."},
+  {name:"Forest dormouse", italic:true, order:"Rodentia", mass_g:26.0, log_B:31.50,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹·⁵", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Dryomys nitedula. Extended winter hibernation reduces effective ν₀ — classic example of temperature effect on ν₀ via Arrhenius equation (16.17)."},
+  {name:"Naked mole rat", italic:true, order:"Rodentia", mass_g:35.0, log_B:31.66,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹·⁷", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Heterocephalus glaber. Lives >30 years at 35 g — rodent record. Anomalously low terminal Σ* (727 mutations vs median ~2,271): death via E-channel with intact R. Exception to universal ℬ* — theoretically justified through elevated Φ_cap."},
+  {name:"Bulldog bat", italic:true, order:"Chiroptera", mass_g:50.0, log_B:31.86,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹·⁹", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Noctilio leporinus. Largest fishing bat. Chiroptera: T_max > 20 years at M = 50 g."},
+  {name:"Southern flying squirrel", italic:true, order:"Rodentia", mass_g:65.4, log_B:32.00,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³²", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Glaucomys volans. T_max ≈ 13 years. Gliding flight reduces predation → demographic effect on T_max analogous to Chiroptera."},
+  {name:"Round-tailed ground squirrel", italic:true, order:"Rodentia", mass_g:163.3, log_B:32.50,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³²·⁵", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Xerospermophilus tereticaudus. 6–7 month hibernation: ν₀ during dormancy reduced 2–3× by van't Hoff rule."},
+  {name:"Brown rat", italic:true, order:"Rodentia", mass_g:300.0, log_B:32.83,
+   genes:"~2 300", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³²·⁸", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Rattus norvegicus. Standard laboratory model. T_max ≈ 3.8 years. VBLS verification via Cagan et al. 2022: mutation accumulation ~55/year in intestinal crypts."},
+  {name:"Golden-headed lion tamarin", italic:true, order:"Primates", mass_g:535.0, log_B:33.14,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³³·¹", tau:"≫ 1", phi:"~10⁻¹¹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Leontopithecus chrysomelas. T_max ≈ 28 years. Primates systematically above Mammalia allometric trend — social structure effect on survival."},
+  {name:"Ringtail possum", italic:true, order:"Diprotodontia", mass_g:1040.0, log_B:33.50,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³³·⁵", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Hemibelideus lemuroides. Marsupial. T_max ≈ 15 years. ℬ/ℏ ~ 10^33.5 — midpoint of small-mammal scale."},
+  {name:"Wedge-capped capuchin", italic:true, order:"Primates", mass_g:2552.5, log_B:33.99,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁴", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Cebus olivaceus. T_max ≈ 45 years. High longevity for 2.5 kg — primate pattern. Capuchin cells: Hayflick limit ~60 divisions."},
+  {name:"Sumatran surili", italic:true, order:"Primates", mass_g:6540.0, log_B:34.50,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁴·⁵", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Presbytis melalophos. T_max ≈ 30 years at M = 6.5 kg."},
+  {name:"Wolverine", italic:true, order:"Carnivora", mass_g:16333.3, log_B:35.00,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁵", tau:"≫ 1", phi:"~10⁻⁹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Gulo gulo. T_max ≈ 13 years at M = 16 kg. Carnivore with moderate T_max — carnivory correlates with higher ν₀ (high-calorie diet → higher cell turnover)."},
+  {name:"Bonobo", italic:true, order:"Primates", mass_g:39925.0, log_B:35.48,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁵·⁵", tau:"≫ 1", phi:"~10⁻⁹ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Pan paniscus. T_max ≈ 50 years at M = 40 kg. Nearest living relative of humans. ℬ/ℏ 2.5 orders below humans at similar T_max — difference only in M^{5/4}."},
+  {name:"Human cell", italic:false, order:"Primates", mass_g:70000.0, log_B:35.79,
+   genes:"~21 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~6×10³⁵", tau:"≫ 1", phi:"~10⁻¹² W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Homo sapiens · M = 70 kg. Hayflick limit (~50 divisions) — direct consequence of E-channel with full memory. ℬ* = 0.32 J·s·kg^{-5/4} → ℬ ≈ 64.8 J·s → ℬ/ℏ ≈ 6.1×10^35. Each division transfers non-zero Σ₀ > 0 to daughter cell. Verification: Whittemore et al. 2019 (telomeres), Cagan et al. 2022 (mutations)."},
+  {name:"Asian black bear", italic:true, order:"Carnivora", mass_g:103750.0, log_B:36.00,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁶", tau:"≫ 1", phi:"~10⁻⁸ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Ursus thibetanus. T_max ≈ 35 years at M = 100 kg. Winter sleep: not true anabiosis (T_body drops only 4–5°C) — ν₀ changes negligibly."},
+  {name:"Grey seal", italic:true, order:"Carnivora", mass_g:268000.0, log_B:36.52,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁶·⁵", tau:"≫ 1", phi:"~10⁻⁸ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Halichoerus grypus. T_max ≈ 46 years. Marine mammals form a distinct cluster on the ℬ/ℏ scale — large M with moderate metabolism."},
+  {name:"Giant eland", italic:true, order:"Artiodactyla", mass_g:680000.0, log_B:37.02,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁷", tau:"≫ 1", phi:"~10⁻⁷ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Taurotragus derbianus. Largest antelope. M = 680 kg, T_max ≈ 25 years. Artiodactyla: stable ℬ* cluster in AnAge database."},
+  {name:"Indian rhinoceros", italic:true, order:"Perissodactyla", mass_g:1602330.0, log_B:37.49,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁷·⁵", tau:"≫ 1", phi:"~10⁻⁷ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Rhinoceros unicornis. M = 1.6 t, T_max ≈ 45 years. One of four surviving rhinoceros species. ℬ/ℏ = 10^37.5 — upper limit of large terrestrial mammals."},
+  {name:"Killer whale", italic:true, order:"Cetacea", mass_g:3987500.0, log_B:37.98,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁸", tau:"≫ 1", phi:"~10⁻⁷ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Orcinus orca. M = 4 t, T_max ≈ 90 years (females). Post-menopausal killer whale — biological anomaly: longevity without reproduction. VBLS: reproductive viability (16.9) and biological age diverge."},
+  {name:"African elephant", italic:true, order:"Proboscidea", mass_g:4800000.0, log_B:38.08,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁸·¹", tau:"≫ 1", phi:"~10⁻⁶ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Loxodonta africana. M = 4.8 t, T_max ≈ 65–70 years. Peto's paradox: with vast cell numbers and ℬ/ℏ = 10^38, extreme cancer burden would be expected — but elephants carry 20 copies of TP53."},
+  {name:"Baird's beaked whale", italic:true, order:"Cetacea", mass_g:11380000.0, log_B:38.55,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁸·⁶", tau:"≫ 1", phi:"~10⁻⁶ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Berardius bairdii. M = 11.4 t, T_max ≈ 84 years. Beaked whale with one of the largest T_max among toothed whales."},
+  {name:"Gray whale", italic:true, order:"Cetacea", mass_g:28500000.0, log_B:39.05,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹", tau:"≫ 1", phi:"~10⁻⁶ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Eschrichtius robustus. M = 28.5 t, T_max ≈ 77 years. Annual migration ~20,000 km — mammalian record."},
+  {name:"Fin whale", italic:true, order:"Cetacea", mass_g:70000000.0, log_B:39.54,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹·⁵", tau:"≫ 1", phi:"~10⁻⁵ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Balaenoptera physalus. M = 70 t, T_max ≈ 140 years. Second largest species on Earth. ℬ/ℏ = 10^39.5 — near absolute maximum for Mammalia."},
+  {name:"Bowhead whale", italic:true, order:"Cetacea", mass_g:100000000.0, log_B:39.73,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹·⁷", tau:"≫ 1", phi:"~10⁻⁵ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Balaena mysticetus. M = 100 t, T_max > 200 years (age determined from 19th-century harpoon tips found in bodies). Longest-lived mammal. ℬ/ℏ ~ 10^39.7 — at upper limit of Mammalia scale."},
+  {name:"Blue whale", italic:true, order:"Cetacea", mass_g:136000000.0, log_B:39.90,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹·⁹", tau:"≫ 1", phi:"~10⁻⁵ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Balaenoptera musculus. M = 136 t — largest animal in Earth's history. ℬ/ℏ ~ 10^39.9 — absolute maximum on the ℬ scale for Mammalia. ℬ ≈ 836,000 J·s = 836 kJ·s."},
+  // ─── Outside Mammalia scale ───
+  {name:"Tardigrade (active)", italic:true, order:"Tardigrada", mass_g:0.001, log_B:null,
+   genes:"~38 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"— (β not calib., non-Mammalia eukaryote)", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+   memory:"Full", status:"Above 𝓜min",
+   note:"Milnesium tardigradum. Invertebrate — Mammalia allometry inapplicable. ℬ/ℏ estimated independently as ~10^18. Two modes: active (full memory, γ≫1) and cryptobiosis (Φ_in→0, (𝒮) equations frozen). Σ does not reset during freezing."}
+  ],
+  "1-2": [{
+    name:"Mycoplasma genitalium", italic:true,
+    genes:"525", gamma:"1.1–1.3", D:"> R*, small", B_hbar:"~10²¹", tau:"~1.2", phi:"~10⁻¹⁶ W",
+    memory:"Full", status:"Near 𝓜min",
+    note:"Natural free-living minimum. τ_div/τ_regen ≈ 1.2 ≈ γ (estimated): ages in the VBLS sense. Without host survives a few hours — on timescale τ_regen·(γ−1)."
+  },{
+    name:"Cladosporium sp. (ISS)", italic:true,
+    genes:"—", gamma:"≳ 1 (rad.)", D:"≈ R*", B_hbar:"—", tau:"—", phi:"~10⁻¹⁴ W (ion. rad.)",
+    memory:"Full", status:"Conditional boundary",
+    note:"Φ_in from ionizing radiation via melanin — analogue of radiotrophic photosynthesis. The only organism for which 𝓜min depends on the ISS radiation field. Full eukaryotic memory (α>0, not frozen) — moved here from R2 (frozen), where it had been grouped with SAR11 despite its own data already reading 'Active'."
+  }],
+  "1-3":{ predicted:true, col:3,
+    name:"Organism with full memory at 𝓜min",
+    desc:"Theory predicts: an organism is possible with τ_div/τ_regen ≫ 1 (memory active) and simultaneously γ ≈ 1. Requires: large number of regulatory modules N > N_crit at minimal Φ_in.",
+    verify:"Chemostat with JCVI-syn3.0 at gradual addition of regulatory genes — searching for γ ≈ 1 with active memory τ_div/τ_regen > 10.",
+    status:"Predicted · not found"
+  },
+  "1-4":"F","1-5":"F","1-6":"F","1-7":"F",
+
+  "2-1": [{
+    name:"Deinococcus radiodurans", italic:true,
+    genes:"~3 200", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~2×10⁻¹³ W",
+    memory:"Frozen", status:"Above 𝓜min",
+    note:"Repair record: 1.5×10⁶ rad. Resistance through record-high ρ, not insensitivity to damage. Barrier I maximized among known organisms."
+  },{
+    name:"Escherichia coli", italic:true,
+    genes:"4 377", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1†", phi:"~10⁻¹² W",
+    memory:"Frozen (Mech. B)", status:"Above 𝓜min",
+    note:"† τ_div/τ_regen ≫ 1 (far above 𝓜min, γ ≫ 1), yet memory is frozen via Mechanism B: α_bact ≈ 0. Clonal E. coli lineage does not age in the VBLS sense."
+  }],
+  "2-2": [{
+    name:"SAR11 / Pelagibacter ubique", italic:true,
+    genes:"~1 354", gamma:"≳ 1", D:"≈ R*", B_hbar:"~10²¹", tau:"≳ 1", phi:"~10⁻¹⁵ W",
+    memory:"Frozen", status:"Near 𝓜min",
+    note:"Most abundant organism on Earth (~10²⁸ cells). Evolutionary analogue of JCVI-syn3.0: natural selection in oligotrophic ocean reduced R_bal to R*."
+  }],
+  "2-3": [{
+    name:"JCVI-syn3.0", italic:false, star:true,
+    genes:"473", gamma:"≈ 1.0–1.05", D:"≈ R*", B_hbar:"~2×10²¹", tau:"1.08 ★", phi:"~10⁻¹⁵ W",
+    memory:"Frozen", status:"AT 𝓜min",
+    note:"τ_div ≈ τ_regen (§13.3, eq. 13.7) — experimental point on the boundary. Removal of 8 repair genes shifts to mutator mode. Direct laboratory verification of 𝓜min as a practically achievable limit."
+  }],
+  "2-4": [{
+    name:"Mycoplasma pneumoniae", italic:true,
+    genes:"~689", gamma:"~0.2–0.4", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁷ W (est.)",
+    memory:"Frozen", status:"Below · type I",
+    note:"Obligate lung parasite. No amino acid synthesis, no TCA cycle. Memory frozen (Mechanism B, small α_bact), R_bal(own)<R*. Intermediate niche between M. genitalium and N. equitans."
+  }],
+  "2-5":"F","2-6":"F","2-7":"F",
+
+  "3-1":null,
+  "3-2":{ predicted:true, col:2,
+    name:"Free-living on path to parasitism",
+    desc:"In oligotrophic medium with a resource donor, an organism with borrowed memory and γ>1 is possible. Intermediate stage of reductive evolution before crossing 𝓜min from above.",
+    verify:"Co-culture of SAR11 with metabolite donor at gradually reduced Φ_in(aut). Criterion: facultative dependence at R_bal(own) ≈ R*.",
+    status:"Predicted · not found"
+  },
+  "3-3":{ predicted:true, col:3,
+    name:"Obligate parasite exactly at 𝓜min",
+    desc:"Parasite with R_bal(eff) ≈ R* and borrowed memory κ>0. τ_div/τ_regen(eff) ≈ 1. Predicts anomalously wide distribution of lifetimes — consequence of the asymptotics t_B ~ C/𝒟.",
+    verify:"Chemostat N. equitans + Ignicoccus hospitalis at gradually reduced host substrate. Criterion: τ_div(eff) ≈ τ_regen.",
+    status:"Predicted · not found"
+  },
+  "3-4": [{
+    name:"Encephalitozoon cuniculi", italic:true,
+    genes:"~2 000", gamma:"~0.2", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁶ W (est.)",
+    memory:"Borrowed", status:"Below · eukaryote!",
+    note:"The only known eukaryote below 𝓜min. Mitochondria loss → Φ_in drops. Proves: 𝓜min is determined by dynamic balance, not taxonomy. Unlike Rickettsia/Chlamydia (α≈0, no memory machinery at all — see R4×IV), E. cuniculi retains some regulatory genes (α(own)>0): the memory mechanism itself survives, just powered by the host — the one cataloged organism that is genuinely 'Borrowed' rather than merely 'Absent'."
+  }],
+  "3-5": [{
+    name:"Tremblaya princeps", italic:true,
+    genes:"~120", gamma:"≈ 0.05", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
+    memory:"None", status:"Below · type II",
+    note:"Contains Moranella endobia inside (~200 genes). Three-level hierarchy: collective balance 𝒟(Tremblaya) + 𝒟(Moranella) + δ𝒟(host) keeps R_bal(eff) > R*. Viability as a collective property."
+  },{
+    name:"Carsonella ruddii", italic:true,
+    genes:"~160", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
+    memory:"None", status:"Below · type II",
+    note:"No DNA repair genes (ρ ≈ 0). Genome degrades at record rate. Survival provided exclusively by δ𝒟(host)."
+  }],
+  "3-6":null,"3-7":null,
+
+  "4-1": [{
+    name:"E. coli ΔmutS (mutator)", italic:true,
+    genes:"~4 300", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~10⁻¹² W",
+    memory:"Absent (α≈0)", status:"Above 𝓜min · α=0",
+    note:"γ≫1 preserved at α≈0. Lineage accumulates mutations but does not 'age' via E-channel. Demonstrates independence of barriers I and III."
+  }],
+  "4-2":null,
+  "4-3":{ predicted:true, col:3,
+    name:"Mutator exactly at 𝓜min",
+    desc:"An organism with fully lost η_abs regulation (α≈0) but γ(own)≈1 — a mutator living not in resource abundance but exactly at the threshold. Unlike R1×III (deficient resource with active memory), here the resource is deficient with memory fully absent. Since the E-channel is structurally excluded by α≈0, death is governed purely by Barrier I, without the sigmoidal three-phase curve.",
+    verify:"Minimal-genome mutator strain (e.g., a JCVI-syn3.0 variant with η_abs-regulation genes deleted) in a chemostat at gradually reduced Φ_in down to γ(own)→1. Criterion distinguishing it from R1×III: absence of a plateau before death — a purely exponential survival curve, not sigmoidal.",
+    status:"Predicted · not found"
+  },
+  "4-4": [{
+    name:"Rickettsia prowazekii", italic:true,
+    genes:"~834", gamma:"~0.3", D:"< R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
+    memory:"Absent", status:"Below · type I",
+    note:"Evolutionary ancestor of mitochondria. ATP via ADP/ATP translocase from host. α(own)≈0 — no memory machinery at all (moved here from R3, where 'borrowed reserve' had been conflated with 'borrowed memory'; see E. cuniculi, R3×IV, for the one organism that actually retains α>0). VBLS prediction: death in ~14 h outside cell."
+  },{
+    name:"Chlamydia trachomatis", italic:true,
+    genes:"~895", gamma:"≈ 0", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
+    memory:"Absent", status:"Below · type I",
+    note:"Complete loss of ATP synthesis. Two-stage cycle: EB (dormant form) → RB (active only inside cell). 'Parasitic launch' through barrier III. α(own)≈0 — no memory machinery at all."
+  },{
+    name:"Nanoarchaeum equitans", italic:true,
+    genes:"490", gamma:"0.10", D:"< R*", B_hbar:"—", tau:"123 (eff)", phi:"~5×10⁻¹⁸ W",
+    memory:"Absent", status:"Below · type I",
+    note:"α ≈ 0 — no memory regulation genes. VBLS prediction: death in ~2 h without Ignicoccus hospitalis. Cannot be cultured outside host."
+  }],
+  "4-5": [{
+    name:"Hodgkinia cicadicola", italic:true,
+    genes:"~144", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
+    memory:"None", status:"Below · type II",
+    note:"Genome fragmented across multiple lineages: collective viability without a single complete genome."
+  },{
+    name:"Nasuia deltocephalinicola", italic:true,
+    genes:"~137", gamma:"≈ 0.02", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
+    memory:"None", status:"Below · type II",
+    note:"Record: smallest genome among cellular organisms. Empirical lower limit of cellular organization on the VBLS scale."
+  }],
+  "4-6": [{
+    name:"Mitochondrion", italic:false,
+    genes:"37", gamma:"0", D:"→ 0", B_hbar:"0", tau:"—", phi:"0 (substrate from host)",
+    memory:"None", status:"Organelle",
+    note:"Survived 2 billion years at γ(own)=0 — as a cell subsystem where γ(cell)≫1. Degradation of mtDNA reduces Φ_in(cell) → γ(cell) ↘ → cell approaches 𝓜min."
+  }],
+  "4-7": [{
+    name:"Szostak protocell (vesicle + RNA)", italic:false,
+    subclass:"Class B · pre-biological models · below 𝓜min from below",
+    genes:"0 (no genome)", gamma:"undef.", D:"< R*", B_hbar:"—", tau:"undef.", phi:"> 0 (external)",
+    memory:"None (α = 0)", status:"Below 𝓜min · experimental model",
+    note:"Fatty acid vesicle with RNA inside (Szostak et al. 2001–2023). Barrier III partial: η_abs > 0 — RNA copied without enzymes (Adamala & Szostak, Science 2013). Passive endocytosis: vesicle captures molecules upon fusion (Zhang et al. PNAS 2023). Barrier I not realized: ρ = 0, no repair. Barrier II not realized: R(t) undefined. Closest laboratory model to 𝓜min from below — barrier I (ρ > 0) is the critical missing condition for crossing 𝓜min."
+  }],
+
+  "5-1": [{
+    name:"Bacillus subtilis spores", italic:true, anab:true,
+    genes:"~4 100", gamma:"≫ 1 (active)", D:"≫ R* (active)", B_hbar:"~10²¹ (active)", tau:"≫ 1 (active)", phi:"→ 0 (spores)",
+    memory:"Frozen → 0", status:"Retrospective anabiant",
+    note:"In active state far above 𝓜min. In spore: Φ_in→0, F_diss→0. Only ν₀ — spontaneous decay of R. t_dormancy ≈ 250 years (formula 12.11). Upon activation returns to (𝒮) with Σ₀ > 0 — accumulated damage does not reset."
+  },{
+    name:"Tardigrade (cryptobiosis)", italic:true, anab:true,
+    genes:"~38 000", gamma:"→ 0/0", D:"→ 0", B_hbar:"—", tau:"—", phi:"→ 0",
+    memory:"Frozen", status:"Retrospective anabiant",
+    note:"Φ_in→0 and F_diss→0 simultaneously: γ undefined, theorem inapplicable. Only ν₀: spontaneous decay of R. t_dormancy ≈ 10–100 years. Σ does not reset during freezing. Upon activation — full (𝒮) with γ≫1."
+  }],
+  "5-2":{ predicted:true, col:2,
+    name:"Anabiant at the 𝓜min boundary",
+    desc:"Organism emerging from anabiosis with γ ≈ 1 (not γ≫1). Upon activation immediately finds itself at the boundary — 'awakening at the limit'. Predicts anomalously wide survival distribution.",
+    verify:"JCVI-syn3.0 in dried state with subsequent reactivation at minimal substrate. Criterion: wide scatter of t_B under identical conditions.",
+    status:"Predicted · not found"
+  },
+  "5-3": [{
+    name:"Lotus seeds", italic:false, anab:true,
+    genes:"—", gamma:"≫ 1 (potential)", D:"≫ R* (potential)", B_hbar:"—", tau:"undef.", phi:"→ 0",
+    memory:"Not activated", status:"Prospective anabiant",
+    note:"Record: ~1,300 years dormancy (Shen-Miller, 2002). All (𝒮) parameters structurally ready: ρ>0, α>0, R₀>R*, E₀>E*. But Φ_in=0, η_abs not activated. Upon water and heat: ρ>0 gives R_bal > R*, and γ > 1 — crossing 𝓜min is deterministic. t_dormancy = (1/ν₀)·ln(R_entry/R*) ≈ 2,000–4,000 years."
+  },{
+    name:"Egg (multicellular)", italic:false, anab:true,
+    genes:"—", gamma:"≫ 1 (potential)", D:"≫ R* (potential)", B_hbar:"—", tau:"undef.", phi:"→ 0",
+    memory:"Not activated", status:"Prospective anabiant",
+    note:"Carries complete parameter set of future (𝒮): structural potential, mitochondria (R₀), epigenetic matrix (α). Distinction from non-living dissipative structure: ρ>0 gives R_bal > R*, so upon Φ_in activation γ > 1 and 𝓜min is crossed deterministically, not spontaneously. Cannot arise independently: R₀, E₀, ρ, α received from parent (𝒮)."
+  }],
+  "5-4":{ predicted:true, col:4,
+    name:"Obligate parasite in anabiosis",
+    desc:"Parasite (R_bal(own)<R*) in dormancy outside host. Survival time determined only by ν₀ and R reserve — independently of γ(own)<1. Chlamydia EB — partial example.",
+    verify:"Chlamydia trachomatis EB at various temperatures: t_dormancy should scale by Arrhenius law as 1/ν₀(T).",
+    status:"Predicted · partial"
+  },
+  "5-5":null,"5-6":null,
+  "5-7": [{
+    name:"Viruses (DNA/RNA)", italic:false,
+    subclass:"Class A · operators on foreign 𝓜min",
+    genes:"2–1000", gamma:"0", D:"—", B_hbar:"—", tau:"—", phi:"0",
+    memory:"—", status:"Type III · outside (𝒮)",
+    note:"E(t), R(t), η_abs(t) undefined. Virus acts as an operator reducing host ρ: cell death = transition through 𝓜min under external agent. Moved here from R4 (No memory): R4 presupposes system (𝒮) exists with α≈0, but for viruses E,R,η_abs are not merely absent — they are undefined, exactly as for viroids and prions below."
+  },{
+    name:"Viroids", italic:false,
+    genes:"—", gamma:"—", D:"—", B_hbar:"—", tau:"—", phi:"—",
+    memory:"—", status:"Outside (𝒮)",
+    note:"RNA only, 246–399 nt, no proteins. Below ribozyme limit 𝓜min. Lower boundary of VBLS applicability domain."
+  },{
+    name:"Prions", italic:false,
+    genes:"0", gamma:"—", D:"—", B_hbar:"—", tau:"—", phi:"—",
+    memory:"—", status:"Outside (𝒮)",
+    note:"Protein PrPSc only. Conformational catalytic process, not thermodynamic. No Φ_in, no F_diss, no R."
+  }],
+};
+
+// ══════════════════════════════════════════════════════
+//  BUILD GRID
+// ══════════════════════════════════════════════════════
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  for (let r = 1; r <= 5; r++) {
+    const rh = document.createElement('div');
+    rh.className = 'row-header';
+    rh.innerHTML = `<div class="row-num">R${r}</div>
+      <div class="row-title">${ROWS[r-1].title}</div>
+      <div class="row-cond">${ROWS[r-1].cond.replace('\n','<br>')}</div>`;
+    grid.appendChild(rh);
+
+    for (let c = 1; c <= 7; c++) {
+      const key = `${r}-${c}`;
+      const data = CELLS[key];
+      const div = document.createElement('div');
+      div.style.animationDelay = `${(r*7+c)*0.018}s`;
+
+      if (data === 'F') {
+        div.className = 'cell forbidden';
+        div.innerHTML = `<div class="forbidden-label"><span class="forbidden-x">×</span>forbidden by theorem</div>`;
+
+      } else if (data && data.predicted) {
+        div.className = `cell predicted c${data.col}`;
+        div.innerHTML = renderPredicted(data);
+        div.addEventListener('click', () => openPredictedModal(data));
+
+      } else if (!data) {
+        div.className = 'cell empty';
+        div.innerHTML = `<div class="empty-label">not observed</div>`;
+
+      } else {
+        const isMmin = (r===2 && c===3);
+        div.className = `cell c${c}${isMmin ? ' mmin-cell' : ''}`;
+        div.innerHTML = renderCellFace(data, c, key);
+        div.addEventListener('click', () => openSpeciesModal(data, c, key));
+      }
+
+      grid.appendChild(div);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER CELL FACE
+// ══════════════════════════════════════════════════════
+function renderCellFace(organisms, col, key) {
+  const g = GROUPS[key] || { name: '—', desc: '' };
+  const color = COL_COLORS[col];
+  const n = organisms.length;
+  const noun = n === 1 ? 'species' : 'species';
+  const hasStar = organisms.some(o => o.star);
+  const hasAnab = organisms.some(o => o.anab);
+  const hasRetro = key === '5-1';
+  const hasProsp = key === '5-3';
+
+  return `
+    <div class="cell-group-name">
+      ${g.name}
+      ${hasStar ? `<span class="star-badge">★ τ_div≈τ_regen</span>` : ''}
+      ${hasRetro ? `<span class="retro-badge">retrospect.</span>` : ''}
+      ${hasProsp ? `<span class="prosp-badge">prospect.</span>` : ''}
+      ${hasAnab && !hasRetro && !hasProsp ? `<span class="anab-badge">anabiosis</span>` : ''}
+    </div>
+    <div class="cell-group-desc">${g.desc}</div>
+    <div class="cell-footer">
+      <span class="cell-count" style="background:${color}18;border:1px solid ${color}55;color:${color}">${n} ${noun}</span>
+      <span class="cell-hint">${g.hint || 'list →'}</span>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER PREDICTED CELL
+// ══════════════════════════════════════════════════════
+function renderPredicted(p) {
+  return `<div class="pred-badge pb-c${p.col}">◈ predicted</div>
+    <div class="pred-name">${p.name}</div>
+    <div class="pred-verify">${p.verify.substring(0, 85)}…</div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL: SPECIES LIST
+// ══════════════════════════════════════════════════════
+function openSpeciesModal(organisms, col, key) {
+  const g = GROUPS[key] || { name: '—', desc: '' };
+  const color = COL_COLORS[col];
+
+  document.getElementById('modal-topbar').innerHTML = `
+    <div class="modal-col-stripe" style="background:${color}"></div>
+    <div class="modal-group-title">${g.name}</div>
+    <div class="modal-group-desc">${g.desc}</div>`;
+
+  const body = document.getElementById('modal-body');
+  body.innerHTML = '';
+
+  if (key === '1-1') {
+    body.appendChild(buildBStrip(organisms, color));
+    return;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'species-list';
+  let lastSubclass = null;
+  organisms.forEach((o, idx) => {
+    if (o.subclass && o.subclass !== lastSubclass) {
+      const divider = document.createElement('div');
+      divider.style.cssText = `font-size:0.55rem;font-weight:700;color:var(--dim);letter-spacing:0.09em;text-transform:uppercase;padding:10px 4px 5px;display:flex;align-items:center;gap:10px;margin-top:${idx>0?'8px':'0'}`;
+      divider.innerHTML = `${o.subclass}<span style="flex:1;height:1px;background:var(--border2)"></span>`;
+      list.appendChild(divider);
+      lastSubclass = o.subclass;
+    }
+    const card = document.createElement('div');
+    card.className = 'species-card';
+    card.innerHTML = `
+      <div class="species-card-header" onclick="toggleCard(this)">
+        <span class="species-card-toggle">▶</span>
+        <span class="species-name${o.italic?' italic':''}">${o.name}${o.star?`<span class="star-badge" style="font-size:0.55rem;padding:1px 5px">★ AT 𝓜min</span>`:''}</span>
+        <div class="species-chips">
+          <span class="chip chip-gamma">γ ${o.gamma}</span>
+          ${o.status.includes('Retro') ? `<span class="chip" style="background:rgba(0,229,255,0.12);color:#00e5ff;border:1px solid rgba(0,229,255,0.35)">${o.status}</span>` :
+            o.status.includes('Prosp') ? `<span class="chip" style="background:rgba(29,233,182,0.12);color:#1de9b6;border:1px solid rgba(29,233,182,0.35)">${o.status}</span>` :
+            `<span class="chip chip-status" style="background:${color}22;color:${color};border:1px solid ${color}44">${o.status}</span>`}
+        </div>
+      </div>
+      <div class="species-card-body">
+        <div class="params-grid">
+          <div class="param-box"><div class="param-label">Genes</div><div class="param-val">${o.genes}</div></div>
+          <div class="param-box"><div class="param-label">γ (own)</div><div class="param-val">${o.gamma}</div></div>
+          <div class="param-box"><div class="param-label">R_bal vs R*</div><div class="param-val">${o.D}</div></div>
+          <div class="param-box"><div class="param-label">Φ_in</div><div class="param-val">${o.phi}</div></div>
+          <div class="param-box"><div class="param-label">τ_div / τ_regen</div><div class="param-val">${o.tau}</div></div>
+          <div class="param-box"><div class="param-label">ℬ / ℏ</div><div class="param-val">${o.B_hbar}</div></div>
+        </div>
+        <div class="species-note">${o.note}</div>
+      </div>`;
+    if (idx === 0) card.classList.add('open');
+    list.appendChild(card);
+  });
+  body.appendChild(list);
+  document.getElementById('modal').classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════
+//  B/ℏ STRIP BUILDER  (cell 1-1 only)
+// ══════════════════════════════════════════════════════
+function buildBStrip(organisms, color) {
+  const wrap = document.createElement('div');
+
+  const scaled = organisms.filter(o => o.log_B !== null);
+  const outscale = organisms.filter(o => o.log_B === null);
+
+  const logMin = 30.0, logMax = 40.2;
+  const range = logMax - logMin;
+
+  const ORDER_COLORS = {
+    'Chiroptera':    '#00e5ff',
+    'Rodentia':      '#69f0ae',
+    'Primates':      '#ffd600',
+    'Carnivora':     '#ff6d00',
+    'Cetacea':       '#e040fb',
+    'Artiodactyla':  '#26c6da',
+    'Proboscidea':   '#ff8a65',
+    'Perissodactyla':'#a5d6a7',
+    'Diprotodontia': '#80cbc4',
+    'Tardigrada':    '#78909c',
+  };
+  const orderColor = o => ORDER_COLORS[o.order] || '#90a4ae';
+
+  const svgH = 52;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', `0 0 600 ${svgH}`);
+  svg.style.cssText = 'width:100%;display:block;margin-bottom:4px';
+
+  const track = document.createElementNS(svgNS, 'rect');
+  track.setAttribute('x','0'); track.setAttribute('y','20');
+  track.setAttribute('width','600'); track.setAttribute('height','4');
+  track.setAttribute('rx','2'); track.setAttribute('fill','rgba(255,255,255,0.08)');
+  svg.appendChild(track);
+
+  const defs = document.createElementNS(svgNS, 'defs');
+  const grad = document.createElementNS(svgNS, 'linearGradient');
+  grad.setAttribute('id','bgrad'); grad.setAttribute('x1','0%'); grad.setAttribute('x2','100%');
+  [['0%','#00e5ff'],['40%','#1de9b6'],['70%','#ffd600'],['100%','#e040fb']].forEach(([off,c])=>{
+    const s = document.createElementNS(svgNS, 'stop');
+    s.setAttribute('offset',off); s.setAttribute('stop-color',c); grad.appendChild(s);
+  });
+  defs.appendChild(grad); svg.appendChild(defs);
+
+  const fill = document.createElementNS(svgNS, 'rect');
+  fill.setAttribute('x','0'); fill.setAttribute('y','20');
+  fill.setAttribute('width','600'); fill.setAttribute('height','4');
+  fill.setAttribute('rx','2'); fill.setAttribute('fill','url(#bgrad)');
+  svg.appendChild(fill);
+
+  for (let lg = 31; lg <= 40; lg++) {
+    const x = ((lg - logMin) / range * 600).toFixed(1);
+    const tick = document.createElementNS(svgNS, 'line');
+    tick.setAttribute('x1', x); tick.setAttribute('x2', x);
+    tick.setAttribute('y1', '18'); tick.setAttribute('y2', '26');
+    tick.setAttribute('stroke','rgba(255,255,255,0.25)'); tick.setAttribute('stroke-width','1');
+    svg.appendChild(tick);
+    const lbl = document.createElementNS(svgNS, 'text');
+    lbl.setAttribute('x', x); lbl.setAttribute('y', '36');
+    lbl.setAttribute('text-anchor','middle');
+    lbl.setAttribute('font-size','7'); lbl.setAttribute('fill','rgba(255,255,255,0.4)');
+    lbl.setAttribute('font-family','monospace');
+    lbl.textContent = lg;
+    svg.appendChild(lbl);
+  }
+
+  const axLbl = document.createElementNS(svgNS, 'text');
+  axLbl.setAttribute('x','300'); axLbl.setAttribute('y','50');
+  axLbl.setAttribute('text-anchor','middle');
+  axLbl.setAttribute('font-size','7.5'); axLbl.setAttribute('fill','rgba(255,255,255,0.35)');
+  axLbl.setAttribute('font-family','monospace');
+  axLbl.textContent = 'log₁₀(ℬ/ℏ) — minimum life action quantum';
+  svg.appendChild(axLbl);
+
+  scaled.forEach(o => {
+    const x = ((o.log_B - logMin) / range * 600);
+    const isHuman = o.name === 'Human cell';
+    const c = isHuman ? '#ffd600' : orderColor(o);
+    const r = isHuman ? 5.5 : 4;
+
+    const glow = document.createElementNS(svgNS, 'circle');
+    glow.setAttribute('cx', x.toFixed(1)); glow.setAttribute('cy', '22');
+    glow.setAttribute('r', (r+3).toString()); glow.setAttribute('fill', c);
+    glow.setAttribute('opacity','0.18'); svg.appendChild(glow);
+
+    const dot = document.createElementNS(svgNS, 'circle');
+    dot.setAttribute('cx', x.toFixed(1)); dot.setAttribute('cy', '22');
+    dot.setAttribute('r', r.toString()); dot.setAttribute('fill', c);
+    dot.setAttribute('opacity', isHuman ? '1' : '0.85');
+    svg.appendChild(dot);
+
+    if (isHuman) {
+      const t = document.createElementNS(svgNS, 'text');
+      t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', '10');
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','8'); t.setAttribute('fill','#ffd600');
+      t.setAttribute('font-family','monospace'); t.setAttribute('font-weight','bold');
+      t.textContent = 'Human';
+      svg.appendChild(t);
+    }
+  });
+
+  const orders = [...new Set(scaled.map(o => o.order))];
+  const legendSvg = document.createElementNS(svgNS, 'svg');
+  legendSvg.setAttribute('viewBox', `0 0 600 14`);
+  legendSvg.style.cssText = 'width:100%;display:block;margin-bottom:10px';
+  let lx = 0;
+  orders.forEach(ord => {
+    const c = ORDER_COLORS[ord] || '#90a4ae';
+    const dot = document.createElementNS(svgNS, 'circle');
+    dot.setAttribute('cx', (lx+5).toString()); dot.setAttribute('cy','7');
+    dot.setAttribute('r','4'); dot.setAttribute('fill',c); dot.setAttribute('opacity','0.85');
+    legendSvg.appendChild(dot);
+    const t = document.createElementNS(svgNS, 'text');
+    t.setAttribute('x', (lx+12).toString()); t.setAttribute('y','10');
+    t.setAttribute('font-size','7.5'); t.setAttribute('fill', c);
+    t.setAttribute('font-family','monospace'); t.setAttribute('opacity','0.85');
+    t.textContent = ord;
+    legendSvg.appendChild(t);
+    lx += ord.length * 5.5 + 20;
+  });
+
+  const stripWrap = document.createElement('div');
+  stripWrap.className = 'b-strip-wrap';
+
+  const stripLbl = document.createElement('div');
+  stripLbl.className = 'b-section-label';
+  stripLbl.textContent = 'ℬ/ℏ — life action scale  ·  27 Mammalia species + Tardigrada';
+  stripWrap.appendChild(stripLbl);
+  stripWrap.appendChild(svg);
+  stripWrap.appendChild(legendSvg);
+  wrap.appendChild(stripWrap);
+
+  const listLbl = document.createElement('div');
+  listLbl.className = 'b-section-label';
+  listLbl.textContent = 'Ranked by ℬ/ℏ · click row for details';
+  wrap.appendChild(listLbl);
+
+  const listWrap = document.createElement('div');
+  listWrap.style.cssText = 'border:1px solid var(--border);border-radius:6px;overflow:hidden';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'b-list-header';
+  hdr.style.cssText = 'padding:6px 10px;background:var(--panel2)';
+  hdr.innerHTML = `<span style="width:22px">#</span><span style="flex:1">Species</span><span style="width:110px;text-align:center">ℬ/ℏ (log)</span><span style="width:60px;text-align:right">log₁₀</span><span style="width:62px;text-align:right">Mass</span>`;
+  listWrap.appendChild(hdr);
+
+  scaled.forEach((o, idx) => {
+    const isHuman = o.name === 'Human cell';
+    const c = isHuman ? '#ffd600' : orderColor(o);
+    const frac = (o.log_B - logMin) / range;
+
+    const row = document.createElement('div');
+    row.className = 'b-org-row';
+    row.style.cssText = 'padding:5px 10px;cursor:pointer';
+    row.innerHTML = `
+      <span class="b-org-rank">${idx+1}</span>
+      <span class="b-org-name${o.italic?' italic':''}${isHuman?' highlight':''}">${o.name}</span>
+      <div class="b-bar-wrap"><div class="b-bar" style="width:${(frac*100).toFixed(1)}%;background:${c}"></div></div>
+      <span class="b-org-val">10<sup>${o.log_B.toFixed(1)}</sup></span>
+      <span class="b-org-mass">${o.mass_g >= 1e6 ? (o.mass_g/1e6).toFixed(1)+' t' : o.mass_g >= 1e3 ? (o.mass_g/1e3).toFixed(1)+' kg' : o.mass_g+' g'}</span>`;
+
+    const noteDiv = document.createElement('div');
+    noteDiv.style.cssText = `display:none;padding:8px 10px 8px 32px;background:var(--panel2);font-size:0.75rem;color:var(--text2);line-height:1.6;font-family:'Cormorant Garamond',serif;font-style:italic;border-top:1px solid var(--border)`;
+    noteDiv.textContent = o.note;
+
+    const rowWrap = document.createElement('div');
+    rowWrap.appendChild(row);
+    rowWrap.appendChild(noteDiv);
+    row.addEventListener('click', () => {
+      const open = noteDiv.style.display !== 'none';
+      noteDiv.style.display = open ? 'none' : 'block';
+      row.style.background = open ? '' : 'var(--border)';
+    });
+    listWrap.appendChild(rowWrap);
+  });
+
+  wrap.appendChild(listWrap);
+
+  if (outscale.length) {
+    const oblbl = document.createElement('div');
+    oblbl.className = 'b-section-label';
+    oblbl.style.marginTop = '16px';
+    oblbl.textContent = 'Outside Mammalia scale';
+    wrap.appendChild(oblbl);
+    outscale.forEach(o => {
+      const row = document.createElement('div');
+      row.className = 'b-org-row';
+      row.style.cssText = 'padding:5px 10px;cursor:pointer;border:1px solid var(--border);border-radius:4px;margin-bottom:4px';
+      row.innerHTML = `<span class="b-outside">out of scale</span><span class="b-org-name italic" style="margin-left:8px">${o.name}</span><span class="b-org-val">${o.B_hbar}</span>`;
+      const noteDiv = document.createElement('div');
+      noteDiv.style.cssText = `display:none;padding:8px 10px;background:var(--panel2);font-size:0.75rem;color:var(--text2);line-height:1.6;font-family:'Cormorant Garamond',serif;font-style:italic;border-top:1px solid var(--border)`;
+      noteDiv.textContent = o.note;
+      const rw = document.createElement('div');
+      rw.appendChild(row); rw.appendChild(noteDiv);
+      row.addEventListener('click',()=>{noteDiv.style.display = noteDiv.style.display!=='none'?'none':'block'});
+      wrap.appendChild(rw);
+    });
+  }
+
+  document.getElementById('modal').classList.add('active');
+  return wrap;
+}
+
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL: PREDICTED
+// ══════════════════════════════════════════════════════
+function openPredictedModal(p) {
+  const color = COL_COLORS[p.col];
+  document.getElementById('modal-topbar').innerHTML = `
+    <div class="modal-col-stripe" style="background:linear-gradient(90deg,${color}33,${color}88,${color}33);border:1px dashed ${color}55"></div>
+    <div class="modal-group-title" style="font-style:italic;color:var(--text2)">${p.name}</div>
+    <div class="modal-group-desc">${p.status}</div>`;
+
+  document.getElementById('modal-body').innerHTML = `
+    <span class="pred-modal-badge" style="background:${color}18;color:${color};border:1px solid ${color}44">◈ PREDICTED BY THEORY</span>
+    <div class="pred-modal-desc">${p.desc}</div>
+    <div class="pred-modal-verify-label">Verification path</div>
+    <div class="pred-modal-verify">${p.verify}</div>`;
+
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('active');
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+buildGrid();
+</script>
+</body>
+</html>

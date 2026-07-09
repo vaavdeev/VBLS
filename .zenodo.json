@@ -1,6 +1,6 @@
 {
   "title": "VBLS — Supplementary Materials",
-  "description": "Supplementary materials for the VBLS monograph: <em>Viability Boundaries of Living Systems — A Phenomenological Thermodynamic Theory</em>. Includes (1) reproducibility scripts and data for the empirical verification program (human lifespan calibration, cross-species allometric scaling, telomere shortening, somatic mutation accumulation, VO2max decline, fish growth dynamics), (2) a machine-checked Lean 4 + Mathlib formalization of the central finite-lifetime theorem, and (3) a bilingual FAQ.",
+  "description": "Supplementary materials for the VBLS monograph: <em>Viability Boundaries of Living Systems — A Phenomenological Thermodynamic Theory</em>. Includes (1) reproducibility scripts and data for the empirical verification program (human lifespan calibration, cross-species allometric scaling, telomere shortening, somatic mutation accumulation, VO2max decline, fish growth dynamics), (2) a machine-checked Lean 4 + Mathlib formalization of the central finite-lifetime theorem, (3) a bilingual FAQ, and (4) an interactive HTML classification table of living structures (Appendix C).",
   "creators": [
     {
       "name": "Avdeev, Vasiliy",

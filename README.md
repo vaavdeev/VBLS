@@ -11,6 +11,7 @@ Monograph: Zenodo, DOI [10.5281/zenodo.20161329](https://doi.org/10.5281/zenodo.
 | [verification/](verification/) | Reproducibility scripts and data for the monograph's empirical verification program — human lifespan calibration, cross-species allometry, telomere shortening, somatic mutation accumulation, VO₂max decline, fish growth dynamics. |
 | [lean_theorem/](lean_theorem/) | Machine-checked Lean 4 + Mathlib formalization of the central result (Appendix A): every system of class $(\mathcal{S})$ has a finite lifetime. Sorry-free. |
 | [faq/](faq/) | Answers to questions that typically come up on a first reading of the monograph, in Russian and English. |
+| [table/](table/) | Interactive HTML "Table of Living Structures" (Appendix C) — classification of biological and sub-biological objects by viability-boundary position and memory type. |
 
 Each folder has its own `README.md` with full detail.
 
