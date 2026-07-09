@@ -1,0 +1,172 @@
+# Frequently Asked Questions about VBLS
+
+This document collects the questions that typically come up on a first reading of the monograph *Viability Boundaries of Living Systems: A Phenomenological Thermodynamic Theory* — together with answers. Sections follow the structure of the monograph; each answer points to the relevant section for a fuller treatment.
+
+---
+
+## 1. The finite lifetime theorem (section 9, Appendix A)
+
+**Isn't it obvious that any system with irreversible damage will eventually fail? What does the theorem actually add?**
+
+Even within the class of systems VBLS considers, finiteness is not automatic: under an exact balance of parameters, a system could in principle sustain a stationary state indefinitely. The theorem proves that the specific structure of the equations — the separation of timescales between the fast integrity potential and the slow repair reserve, together with the mechanism of irreversible memory — rules out that scenario for any bounded external resource flow.
+
+The value of the result lies less in the bare fact that lifetime is finite than in what the theorem delivers: an explicit bound linking lifetime to the system's parameters; a proof that the guarantee comes specifically from the nonlocal, cumulative memory mechanism, not from the mere accumulation of damage; and a foundation from which the viability boundary is later derived (section 11).
+
+**Doesn't the non-degeneracy condition amount to a loophole that makes the theorem unfalsifiable?**
+
+No. The non-degeneracy condition (structural entropy is positive at the initial moment, or begins increasing immediately) is an explicit restriction on the theorem's domain of applicability — the same kind of restriction as requiring "initial data away from equilibrium" in ordinary differential-equation problems. The degenerate case would require an exact synchronization between the environment and the internal dynamics sustained over the entire lifetime — a condition incompatible with arbitrary bounded external flows. Whenever the non-degeneracy condition holds, the growth of structural entropy is guaranteed regardless of what happens in the environment.
+
+**One of the two death channels (exhaustion of the repair reserve) holds only under an additional condition that does not follow from the theory's basic assumptions. Does that mean this channel isn't rigorously proved?**
+
+Yes, and the theorem's own structure states this honestly. The two death mechanisms in VBLS carry different proof status. The channel through exhaustion of the integrity potential is proved unconditionally — this is the theorem's primary result. The channel through exhaustion of the repair reserve is proved under an additional condition (structural entropy exceeding a specific threshold) — a condition expressed through the system's parameters and physically motivated, but not derivable from the same basic assumptions as the first channel. Both channels matter for the complete picture (the second dominates in nature), but it would be inaccurate to say both are proved "equally rigorously."
+
+**Are the theory's parameters simply fitted to the data rather than grounded in physics?**
+
+This is the standard position for a phenomenological theory: parameters are calibrated against data rather than derived from molecular mechanics from scratch — classical thermodynamics works the same way. What matters is that VBLS's parameters are not pulled from thin air: the rate of repair-reserve degradation is independently estimated from the rate of telomere shortening (Whittemore et al., 2019), and the rate of memory degradation from the decline curve of maximal oxygen consumption with age (section 17.1). With parameters fixed from a single species, the theory yields more than a dozen qualitatively distinct predictions across several independent datasets — a fundamentally different situation from fitting after the fact.
+
+**The proved part of the theorem (through the integrity potential), once real numbers are substituted, yields a lifetime estimate that arrives many orders of magnitude later than what is actually observed in humans and other species. Does this mean the theory is predicting a lifetime of thousands of years, or is the theorem's result simply empty — not predicting anything concrete?**
+
+Neither. This estimate is not a lifetime prediction at all, but a "just-in-case" mathematical proof: it answers the question of whether death is still guaranteed if only the weaker of the two death mechanisms (exhaustion of the integrity potential) were operating, with the second, dominant mechanism in nature (exhaustion of the repair reserve) hypothetically switched off. The answer is yes, but not for a very long time — which is exactly why the resulting number is so large. This demonstrates that the theorem does not secretly rely only on realistic biology to guarantee finiteness: finiteness holds even in this artificially stripped-down, least favorable scenario for the theory.
+
+The real, observed scale of lifetime is set by the other mechanism — whichever of the two death channels actually triggers first (for the vast majority of species, this is exhaustion of the repair reserve) — combined with parameter calibration against data. This is the standard structure for a phenomenological theory: an existence result (analogous to the Carnot limit — an unreachable but universal bound on the efficiency of heat engines) plus a separate, calibrated quantitative model for the specific case at hand. It would be wrong to say that the unconditional estimate "predicts lifetime" — better to say that it proves the inevitability of a finite end with a large margin, while the quantitative prediction for specific species comes from a different part of the theory.
+
+---
+
+## 2. Two death channels
+
+**The two death channels (through the integrity potential and through the repair reserve) are dynamically coupled to each other. Why treat them separately at all rather than as one phenomenon?**
+
+Coupling does not imply reducibility. The two channels differ in variable, threshold, and observed outcome:
+
+- **The repair-reserve channel** is typical of most mammals: the system dies when the repair reserve falls to its threshold, while the integrity potential is still high.
+- **The integrity-potential channel** is observed in long-lived species with a suppressed first channel (for example, in some large long-lived animals): the system dies from exhaustion of the integrity potential while the repair reserve is nearly fully intact.
+
+These are empirically distinct terminal events, and merging them into a single variable would erase that distinction. Moreover, the coupling between the channels is asymmetric: decay of the repair reserve does not depend directly on the integrity potential, while its restoration does; the reverse influence exists but is indirect. Finally, the two variables operate on different characteristic timescales — the integrity potential changes fast (hours to days), the repair reserve slowly (years to decades) — and this timescale separation is a structural feature of the system, not an artificial simplification.
+
+The correct term for this relationship is not "independent" (too strong, given the real coupling between channels) but "functionally irreducible": neither channel can be derived from the other as a special case, and each carries its own, distinguishable contribution to explaining observed mortality.
+
+**Why can the repair reserve be restored while assimilation efficiency cannot? Doesn't that look like an arbitrary assumption?**
+
+It is indeed a strong assumption, but a physically grounded one. The repair reserve and assimilation efficiency are quantities of a different nature. The reserve is a consumable resource, analogous to a fuel tank: it is spent and can be replenished. Assimilation efficiency is an integral characteristic of the state of the organism's entire coupling structure, and its decline reflects accumulated irreversible changes in molecular architecture across many levels at once. Restoring such an efficiency would require a mechanism structurally independent of the repair apparatus itself — and the basic model provides for no such separate mechanism. The assumption is strong, but its possible relaxation is explicitly flagged as a direction for extending the theory.
+
+**The death channel through the integrity potential shows almost no sensitivity of the final lifetime to the parameters that govern it. Does this mean this channel can't be tested experimentally?**
+
+Zero sensitivity is a property of one specific, and most common, regime (where the repair-reserve channel dominates) — not a sign that the mechanism itself is untestable. First, this is a regime property: as soon as dominance shifts to the integrity-potential channel (which can be modeled by weakening the mechanisms responsible for the first channel), the parameters of the second channel immediately become significant for the final lifetime. Second, there is direct observational support: in some long-lived species with a suppressed first channel, death does occur while the repair reserve is still high — that is, precisely through the second channel. Third, the theory makes a quantitative, testable prediction about the conditions under which sensitivity to the second channel's parameters should become detectable.
+
+**Isn't the spontaneous-decay rate parameter of the repair reserve just the well-known Hayflick limit (the cap on the number of cell divisions) under another name?**
+
+No, these are quantities of different types and should not be conflated. The Hayflick limit is a threshold number of divisions — a dimensionless quantity. The spontaneous-decay-rate parameter in VBLS is exactly that: a rate, with dimension "inverse time" — the normalized rate of telomere shortening. The link between them is mediated by how frequently a given tissue's cells divide. One sets a threshold, the other sets the pace of approach to that threshold; these are fundamentally different roles within the model.
+
+**What exactly counts as the moment of death — exhaustion of the integrity potential, or of the repair reserve?**
+
+Neither takes priority by itself: death is whichever of the two thresholds is reached first for the system in question. For the vast majority of species, the repair-reserve threshold is reached first, while the integrity potential is still high. In species with a suppressed first channel, it is the reverse — the integrity potential is exhausted first while the repair reserve is barely touched. In a state of dormancy, where the memory mechanism is effectively switched off, finiteness of existence is still guaranteed — through the slow spontaneous decay of the repair reserve.
+
+---
+
+## 3. The viability boundary and the three barriers
+
+**The theory claims a sharp boundary between viable and non-viable configurations, while comparative biology shows a continuous spectrum of transitional forms (viruses, organelles, reduced symbionts). Isn't there a contradiction here?**
+
+There is no contradiction, for two reasons. First, the objects listed typically fall outside the theory's domain altogether: they lack the self-sustaining autocatalytic dynamics that defines the class of systems under discussion — the relevant system is one level up (for a virus, that would be the infected host cell). Second, the boundary is sharp only with respect to one specific system with a fixed architecture; the exact point where the boundary sits depends continuously on the system's parameters — and the continuity observed in comparative biology is precisely the continuity of evolutionary drift in that parameter space, not a blurring of the threshold for a given system.
+
+**Why is a third viability barrier needed at all, if life apparently can start once the first two are satisfied?**
+
+The third barrier combines two conditions of different status. The first is a resource condition: if the available resource flow falls below a certain threshold, assimilation efficiency is close to zero from the very start, and the integrity potential then begins to decline monotonically right from the outset, regardless of the state of the repair reserve — the system dies through the same mechanism described in Section 2, on the characteristic timescale of energy turnover. This happens even when the first two barriers are satisfied: they protect the system from other threats, but not from a resource shortfall that starves assimilation efficiency itself.
+
+The second condition is structural: it ensures that the accumulation of the system's history (memory) proceeds continuously at all. If this condition fails, the system can remain viable (single-channel existence, aging only through the repair-reserve channel, without any contribution from memory) but loses the integrity-potential death channel. Here the intuitive objection has some merit: "life without the full pair of death channels" is possible in this narrow sense. But the resource condition (the first part of the barrier) must still be satisfied — otherwise the system dies immediately.
+
+It's worth not confusing the number of barriers with the number of death channels: there are three barriers because they protect three different variables of the system, but only two death channels (Section 2) — the second and third barriers both, at different stages, guard the same channel: exhaustion of the integrity potential.
+
+**Why doesn't the characteristic memory timescale depend on the characteristic energy-turnover timescale? Intuitively, one would expect metabolic turnover rate to affect how fast the memory mechanism degrades.**
+
+These are two parameters describing different processes in different variables of the system: the energy-turnover time characterizes the integrity potential, while the memory timescale characterizes assimilation efficiency. There is a dynamical link between the variables through accumulated structural entropy, but this does not make one time a direct function of the other when deriving the estimate: the condition for a significant drop in assimilation efficiency is derived directly, without any assumption about how these two system timescales relate to each other.
+
+**There is a formula where the rate of terminal decline is expressed through the characteristic level of structural entropy "on the late plateau" — and that level itself seems to be set by the very dynamics that includes the moment of death. Isn't this circular?**
+
+No: the characteristic plateau level is set by the balance of damage production and export under quasi-stationary conditions of the remaining variables, and depends only on the system's parameters, not on the length of the whole trajectory. The formula for terminal time takes this level as an input parameter (known in advance from the rate balance) and produces lifetime as an output — the direction of dependence is unambiguous, with no circular reasoning involved.
+
+**There is a lemma stating that the integrity potential cannot increase under a certain condition — but it is formulated for the basic, simplest version of the system. Real organisms have more elaborate active self-maintenance mechanisms. Does the lemma lose force for them?**
+
+Partly — the proof in its basic form relies on the monotonicity of an intermediate quantity, which can fail once active restoration is present. Nevertheless, the lemma's conclusion survives for the practically important cases: if the incoming resource flow is consistently below the minimum required dissipation, the integrity potential still declines monotonically — just for a slightly different but equally direct reason. For normal functioning in viable organisms, the lemma is not actually relevant at all: there, the integrity potential grows from the outset, and the lemma's condition simply does not hold. Its practical value lies in analyzing borderline, limiting configurations, not typical living systems.
+
+**The viability boundary is defined within a class of systems that already presupposes a particular autocatalytic, dissipative architecture with memory. Isn't this then a viability boundary within an already "life-like" class, rather than a genuine demarcation between the living and the non-living?**
+
+The objection rests on a silent assumption that life exists outside the class of systems in question. The work claims the opposite: membership in this class *is* the operational characterization of the living, not a subset of it. The demarcation between living and non-living is therefore two-layered: first, membership in the class itself (defined by conditions universal to all known living systems), and second, position relative to the viability boundary within that architecture. What lies outside the class is either dissipative structures without memory (which can persist indefinitely, carry no history — order without memory, not life in the sense of the theory) or non-autonomous subsystems such as viruses or isolated organelles, which simply lack their own autocatalytic dynamics. No known living object violates the class-membership conditions — so the demarcation covers life as we actually know it, which is an ordinary and honest status for a phenomenological theory of this kind.
+
+---
+
+## 4. Structural entropy and nonlocal memory
+
+**Is structural entropy $\Sigma$ the same thing as Boltzmann entropy? How would one measure it in practice?**
+
+No, the two should not be equated. $\Sigma$ is a latent variable: it is not tied to a single measurable biomarker, but defined through general properties (monotonicity, boundedness, and so on) that any concrete realization of it must satisfy. Classical Boltzmann entropy has a single operational measurement protocol; $\Sigma$ has no such single protocol — instead, there is an entire class of admissible proxy measures (telomere shortening, epigenetic clocks, accumulation of somatic mutations, markers of cellular senescence, and others). Which proxy to use in a given application is a separate, applied question outside the basic theory.
+
+**Has the dependence of assimilation efficiency on accumulated history of structural entropy, rather than on its current value, been proved by independent biological data?**
+
+There is data structurally consistent with this hypothesis (epigenetic clocks in particular), but it does not prove the uniqueness of this specific, integral form of dependence — the same data is in principle explainable by other mechanisms. For a phenomenological theory, it is enough that the equation's argument is the accumulated history, not the instantaneous value of the variable; a finer, quantitative test of the specific form of this dependence remains an open question awaiting further data.
+
+**Does $\Sigma\to1$ mark the moment of death?**
+
+No. $\Sigma=1$ is a formal asymptote of the equation that the system only approaches, not an event of death. In practice, death occurs earlier: for typical parameters, $\Sigma$ at the moment of death is noticeably below one — a direct quantitative prediction of the theory, analogous to the unreachable Carnot limit in thermodynamics. Death in VBLS is defined not by $\Sigma$ approaching one, but by reaching one of two real thresholds — exhaustion of the integrity potential or of the repair reserve — within finite time.
+
+**Is structural entropy bounded above by 1 through the dynamics itself, or is this just a convention of scale?**
+
+It is a convention of scale, not a dynamically guaranteed property: the equation governing the growth of $\Sigma$ contains no mechanism that would automatically keep it at or below one. This does not weaken the finite lifetime theorem: the proof relies only on the monotonicity of structural entropy and on a positive lower bound for its growth, and never uses an upper bound of one at all — that upper bound serves only as a substantive interpretation of the scale (the value 1 corresponds to complete, hypothetical loss of structural identity, which is never reached in practice, since death by one of the two channels occurs earlier).
+
+**Why do we need a separate memory variable (assimilation efficiency) at all, rather than just using the system's current state — wouldn't that be simpler?**
+
+There is a hidden ambiguity in the word "state" here. If "current state" means the full set of all four system variables, including assimilation efficiency, then the objection does not actually conflict with the theory: the system is indeed Markovian with respect to this complete set. The real question is different: can one make do with a truncated set of variables, without a separate memory variable — that is, can assimilation efficiency be expressed as a function of only structural entropy, the integrity potential, and the repair reserve? It turns out the answer is no: assimilation efficiency depends on the time-accumulated integral of structural entropy, not on its current value, and two different trajectories can arrive at the same point in the remaining three variables while carrying different accumulated integrals — meaning different resulting assimilation efficiencies. So this variable does carry genuinely independent information.
+
+The precise mathematical form of this dependence on history is itself an open question subject to refinement (on the data currently available, it cannot always be statistically distinguished from certain alternative descriptions). But the necessity of a memory variable as such, needed to explain the observed dependence of aging rate on prior history rather than only on the current state, is a separate and well-supported result, independent of which precise formula eventually turns out to be correct.
+
+**Is this model of memory supported by independent biological data?**
+
+There are consistent observations: the decline of mitochondrial efficiency and of maximal oxygen consumption with age, and the roughly linear accumulation of somatic mutations in mid-life, all match the direction of the theory's predictions. But this is support for the general direction, not proof of the uniqueness of the specific mathematical form of the dependence — a stronger test of that kind would require data that is not yet available in sufficient quantity.
+
+---
+
+## 5. Parameters and empirical testing
+
+**Aren't seven calibrated parameters simply overfitting to the data?**
+
+The key difference from overfitting is that this is not repeated testing on the same sample, but more than a dozen qualitatively distinct predictions across several independent datasets, using one and the same fixed set of parameters. Moreover, the parameters are not freely tuned to the final target (lifetime): some are constrained thermodynamically in advance, and others are calibrated against data of an independent nature (rate of telomere shortening, rate of decline in oxygen consumption) — not against the lifetime that the theory then goes on to predict.
+
+**Numerical simulation shows that only about a third of randomly sampled parameter sets (within a reasonable range) fall within the real demographic corridor of human life expectancy. Doesn't this indicate an unstable calibration?**
+
+No — this is the expected fraction, not a sign of instability, and here is why. The demographic corridor used in this comparison is fairly narrow — comparable in width to just one standard deviation of the resulting model distribution. For a distribution centered exactly on the target, a window of this width by construction captures only the central portion of the values — ordinary normal-distribution arithmetic predicts roughly a third to two-fifths, which is exactly what is observed. The remaining cases are not "misses" but natural spread into a range that is itself biologically plausible. At the same time, the overall spread in predicted lifetime, under a substantial (about 20%) simultaneous variation of all parameters, turns out to be markedly narrower than the input spread — meaning the model actually compresses uncertainty rather than amplifying it.
+
+**One statistical test shows that the proposed form of memory's dependence on history is statistically indistinguishable, on the data available, from simpler alternative curves. Does this mean the central idea of the work — cumulative memory — hasn't actually been tested at all?**
+
+It helps to separate three different levels of claim here. The first is the memory mechanism itself as part of a rigorous mathematical result (Section 1): this is a proved fact about the structure of the equations, independent of what data happens to be available today. The second is the general empirical profile — that the rate of aging depends on history rather than only on the current state: this is supported by independent observations. The third is the specific mathematical form of that dependence: here, on the data currently available, there genuinely is no way to statistically distinguish the proposed form from a few reasonable alternatives — and this is openly acknowledged as a subject for further testing, not concealed. Conflating these three levels is what creates the impression that "the central idea hasn't been tested," when in fact only the finest, third level remains untested.
+
+**The theory has been tested only on small, uniquely available samples of data (a handful of species, dozens of individuals), without large-scale independent validation. Is that really enough for a fundamental theory?**
+
+Sample size here is objectively limited — these are, at present, the only datasets of their kind that exist anywhere in the world (for example, with a direct, cross-species-comparable measurement of telomere shortening rate), not a result of cherry-picking convenient data. It also helps to keep the genre in mind: a fundamental phenomenological theory (as classical thermodynamics once was) does not need large-scale empirical validation to be mathematically sound — its value lies in rigor, qualitative laws, and falsifiability. Even so, this work's empirical testing spans several independent datasets, which is already more than is strictly required for a theory of this kind; broader cross-species validation is flagged as a task awaiting the corresponding future data.
+
+**On the plots, the rate of damage accumulation looks flat, almost zero, at the start of life. Is this a visualization error?**
+
+No, this is a real and meaningful feature of the model. Early in life, the repair reserve is still high and barely needed, so the rate of damage export fully offsets its production, and the net accumulation of structural entropy is close to zero. This matches what is observed in practice: extrapolating backward a regression fitted on mid-life data crosses zero not at birth, but several years later — a direct consequence of this early "plateau," not a data artifact.
+
+**Toward the end of life, the rate of damage accumulation declines on the plot. Doesn't this contradict the idea of "acceleration" of aging near the end of life — and doesn't it, if anything, match the observed deceleration of aging in very old age?**
+
+It's important to distinguish the rate of accumulation from the accumulated quantity itself: structural entropy itself keeps growing monotonically right up to death, but its *rate* of growth does peak noticeably before the moment of death itself and then declines slightly. This arises from a competition of two effects near the threshold of death: a decline in damage production (as the integrity potential falls) and the lifting of the repair barrier (as the reserve falls) — under calibration, the first effect slightly outweighs the second. This is qualitatively consistent with the demographically observed deceleration of mortality growth in very old age, while the system still inevitably dies — but through the repair-reserve channel, not because of the rate of damage accumulation itself.
+
+**Why does the work include a separate test on a minimal synthetic genome (JCVI-syn3.0), given that the main empirical testing has already been done on continuous aging trajectories across several species?**
+
+This is a qualitatively different kind of test, expanding the range over which the theory could fail, rather than repeating ground already covered. The main verification tests continuous predictions — the shape of curves, lifetime itself. The test on a minimal genome, by contrast, translates the theory's structural conditions (two independent viability barriers) into a combinatorial prediction: the minimum number of distinguishable gene types needed for a system to cross both barriers at all. This prediction is then compared not against a retrospectively curated dataset, but against the outcome of an independent, twenty-year experimental search for a minimal viable genome — and the agreement turns out to be high. A test of this kind can fail in a way qualitatively different from how a poor curve fit fails, which is precisely why it meaningfully extends the theory's testability.
+
+**On the plot of the integrity potential, it briefly dips at the very start of life before rising. Is this a modeling error?**
+
+No, this is an expected transient. At the very first moment, the incoming resource flow in the model has not yet reached full strength (consumption has not yet "matured"), while baseline dissipation is already underway — so the integrity potential briefly declines before the inflow begins to exceed dissipation and it turns to growth. This effect is universal across all species considered and simply more visible in short-lived species due to the scale of normalization. In substance, it corresponds to a temporarily negative energy balance at the very start of life, before the capacity to assimilate resources has fully matured, and has nothing to do with a quite different, far more specific biological phenomenon such as embryonic rejuvenation of epigenetic age.
+
+---
+
+## 6. Phenomenological foundations
+
+**Where does the specific quadratic form of the dissipation function come from? Is it a rigorous derivation from Onsager thermodynamics?**
+
+Not a rigorous derivation, but a structural reference point. The quadratic form is the most economical nonlinear form with the right boundary behavior (zero dissipation at zero potential, strict monotonic growth). Onsager's linear irreversible thermodynamics (1931) served as a reference point when choosing this form, but cannot be derived from directly: it holds near equilibrium, whereas the systems under consideration are far from it. Importantly, the finite lifetime theorem itself is proved for any dissipation function with these same general qualitative properties — the specific quadratic form is not critical to the proof, only to the quantitative calculations.
+
+**What exactly is the "integrity potential" — is it energy? What are its units?**
+
+It is a phenomenological quantity — a potential of self-maintenance — not "energy" in the narrow classical sense, and not the Gibbs free energy of a single molecule. It shares its units with energy, but the theory deliberately does not specify which particular molecular substrate underlies it in any given case — a normal feature of a phenomenological quantity, not a shortcoming of the theory. Depending on the type of system, this concept naturally reduces to different more concrete quantities: for instance, in biochemical systems, to the overall Gibbs free energy store of the system.
