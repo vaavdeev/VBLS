@@ -5,58 +5,25 @@
   Monograph:  VBLS_THEORY
 =================================================================
 
-  Copyright (c) 2026 Vasiliy Avdeev.  All rights reserved.
-
-  This work is licensed under the Creative Commons Attribution-NonCommercial-
-  NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).
-
-  You are free to:
-    Share — copy and redistribute the material in any medium or format
-    The licensor cannot revoke these freedoms as long as you follow the
-    license terms.
-
-  Under the following terms:
-    Attribution    — You must give appropriate credit, provide a link to
-                     the license, and indicate if changes were made.  You
-                     may do so in any reasonable manner, but not in any way
-                     that suggests the licensor endorses you or your use.
-    NonCommercial  — You may not use the material for commercial purposes.
-    NoDerivatives  — If you remix, transform, or build upon the material,
-                     you may not distribute the modified material.
-    No additional restrictions — You may not apply legal terms or
-                     technological measures that legally restrict others
-                     from doing anything the license permits.
-
-  Notices:
-    You do not have to comply with the license for elements of the material
-    in the public domain or where your use is permitted by an applicable
-    exception or limitation.
-
-    No warranties are given.  The license may not give you all of the
-    permissions necessary for your intended use.  For example, other rights
-    such as publicity, privacy, or moral rights may limit how you use the
-    material.
-
-  Full license text:        https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-  Human-readable summary:   https://creativecommons.org/licenses/by-nc-nd/4.0/
-
+  Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+  LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Кривые жизненного цикла: сравнение двух вариантов Phi_in
+VBLS — Lifecycle curves: comparison of two Phi_in variants
 
-Phi_in A (оригинал):  стартует с 0 при t=0 — моделирует системы
-                      где поток ресурсов нарастает постепенно
-                      (яйцекладущие, одноклеточные, семена)
+Phi_in A (original):  starts at 0 at t=0 — models systems where
+                      the resource flow builds up gradually
+                      (egg-laying species, unicellular organisms, seeds)
 
-Phi_in B (phi_birth): стартует с phi_birth > 0 — моделирует
-                      живородящих млекопитающих, где при рождении
-                      уже есть материнский ресурсный поток
-                      (молоко, запасы желточного мешка)
+Phi_in B (phi_birth): starts at phi_birth > 0 — models live-bearing
+                      mammals, where a maternal resource flow
+                      (milk, yolk-sac reserves) is already present
+                      at birth
 
-Разница наглядно показывает что «момент рождения» в теории VBLS
-является параметром, а не фиксированной точкой.
+The difference visually demonstrates that the "moment of birth" in
+VBLS theory is a parameter, not a fixed point.
 
-Масштабирование: T_ls (вариант B из lifecycle_comparison.py)
+Scaling: T_ls (variant B from lifecycle_comparison.py)
 """
 
 import numpy as np
@@ -88,7 +55,7 @@ BASE = dict(
 )
 Y0 = [0.10, 0.01, 0.96, 0.99]
 
-# Масштабирование по T_ls
+# Scaling by T_ls
 SPECIES = [
     ("Mouse",       4.0,   2.0),
     ("Rat",         3.8,   2.5),
@@ -103,17 +70,17 @@ SPECIES = [
     ("Human",     122.5,  77.6),
 ]
 
-# ── Два варианта Phi_in ────────────────────────────────────────────────────────
-PHI_BIRTH = 0.45   # начальный поток для живородящих млекопитающих
+# ── Two Phi_in variants ─────────────────────────────────────────────────────
+PHI_BIRTH = 0.45   # initial flow for live-bearing mammals
 
 def Phi_in_A(t_norm):
-    """Оригинал: стартует с нуля. Яйцекладущие, одноклеточные."""
+    """Original: starts from zero. Egg-laying species, unicellular organisms."""
     growth  = 1.0 - np.exp(-t_norm / 0.08)
     decline = np.exp(-max(0.0, t_norm - 0.55) / 0.30)
     return growth * decline
 
 def Phi_in_B(t_norm):
-    """С начальным потоком phi_birth. Живородящие млекопитающие."""
+    """With an initial flow phi_birth. Live-bearing mammals."""
     growth  = PHI_BIRTH + (1.0 - PHI_BIRTH) * (1.0 - np.exp(-t_norm / 0.08))
     decline = np.exp(-max(0.0, t_norm - 0.55) / 0.30)
     return growth * decline
@@ -150,7 +117,7 @@ def run(T_ls, phi_func):
     mask = sol.t <= td
     return sol.t[mask], sol.y[:,mask], td
 
-# ── Расчёт ───────────────────────────────────────────────────────────────────
+# ── Computation ──────────────────────────────────────────────────────────────
 print("="*70)
 print("  VBLS — Phi_in(0)=0 vs Phi_in(0)=phi_birth")
 print(f"  phi_birth = {PHI_BIRTH}  |  scaling by T_ls")
@@ -168,10 +135,10 @@ for name, T_max, T_ls in SPECIES:
     print(f"{name:<14} {T_ls:>7.1f} | {tdA:>8.1f} {dA:>+7.1f}% | {tdB:>8.1f} {dB:>+7.1f}% | {dt:>+7.2f}")
     results[name] = (tA, yA, tdA, tB, yB, tdB, T_ls)
 
-# ── Визуализация ─────────────────────────────────────────────────────────────
+# ── Visualization ────────────────────────────────────────────────────────────
 BG   = '#f7f9fc'
-C_A  = '#e74c3c'    # Phi_in A — красный (провал)
-C_B  = '#2980b9'    # Phi_in B — синий (без провала)
+C_A  = '#e74c3c'    # Phi_in A — red (dip)
+C_B  = '#2980b9'    # Phi_in B — blue (no dip)
 C_R  = '#27ae60'    # R(t)
 
 n = len(SPECIES)
@@ -188,21 +155,21 @@ for idx, (name, T_max, T_ls) in enumerate(SPECIES):
     ax = fig.add_subplot(nrows, ncols, idx+1)
     ax.set_facecolor(BG)
 
-    # Вариант A — красный
+    # Variant A — red
     ax.plot(tA, EA, color=C_A, lw=2.0, alpha=0.85,
             label=f'E, Φ(0)=0')
     ax.plot(tA, RA, color=C_A, lw=1.5, ls='--', alpha=0.6,
             label=f'R, Φ(0)=0')
     ax.axvline(tdA, color=C_A, ls=':', lw=1.0, alpha=0.5)
 
-    # Вариант B — синий
+    # Variant B — blue
     ax.plot(tB, EB, color=C_B, lw=2.0, alpha=0.85,
             label=f'E, Φ(0)={PHI_BIRTH}')
     ax.plot(tB, RB, color=C_B, lw=1.5, ls='--', alpha=0.6,
             label=f'R, Φ(0)={PHI_BIRTH}')
     ax.axvline(tdB, color=C_B, ls=':', lw=1.0, alpha=0.5)
 
-    # Разметка провала у варианта A
+    # Mark the dip for variant A
     if len(EA) > 10:
         dip_idx = np.argmin(EA[:int(len(EA)*0.15)])
         t_dip   = tA[dip_idx]
@@ -226,7 +193,7 @@ for idx, (name, T_max, T_ls) in enumerate(SPECIES):
         ax.legend(fontsize=6.5, loc='center right',
                   framealpha=0.85, ncol=1)
 
-# Пустые ячейки
+# Empty cells
 for idx in range(n, nrows*ncols):
     fig.add_subplot(nrows, ncols, idx+1).set_visible(False)
 

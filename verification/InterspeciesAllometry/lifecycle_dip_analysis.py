@@ -5,50 +5,17 @@
   Monograph:  VBLS_THEORY
 =================================================================
 
-  Copyright (c) 2026 Vasiliy Avdeev.  All rights reserved.
-
-  This work is licensed under the Creative Commons Attribution-NonCommercial-
-  NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).
-
-  You are free to:
-    Share — copy and redistribute the material in any medium or format
-    The licensor cannot revoke these freedoms as long as you follow the
-    license terms.
-
-  Under the following terms:
-    Attribution    — You must give appropriate credit, provide a link to
-                     the license, and indicate if changes were made.  You
-                     may do so in any reasonable manner, but not in any way
-                     that suggests the licensor endorses you or your use.
-    NonCommercial  — You may not use the material for commercial purposes.
-    NoDerivatives  — If you remix, transform, or build upon the material,
-                     you may not distribute the modified material.
-    No additional restrictions — You may not apply legal terms or
-                     technological measures that legally restrict others
-                     from doing anything the license permits.
-
-  Notices:
-    You do not have to comply with the license for elements of the material
-    in the public domain or where your use is permitted by an applicable
-    exception or limitation.
-
-    No warranties are given.  The license may not give you all of the
-    permissions necessary for your intended use.  For example, other rights
-    such as publicity, privacy, or moral rights may limit how you use the
-    material.
-
-  Full license text:        https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-  Human-readable summary:   https://creativecommons.org/licenses/by-nc-nd/4.0/
-
+  Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+  LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Анализ начального провала E(t): физика и два варианта Phi_in
+VBLS — Analysis of the initial dip in E(t): physics and two Phi_in variants
 
-Два варианта показаны на одних осях для каждого вида:
-  Красный: Phi_in(0)=0   — перинатальный дефицит ресурсов
-  Синий:   Phi_in(0)=0.45 — живородящие с материнским ресурсом
+Both variants are shown on the same axes for each species:
+  Red:  Phi_in(0)=0    — perinatal resource deficit
+  Blue: Phi_in(0)=0.45 — live-bearing species with a maternal resource
 
-Отдельная крупная панель для Человека — детальный анализ провала.
+A separate, larger panel for Human gives a detailed dip analysis.
 """
 
 import numpy as np
@@ -95,11 +62,11 @@ SPECIES = [
 ]
 
 def Phi_in_A(t_norm):
-    """Phi_in(0) = 0: поток нарастает с нуля"""
+    """Phi_in(0) = 0: flow builds up from zero"""
     return (1.0 - np.exp(-t_norm / 0.08)) * np.exp(-max(0.0, t_norm - 0.55) / 0.30)
 
 def Phi_in_B(t_norm):
-    """Phi_in(0) = PHI_BIRTH: начальный поток от матери"""
+    """Phi_in(0) = PHI_BIRTH: initial flow from the mother"""
     g = PHI_BIRTH + (1.0 - PHI_BIRTH) * (1.0 - np.exp(-t_norm / 0.08))
     return g * np.exp(-max(0.0, t_norm - 0.55) / 0.30)
 
@@ -130,13 +97,13 @@ def run(T_ls, phi_f):
     mask = sol.t <= td
     return sol.t[mask], sol.y[:,mask], td
 
-# ── Расчёт ────────────────────────────────────────────────────────────────────
+# ── Computation ──────────────────────────────────────────────────────────────
 print("Computing curves...")
 res = {}
 for name, Tmax, Tls in SPECIES:
     tA,yA,tdA = run(Tls, Phi_in_A)
     tB,yB,tdB = run(Tls, Phi_in_B)
-    # Находим глубину провала E
+    # Find the depth of the dip in E
     early_A = yA[0,:max(10, int(len(tA)*0.12))]
     dip_val = early_A.min()
     dip_depth = Y0[0] - dip_val
@@ -148,12 +115,12 @@ for name, Tmax, Tls in SPECIES:
           f"t_dip={dip_t:.3f}y  depth={dip_depth:.4f}  "
           f"t_B(A)={tdA:.1f}y  t_B(B)={tdB:.1f}y  Δ={tdB-tdA:+.2f}y")
 
-# ── ФИГУРА 1: Все виды, E(t) обоих вариантов ─────────────────────────────────
+# ── FIGURE 1: All species, E(t) for both variants ────────────────────────────
 BG  = '#f7f9fc'
-CA  = '#e74c3c'   # вариант A (провал) — красный
-CB  = '#2980b9'   # вариант B (без провала) — синий
-CRa = '#e74c3c'   # R(t) вариант A — тот же красный, пунктир
-CRb = '#2980b9'   # R(t) вариант B — синий пунктир
+CA  = '#e74c3c'   # variant A (dip) — red
+CB  = '#2980b9'   # variant B (no dip) — blue
+CRa = '#e74c3c'   # R(t) variant A — same red, dashed
+CRb = '#2980b9'   # R(t) variant B — blue dashed
 
 n=len(SPECIES); ncols=6; nrows=(n+ncols-1)//ncols
 
@@ -164,19 +131,19 @@ for idx,(name,Tmax,Tls) in enumerate(SPECIES):
     r  = res[name]
     ax = axs[idx]; ax.set_facecolor(BG)
 
-    # E(t): оба варианта
+    # E(t): both variants
     ax.plot(r['tA'], r['yA'][0], color=CA, lw=2.0, alpha=0.9)
     ax.plot(r['tB'], r['yB'][0], color=CB, lw=2.0, alpha=0.9)
-    # R(t): оба варианта (тоньше)
+    # R(t): both variants (thinner)
     ax.plot(r['tA'], r['yA'][3], color=CA, lw=1.2, ls='--', alpha=0.5)
     ax.plot(r['tB'], r['yB'][3], color=CB, lw=1.2, ls='--', alpha=0.5)
-    # Вертикали смерти
+    # Death verticals
     ax.axvline(r['tdA'], color=CA, ls=':', lw=1.0, alpha=0.6)
     ax.axvline(r['tdB'], color=CB, ls=':', lw=1.0, alpha=0.6)
-    # R* линия
+    # R* line
     ax.axhline(BASE['R_star'], color='#aaa', ls=':', lw=0.8)
 
-    # Аннотация провала (стрелка вниз)
+    # Dip annotation (downward arrow)
     if r['dip_depth'] > 0.003:
         ax.annotate('',
             xy =(r['dip_t'], Y0[0]-r['dip_depth']),
@@ -208,14 +175,14 @@ plt.savefig('lifecycle_dip_allspecies.png', dpi=150,
             bbox_inches='tight', facecolor=BG)
 print("\nFig. 1 saved: lifecycle_dip_allspecies.png")
 
-# ── ФИГУРА 2: Детальная панель — Человек ──────────────────────────────────────
+# ── FIGURE 2: Detailed panel — Human ──────────────────────────────────────────
 fig2 = plt.figure(figsize=(16, 10), facecolor=BG)
 gs = gridspec.GridSpec(2, 3, figure=fig2, hspace=0.45, wspace=0.38)
 
 r = res['Human']
 Tls = r['Tls']
 
-# ── Панель А: Полная кривая E(t) ─────────────────────────────────────────────
+# ── Panel A: Full E(t) curve ──────────────────────────────────────────────────
 ax1 = fig2.add_subplot(gs[0, :2])
 ax1.set_facecolor(BG)
 ax1.plot(r['tA'], r['yA'][0], color=CA, lw=2.2, label=f'$\\Phi_{{in}}(0)=0$ — dip')
@@ -247,10 +214,10 @@ ax1.set_xlabel('Age (yr)'); ax1.set_ylabel('$E(t)$')
 ax1.legend(fontsize=8.5, framealpha=0.93)
 ax1.set_ylim(0, 0.115)
 
-# ── Панель Б: Увеличение начального периода ───────────────────────────────────
+# ── Panel B: Zoom on the early period ──────────────────────────────────────────
 ax2 = fig2.add_subplot(gs[0, 2])
 ax2.set_facecolor(BG)
-zoom_end = Tls * 0.18   # первые 18% жизни
+zoom_end = Tls * 0.18   # first 18% of life
 mA = r['tA'] <= zoom_end
 mB = r['tB'] <= zoom_end
 ax2.plot(r['tA'][mA], r['yA'][0][mA], color=CA, lw=2.2)
@@ -258,7 +225,7 @@ ax2.plot(r['tB'][mB], r['yB'][0][mB], color=CB, lw=2.2)
 ax2.axhline(Y0[0], color='gray', ls=':', lw=1, alpha=0.5, label='$E_0$')
 ax2.axhline(BASE['E_star'], color='gray', ls='--', lw=0.8, alpha=0.4, label='$E^*$')
 
-# Phi_in на правой оси
+# Phi_in on the right-hand axis
 ax2r = ax2.twinx()
 t_zoom = np.linspace(0, zoom_end, 500)
 phiA_vals = np.array([Phi_in_A(tt/Tls) for tt in t_zoom])
@@ -279,7 +246,7 @@ ax2.set_title('B.  Zoom: early life', fontsize=10)
 ax2.set_xlabel('Age (yr)'); ax2.set_ylabel('$E(t)$')
 ax2.legend(fontsize=8, framealpha=0.9, loc='lower right')
 
-# ── Панель В: R(t) обоих вариантов ───────────────────────────────────────────
+# ── Panel C: R(t) for both variants ──────────────────────────────────────────
 ax3 = fig2.add_subplot(gs[1, :2])
 ax3.set_facecolor(BG)
 ax3.plot(r['tA'], r['yA'][3], color=CA, lw=2.0, label='$R(t)$, $\\Phi(0)=0$')
@@ -294,7 +261,7 @@ ax3.set_xlabel('Age (yr)'); ax3.set_ylabel('Value')
 ax3.legend(fontsize=8.5, framealpha=0.93, ncol=2)
 ax3.set_ylim(0, 1.05)
 
-# ── Панель Г: Phi_in(t) — наглядно ───────────────────────────────────────────
+# ── Panel D: Phi_in(t) — visual comparison ───────────────────────────────────
 ax4 = fig2.add_subplot(gs[1, 2])
 ax4.set_facecolor(BG)
 t_full = np.linspace(0, Tls*1.0, 1000)

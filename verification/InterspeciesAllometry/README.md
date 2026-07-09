@@ -19,15 +19,15 @@
 
 | File | Figure in monograph |
 |---|---|
-| `lifecycle_comparison.png/.pdf` | Рис. D.3.1 — full lifecycle dynamics, 11 species, two scaling variants |
-| `lifecycle_dip_allspecies.png` | Рис. D.3.2 — initial E(t) dip, all 11 species |
-| `lifecycle_dip_human.png` | Рис. D.3.3 — initial E(t) dip, detailed analysis for *Homo sapiens* |
-| `lifecycle_phi_comparison.png/.pdf` | Рис. D.3.4 — full lifecycle curves under two Φ_in(0) regimes |
+| `lifecycle_comparison.png/.pdf` | Fig. D.3.1 — full lifecycle dynamics, 11 species, two scaling variants |
+| `lifecycle_dip_allspecies.png` | Fig. D.3.2 — initial E(t) dip, all 11 species |
+| `lifecycle_dip_human.png` | Fig. D.3.3 — initial E(t) dip, detailed analysis for *Homo sapiens* |
+| `lifecycle_phi_comparison.png/.pdf` | Fig. D.3.4 — full lifecycle curves under two Φ_in(0) regimes |
 
 ## Run
 
 ```bash
-python lifecycle_comparison.py      # Рис. D.3.1
-python lifecycle_dip_analysis.py    # Рис. D.3.2, D.3.3
-python lifecycle_phi_comparison.py  # Рис. D.3.4
+python lifecycle_comparison.py      # Fig. D.3.1
+python lifecycle_dip_analysis.py    # Fig. D.3.2, D.3.3
+python lifecycle_phi_comparison.py  # Fig. D.3.4
 ```

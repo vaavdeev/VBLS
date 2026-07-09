@@ -28,8 +28,8 @@ Each folder has its own `README.md` with the exact script→figure mapping and r
 
 | File | Description |
 |---|---|
-| `anage_final.py` | Calibrates the class invariant ℬ* on 306 Mammalia species (Appendix C, §C.9.2); reads `anage_data.csv` in this same directory. |
-| `anage_data.csv` | AnAge Build 14 (semicolon-delimited) — shared input for `anage_final.py` and `lifetime_near_Mmin.py`. |
+| `bstar_calibration.py` | Calibrates the class invariant ℬ* on 306 Mammalia species (Appendix C, §C.9.2); reads `anage_data.csv` in this same directory. Produces `Fig1_allometry.png`/`Fig2_Bstar_normalized.png`/`Fig3_taxa_boxplots.png` (Fig. C.9.1–C.9.3). |
+| `anage_data.csv` | AnAge Build 14 (semicolon-delimited) — shared input for `bstar_calibration.py` and `lifetime_near_Mmin.py`. |
 | `lifetime_near_Mmin.py` / `.png` | Numerical verification of t_B vs. repair capacity ρ near the viability boundary ℳ_min (§15.2.2, Appendix A remark). |
 
 ## Citation

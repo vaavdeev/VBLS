@@ -11,6 +11,10 @@
   => effectively ONE fitted parameter against 7 points; nu* is not fitted.
 
   Author: Vasiliy Avdeev (independent researcher). Data: Whittemore et al. 2019 PNAS.
+
+  Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+  LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
+  SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
 """
 import numpy as np

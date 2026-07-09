@@ -27,9 +27,9 @@
 
 | File | Figure in monograph |
 |---|---|
-| `anage_verification.png/.pdf` | Рис. D.6.1 — base sample (N=318), four scaling tests |
-| `anage_improved.png/.pdf` | Рис. D.6.2 — quality-filtered sample (N=111) + breakdown by taxonomic order |
-| `anomalies_fig.png/.pdf` | Рис. D.6.3 — allometric anomalies: observed vs. predicted T_max with anomaly markers |
+| `anage_verification.png/.pdf` | Fig. D.6.1 — base sample (N=318), four scaling tests |
+| `anage_improved.png/.pdf` | Fig. D.6.2 — quality-filtered sample (N=111) + breakdown by taxonomic order |
+| `anomalies_fig.png/.pdf` | Fig. D.6.3 — allometric anomalies: observed vs. predicted T_max with anomaly markers |
 | `attenuation_bias.png/.pdf` | Monte Carlo attenuation-bias simulation (§D.6.4, not separately numbered as a figure) |
 
 ## Run

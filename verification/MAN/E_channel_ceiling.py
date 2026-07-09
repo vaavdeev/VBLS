@@ -1,4 +1,8 @@
 """
+Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
+SPDX-License-Identifier: CC-BY-NC-ND-4.0
+
 VBLS — E-channel longevity ceiling under full R-channel suppression.
 
 Question (author dialogue, 2026-06-22):

@@ -17,7 +17,7 @@ Dataset spans 94 non-human mammal species (cross-order). Also documents the huma
 | File | What it does |
 |---|---|
 | `escala_4tests.py` | Main script. Four-panel figure: one panel per scaling test (§D.1.1–D.1.3). All exponents computed from data — nothing hard-coded. |
-| `escala_human_fig.py` | Human exceptionalism analysis (§D.1.4): places Человек_1 (T_ls=75 yr) and Человек_2 (T_ls=122 yr) against the 94-species regression; compares Rubner products across the two T_ls conventions. |
+| `escala_human_fig.py` | Human exceptionalism analysis (§D.1.4): places Human_1 (T_ls=75 yr) and Human_2 (T_ls=122 yr) against the 94-species regression; compares Rubner products across the two T_ls conventions. |
 
 ## Data
 
@@ -29,8 +29,8 @@ Dataset spans 94 non-human mammal species (cross-order). Also documents the huma
 
 | File | Figure in monograph |
 |---|---|
-| `escala_4tests.png/.pdf` | Рис. D.1.1 — four scaling tests (2×2 panel) |
-| `escala_fig_human.png/.pdf` | Рис. D.1.2 — human exceptionalism: power law + Rubner product distribution + Escala/Cagan T_ls comparison |
+| `escala_4tests.png/.pdf` | Fig. D.1.1 — four scaling tests (2×2 panel) |
+| `escala_fig_human.png/.pdf` | Fig. D.1.2 — human exceptionalism: power law + Rubner product distribution + Escala/Cagan T_ls comparison |
 
 ## Run
 

@@ -23,21 +23,21 @@ Calibrated parameters: σ₀ = 0.0162, α = 0.030 yr⁻¹, ν₀ = 0.006, ν = 0
 
 | File | Figure in monograph |
 |---|---|
-| `human_lifespan_EN.png` | Рисунок 17.1a — full human lifecycle: E(t), Σ(t), η_abs(t), R(t), Φ balance, R(Σ) phase portrait |
-| `human_sensitivity_EN.png` | Рисунок 17.1b — parameter sensitivity: tornado + heatmap + Monte Carlo |
-| `alpha_sensitivity.png/.pdf` | Рисунок 17.1c — α sensitivity: t_B vs α and trajectory panels |
-| `E_channel_ceiling.png` | Рисунок 17.1d — E-channel ceiling under R-channel suppression |
-| `g_sensitivity.png` | Рис. D.7.1 — g(E) functional-form sensitivity |
+| `human_lifespan_EN.png` | Fig. 17.1a — full human lifecycle: E(t), Σ(t), η_abs(t), R(t), Φ balance, R(Σ) phase portrait |
+| `human_sensitivity_EN.png` | Fig. 17.1b — parameter sensitivity: tornado + heatmap + Monte Carlo |
+| `alpha_sensitivity.png/.pdf` | Fig. 17.1c — α sensitivity: t_B vs α and trajectory panels |
+| `E_channel_ceiling.png` | Fig. 17.1d — E-channel ceiling under R-channel suppression |
+| `g_sensitivity.png` | Fig. D.7.1 — g(E) functional-form sensitivity |
 | `regime_sensitivity.png` | Not embedded in the monograph (script's printed numbers are cited directly in the text) |
 
 ## Run
 
 ```bash
-python human_lifespan.py         # Рис. 17.1a
-python human_sensitivity.py      # Рис. 17.1b
-python alpha_sensitivity.py      # Рис. 17.1c
-python E_channel_ceiling.py      # console output for Рис. 17.1d
-python E_channel_ceiling_fig.py  # Рис. 17.1d
-python g_sensitivity.py          # Рис. D.7.1
+python human_lifespan.py         # Fig. 17.1a
+python human_sensitivity.py      # Fig. 17.1b
+python alpha_sensitivity.py      # Fig. 17.1c
+python E_channel_ceiling.py      # console output for Fig. 17.1d
+python E_channel_ceiling_fig.py  # Fig. 17.1d
+python g_sensitivity.py          # Fig. D.7.1
 python regime_sensitivity.py     # console output only, no figure
 ```

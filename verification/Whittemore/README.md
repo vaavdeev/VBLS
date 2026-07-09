@@ -16,7 +16,7 @@ Measurements: initial telomere length L₀ (kb), shortening rate (bp/yr), T_max,
 | File | What it does |
 |---|---|
 | `telomere_verification.py` | Main script. Four figures: (1) universal R* bar chart + cluster zones; (2) predicted vs observed T_max scatter (two channels); (3) power law T_max ~ ν*⁻ᵅ, VBLS vs Whittemore regression; (4) sensitivity analysis / tornado chart. Data embedded in script. |
-| `lifecycle_telomere.py` | Illustrative lifecycle trajectory for the telomere system mapped onto VBLS phases (Рис. 17.2.5). |
+| `lifecycle_telomere.py` | Illustrative lifecycle trajectory for the telomere system mapped onto VBLS phases (Fig. 17.2.5). |
 | `telomere_robustness.py` | Small-sample robustness of the n=7 cluster-1 result (reviewer point RV-3, §19.2.4): leave-one-out, nonparametric bootstrap 95% CI, and a leverage diagnostic. Prints to stdout; no figures. |
 
 ## Data

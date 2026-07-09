@@ -1,4 +1,8 @@
 """
+Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
+SPDX-License-Identifier: CC-BY-NC-ND-4.0
+
 VBLS vs. VBGF — Mass-Based Growth Analysis
 Atlantic Cod (Gadus morhua), ICES DATRAS NS-IBTS, 1989–2026
 ============================================================

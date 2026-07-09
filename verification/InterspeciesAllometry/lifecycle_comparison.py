@@ -5,56 +5,23 @@
   Monograph:  VBLS_THEORY
 =================================================================
 
-  Copyright (c) 2026 Vasiliy Avdeev.  All rights reserved.
-
-  This work is licensed under the Creative Commons Attribution-NonCommercial-
-  NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).
-
-  You are free to:
-    Share — copy and redistribute the material in any medium or format
-    The licensor cannot revoke these freedoms as long as you follow the
-    license terms.
-
-  Under the following terms:
-    Attribution    — You must give appropriate credit, provide a link to
-                     the license, and indicate if changes were made.  You
-                     may do so in any reasonable manner, but not in any way
-                     that suggests the licensor endorses you or your use.
-    NonCommercial  — You may not use the material for commercial purposes.
-    NoDerivatives  — If you remix, transform, or build upon the material,
-                     you may not distribute the modified material.
-    No additional restrictions — You may not apply legal terms or
-                     technological measures that legally restrict others
-                     from doing anything the license permits.
-
-  Notices:
-    You do not have to comply with the license for elements of the material
-    in the public domain or where your use is permitted by an applicable
-    exception or limitation.
-
-    No warranties are given.  The license may not give you all of the
-    permissions necessary for your intended use.  For example, other rights
-    such as publicity, privacy, or moral rights may limit how you use the
-    material.
-
-  Full license text:        https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-  Human-readable summary:   https://creativecommons.org/licenses/by-nc-nd/4.0/
-
+  Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+  LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Сравнение двух вариантов масштабирования жизненных кривых
+VBLS — Comparison of two lifecycle-curve scaling variants
 
-Вариант A: масштабирование по T_max (биологический максимум)
-Вариант B: масштабирование по T_ls  (средняя продолжительность жизни)
+Variant A: scaled by T_max (biological maximum)
+Variant B: scaled by T_ls  (mean lifespan)
 
-Вывод: 
-  - Вариант A воспроизводит верхнюю границу возможной жизни
-  - Вариант B предсказывает наблюдаемую среднюю продолжительность
-  - Разница наглядно показывает что T_ls ≈ 0.5–0.7 × T_max
+Takeaway:
+  - Variant A reproduces the upper bound of possible lifespan
+  - Variant B predicts the observed mean lifespan
+  - The difference visually shows that T_ls ≈ 0.5-0.7 × T_max
 
-Источники T_max / T_ls:
+Sources for T_max / T_ls:
   AnAge Build 14: Mouse, Rat, Rabbit, Pig, Elephant, Human
-  Литература: Dog, Cat, NMR, Horse, Chimpanzee
+  Literature: Dog, Cat, NMR, Horse, Chimpanzee
 """
 
 import numpy as np
@@ -78,8 +45,8 @@ plt.rcParams.update({
     'figure.dpi':        150,
 })
 
-# ── Параметры эталона (Human, T_ref = 77.6 лет — популяционная калибровка) ────
-T_REF = 77.6   # средняя продолжительность жизни человека — база калибровки
+# ── Reference parameters (Human, T_ref = 77.6 yr — population calibration) ──
+T_REF = 77.6   # mean human lifespan — calibration baseline
 
 BASE = dict(
     mu=1.50, lam=0.30, sigma0=0.018, alpha=0.060,
@@ -88,21 +55,21 @@ BASE = dict(
 )
 Y0 = [0.10, 0.01, 0.96, 0.99]
 
-# ── Виды: (имя, T_max, T_ls, источник) ────────────────────────────────────────
-# T_ls — средняя в контролируемых условиях содержания
-# T_max — верифицированный биологический максимум
+# ── Species: (name, T_max, T_ls, source) ─────────────────────────────────────
+# T_ls  — mean lifespan under controlled captive conditions
+# T_max — verified biological maximum
 SPECIES = [
-    ("Mouse",       4.0,   2.0,  "AnAge / лаб."),
-    ("Rat",         3.8,   2.5,  "AnAge / лаб."),
-    ("Rabbit",     13.0,   8.0,  "AnAge / лит."),
-    ("Dog",        24.0,  12.0,  "лит."),
-    ("Cat",        30.0,  15.0,  "лит."),
-    ("NMR",        31.0,  20.0,  "AnAge / лит."),
-    ("Pig",        27.0,  15.0,  "AnAge / лит."),
-    ("Horse",      57.0,  30.0,  "лит."),
-    ("Chimpanzee", 59.0,  40.0,  "лит."),
-    ("Elephant",   86.0,  60.0,  "AnAge / лит."),
-    ("Human",     122.5,  77.6,  "AnAge / ВОЗ"),
+    ("Mouse",       4.0,   2.0,  "AnAge / lab"),
+    ("Rat",         3.8,   2.5,  "AnAge / lab"),
+    ("Rabbit",     13.0,   8.0,  "AnAge / lit."),
+    ("Dog",        24.0,  12.0,  "lit."),
+    ("Cat",        30.0,  15.0,  "lit."),
+    ("NMR",        31.0,  20.0,  "AnAge / lit."),
+    ("Pig",        27.0,  15.0,  "AnAge / lit."),
+    ("Horse",      57.0,  30.0,  "lit."),
+    ("Chimpanzee", 59.0,  40.0,  "lit."),
+    ("Elephant",   86.0,  60.0,  "AnAge / lit."),
+    ("Human",     122.5,  77.6,  "AnAge / WHO"),
 ]
 
 def Phi_in(t_norm):
@@ -114,7 +81,7 @@ def Phi_cap():
     return 0.003
 
 def scale_params(T_scale):
-    """sc = T_REF / T_scale — масштабирование всех скоростей"""
+    """sc = T_REF / T_scale — scales all rate parameters"""
     sc = T_REF / T_scale
     return dict(
         mu=BASE['mu'], lam=BASE['lam']*sc,
@@ -147,7 +114,7 @@ def run(T_scale):
     ch = "R" if float(np.interp(td,sol.t[mask],sol.y[3,mask]))<=p['R_star']+0.01 else "E"
     return sol.t[mask], sol.y[:,mask], td, ch
 
-# ── Расчёт обоих вариантов ────────────────────────────────────────────────────
+# ── Computing both variants ──────────────────────────────────────────────────
 print("="*72)
 print("  VBLS — Scaling comparison: T_max vs T_ls")
 print(f"  Reference: Human T_ref = {T_REF} yr")
@@ -165,12 +132,12 @@ for name, T_max, T_ls, src in SPECIES:
     res_A[name] = (tA, yA, tdA, T_max, chA)
     res_B[name] = (tB, yB, tdB, T_ls,  chB)
 
-# ── Фигура: 2 строки × n столбцов ────────────────────────────────────────────
+# ── Figure: 2 rows × n columns ────────────────────────────────────────────────
 BG   = '#f7f9fc'
-C_A  = '#2980b9'   # вариант A — синий
-C_B  = '#e74c3c'   # вариант B — красный
+C_A  = '#2980b9'   # variant A — blue
+C_B  = '#e74c3c'   # variant B — red
 C_R  = '#27ae60'   # R(t)
-C_S  = '#95a5a6'   # Σ(t) — серый, второстепенный
+C_S  = '#95a5a6'   # Σ(t) — gray, secondary
 
 n    = len(SPECIES)
 ncols= 6

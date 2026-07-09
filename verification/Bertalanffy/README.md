@@ -25,7 +25,7 @@
 
 | File | Figure in monograph |
 |---|---|
-| `mass_cod_EN.png` | Рис. D.4.1 — VBLS vs. VBGF mass growth, Atlantic cod |
+| `mass_cod_EN.png` | Fig. D.4.1 — VBLS vs. VBGF mass growth, Atlantic cod |
 
 ## Run
 

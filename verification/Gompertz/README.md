@@ -15,7 +15,7 @@
 
 | File | Figure in monograph |
 |---|---|
-| `gompertz_comparison_4panels.png` | Рис. 16.2 — asymptotic VBLS regime compatible with the Gompertz law |
+| `gompertz_comparison_4panels.png` | Fig. 16.2 — asymptotic VBLS regime compatible with the Gompertz law |
 
 ## Run
 
