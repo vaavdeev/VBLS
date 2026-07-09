@@ -47,7 +47,7 @@ Variables: E(t), Sigma(t), eta_abs(t), R(t)
 
 Calibration target : t_B = 75–83 yr  (WHO 2023, developed countries)
 Death event        : R(t) = R*  OR  E(t) = E*  (whichever comes first)
-Key addition       : recovery-potential function g(E) in the R-restoration term (eq. 4.2)
+Key addition       : restoration-potential function g(E) in the R-restoration term (eq. 4.2)
 """
 
 import numpy as np
@@ -116,7 +116,7 @@ Sigma0  = 0.01
 eta0    = 0.96
 R0      = 0.99
 
-# --- Recovery-potential function normalization (formula 4.2) ---
+# --- Restoration-potential function normalization (formula 4.2) ---
 E_range = E0_init - E_star    # = 0.06  (denominator of g(E))
 
 
@@ -135,7 +135,7 @@ def system(t, y):
 
     F_diss = mu * E**2 + lam * E                               # eq. (6.2)
 
-    # Recovery-potential function  g(E) = (E - E*) / (E0 - E*)  in [0, 1]  (eq. 4.2)
+    # Restoration-potential function  g(E) = (E - E*) / (E0 - E*)  in [0, 1]  (eq. 4.2)
     # Degradation terms in dR/dt are independent of E (time-scale separation).
     # Restoration requires active synthesis — gated by g(E).
     g_E = max(0.0, min(1.0, (E - E_star) / E_range))
@@ -152,7 +152,7 @@ def system(t, y):
 
     # ── Eq. 4: repair reserve R(t)  (eq. 4.1) ───────────────────────────────
     # Decay terms: spontaneous (-nu_0*R) + damage-driven (-nu*Sigma*R)
-    # Restoration: gated by the recovery-potential function g(E) — zero when E -> E*
+    # Restoration: gated by the restoration-potential function g(E) — zero when E -> E*
     dR = -nu_0 * R - nu * Sigma * R + rho * g_E * (1.0 - Sigma) * (1.0 - R)
 
     return [dE, dSigma, deta, dR]
@@ -230,7 +230,7 @@ if t_death is not None:
     i70 = np.argmin(np.abs(t - 70))
     print(f"\n  Sigma(70 yr)    = {Sigma[i70]:.3f}   (accumulated structural damage)")
     print(f"  R(70 yr)        = {R[i70]:.3f}   (R* = {R_star})")
-    print(f"  g(E)(70 yr)     = {g_E_v[i70]:.3f}   (recovery-potential function)")
+    print(f"  g(E)(70 yr)     = {g_E_v[i70]:.3f}   (restoration-potential function)")
 else:
     print("\n  No death event within t_max — system survives to end of integration.")
 

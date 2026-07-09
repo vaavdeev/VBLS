@@ -170,7 +170,7 @@ def rhs(t, y, mu, lam, s0, alpha, nu0, nu, rho, Phi_max, Phi_cap, T_mat):
     dE   = eta*phi - mu*E**2 - lam*E
     dS   = max(0.0, s0*(mu*E**2+lam*E) - R*Phi_cap)
     deta = -alpha*S*eta
-    # Recovery-potential function g(E), formula 4.2: gates repair restoration
+    # Restoration-potential function g(E), formula 4.2: gates repair restoration
     g_E  = max(0.0, min(1.0, (E - BASE_ABS['E_star']) / E_RANGE))
     dR   = -nu0*R - nu*S*R + rho*g_E*(1-S)*(1-R)
     return [dE, dS, deta, dR]

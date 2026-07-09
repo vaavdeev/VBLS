@@ -42,7 +42,7 @@
 
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Sensitivity of t_B to the functional form of g(E) (recovery-potential function).
+VBLS — Sensitivity of t_B to the functional form of g(E) (restoration-potential function).
 
 Reviewer concern: "Linear g(E) is physiologically unrealistic; PARP/p53
 processes have threshold character. Recommend sensitivity analysis to Hill."

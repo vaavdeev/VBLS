@@ -136,7 +136,7 @@ def vbls_run(t_end, sigma0=SIGMA0, n=15000):
         e  = max(min(y[2], 1.0), 0.0)
         R  = max(min(y[3], 1.0), 0.0)
         F  = MU * E**2 + LAM * E
-        # Recovery-potential function g(E) = (E - E*) / (E0 - E*)  ∈ [0, 1]  (eq. 4.2)
+        # Restoration-potential function g(E) = (E - E*) / (E0 - E*)  ∈ [0, 1]  (eq. 4.2)
         g_E = max(0.0, min(1.0, (E - E_STAR) / E_RANGE))
         return [
             e * Phi_in(t) - F,
