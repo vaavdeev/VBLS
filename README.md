@@ -2,7 +2,9 @@
 
 Supplementary materials for the monograph **Viability Boundaries of Living Systems: A Phenomenological Thermodynamic Theory** (Vasiliy Avdeev, 2026), establishing a testable boundary between living and non-living matter through a phenomenological thermodynamic theory in the tradition of Bauer and Prigogine.
 
-Monograph: Zenodo, DOI [10.5281/zenodo.20161329](https://doi.org/10.5281/zenodo.20161329).
+Monograph on Zenodo — these DOIs always resolve to the current version:
+English — [10.5281/zenodo.21339795](https://doi.org/10.5281/zenodo.21339795) ·
+Russian — [10.5281/zenodo.20161328](https://doi.org/10.5281/zenodo.20161328).
 
 ## Contents
 
@@ -19,7 +21,7 @@ Each folder has its own `README.md` with full detail.
 
 If you use these materials, please cite the monograph:
 
-Avdeev, V. (2026). *Viability Boundaries of Living Systems: A Phenomenological Thermodynamic Theory*. Zenodo. https://doi.org/10.5281/zenodo.20161329
+Avdeev, V. (2026). *Viability Boundaries of Living Systems: A Phenomenological Thermodynamic Theory*. Zenodo. https://doi.org/10.5281/zenodo.21339795
 
 ## License
 
