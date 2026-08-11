@@ -1,0 +1,31 @@
+Species with M, T_max and metabolic rate, quality != low:
+Class
+Mammalia    350
+Aves        167
+Amphibia     16
+Reptilia     14
+
+clade                         n      chi (Phi~M)        a (Tmax~M)     1-chi           a+chi-1    dev    dec
+----------------------------------------------------------------------------------------------------------------
+Mammalia                    350  +0.7254+-0.0081  +0.1850+-0.0111   +0.2746   -0.0896+-0.0137   6.5s    6.2
+Aves                        167  +0.6524+-0.0093  +0.2075+-0.0159   +0.3476   -0.1401+-0.0184   7.6s    4.5
+Reptilia                     14  +0.7287+-0.0728  +0.2307+-0.0769   +0.2713   -0.0406+-0.1059   0.4s    3.3
+Amphibia                     16  +0.7343+-0.1044  +0.0909+-0.0956   +0.2657   -0.1748+-0.1416   1.2s    2.7
+Mammalia w/o Chiroptera     318  +0.7229+-0.0088  +0.2180+-0.0105   +0.2771   -0.0590+-0.0136   4.3s    6.2
+
+Mammalian order               n        chi          a    a+chi-1
+------------------------------------------------------------------
+Artiodactyla                 19    +0.7557    +0.1357    -0.1086
+Carnivora                    51    +0.7665    +0.1344    -0.0990
+Chiroptera                   32    +0.7634    +0.1151    -0.1215
+Dasyuromorphia               18    +0.7333    +0.1100    -0.1567
+Diprotodontia                19    +0.7377    +0.1135    -0.1488
+Primates                     24    +0.7899    +0.2191    +0.0090
+Rodentia                    115    +0.6890    +0.1825    -0.1286
+
+=== covariance of a with chi (VBLS requires slope -1) ===
+  classes            n=4:  a ~ -0.605*chi   r=-0.382  p=0.618   (VBLS: -1.000)
+  Mammalian orders   n=7:  a ~ +0.161*chi   r=+0.126  p=0.788   (VBLS: -1.000)
+  note: with four classes the slope is not determined; read the sign only.
+
+No phylogenetic correction is applied here: trees were built for Mammalia only (Section D.6.7).

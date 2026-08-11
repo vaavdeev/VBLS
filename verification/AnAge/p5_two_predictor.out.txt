@@ -1,0 +1,212 @@
+== loading ==
+   base sample (Mammalia, quality!=low, excl Chiroptera): n=318
+   OTL cache: n=316
+
+
+==================== TAX  n=318 ====================
+  collinearity: r(logP, logM) = 0.9776   VIF = 22.6
+                Var(logM) = 1.2981   Var(u) = 0.03145   ratio = 41.3
+
+  OLS   b1 (logP) = -0.2415 +- 0.0660     b2 (logM) = +0.3926 +- 0.0488
+        H_ratio  b1 + b2 = 0 : est +0.1511 +- 0.0210   F(1,315) =   51.96   p = 4.21e-12   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,315) =   82.60   p = 1.44e-29   -> REJECTED
+        restricted p_scale  = -0.6561 +- 0.0348   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.2180   B (u) = -0.2415   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =   51.96  p = 4.21e-12   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.1199 +- 0.0626     b2 (logM) = +0.2737 +- 0.0476   lam=0.836
+        H_ratio  b1 + b2 = 0 : est +0.1538 +- 0.0201   F(1,315) =   58.65   p = 2.33e-13   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,315) =  120.68   p = 1.23e-39   -> REJECTED
+        restricted p_scale  = -0.5021 +- 0.0396   (this is what the monograph fits)
+
+
+==================== OTL  n=316 ====================
+  collinearity: r(logP, logM) = 0.9779   VIF = 22.8
+                Var(logM) = 1.2974   Var(u) = 0.03119   ratio = 41.6
+
+  OLS   b1 (logP) = -0.2335 +- 0.0663     b2 (logM) = +0.3858 +- 0.0491
+        H_ratio  b1 + b2 = 0 : est +0.1524 +- 0.0210   F(1,313) =   52.79   p = 2.98e-12   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,313) =   83.14   p = 1.1e-29   -> REJECTED
+        restricted p_scale  = -0.6534 +- 0.0351   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.2167   B (u) = -0.2335   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =   52.79  p = 2.98e-12   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.1041 +- 0.0596     b2 (logM) = +0.2253 +- 0.0446   lam=0.869
+        H_ratio  b1 + b2 = 0 : est +0.1212 +- 0.0205   F(1,313) =   34.90   p = 9.03e-09   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,313) =  171.23   p = 5.79e-51   -> REJECTED
+        restricted p_scale  = -0.3924 +- 0.0365   (this is what the monograph fits)
+
+
+==================== DATED n=305 ====================
+  collinearity: r(logP, logM) = 0.9775   VIF = 22.5
+                Var(logM) = 1.2915   Var(u) = 0.03171   ratio = 40.7
+
+  OLS   b1 (logP) = -0.2336 +- 0.0678     b2 (logM) = +0.3869 +- 0.0504
+        H_ratio  b1 + b2 = 0 : est +0.1533 +- 0.0214   F(1,302) =   51.39   p = 5.84e-12   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,302) =   78.02   p = 4.83e-28   -> REJECTED
+        restricted p_scale  = -0.6554 +- 0.0364   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.2173   B (u) = -0.2336   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =   51.39  p = 5.84e-12   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.0949 +- 0.0594     b2 (logM) = +0.2054 +- 0.0462   lam=0.961
+        H_ratio  b1 + b2 = 0 : est +0.1106 +- 0.0204   F(1,302) =   29.32   p = 1.26e-07   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,302) =  156.74   p = 2.04e-47   -> REJECTED
+        restricted p_scale  = -0.3467 +- 0.0410   (this is what the monograph fits)
+
+
+==================== TAX  n=111 ====================
+  collinearity: r(logP, logM) = 0.9755   VIF = 20.7
+                Var(logM) = 1.2690   Var(u) = 0.03317   ratio = 38.3
+
+  OLS   b1 (logP) = -0.3385 +- 0.0952     b2 (logM) = +0.4503 +- 0.0700
+        H_ratio  b1 + b2 = 0 : est +0.1118 +- 0.0310   F(1,108) =   13.01   p = 0.000471   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,108) =   36.06   p = 1.01e-12   -> REJECTED
+        restricted p_scale  = -0.6365 +- 0.0498   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.2074   B (u) = -0.3385   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =   13.01  p = 0.000471   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.2486 +- 0.0857     b2 (logM) = +0.3383 +- 0.0627   lam=0.639
+        H_ratio  b1 + b2 = 0 : est +0.0897 +- 0.0309   F(1,108) =    8.43   p = 0.00448   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,108) =   68.07   p = 7.46e-20   -> REJECTED
+        restricted p_scale  = -0.4413 +- 0.0499   (this is what the monograph fits)
+
+
+==================== TAX  n=35 ====================
+  collinearity: r(logP, logM) = 0.9875   VIF = 40.1
+                Var(logM) = 1.6445   Var(u) = 0.02730   ratio = 60.2
+
+  OLS   b1 (logP) = -0.3034 +- 0.2029     b2 (logM) = +0.3685 +- 0.1656
+        H_ratio  b1 + b2 = 0 : est +0.0651 +- 0.0473   F(1,32) =    1.89   p = 0.178   -> not rejected
+        H_vbls   b1=-1,b2=+1 : F(2,32) =    9.51   p = 0.000575   -> REJECTED
+        restricted p_scale  = -0.5361 +- 0.1136   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.1241   B (u) = -0.3034   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =    1.89  p = 0.178   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.1096 +- 0.1429     b2 (logM) = +0.1941 +- 0.1182   lam=1.063
+        H_ratio  b1 + b2 = 0 : est +0.0845 +- 0.0331   F(1,32) =    6.50   p = 0.0158   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,32) =   27.48   p = 1.13e-07   -> REJECTED
+        restricted p_scale  = -0.5105 +- 0.0978   (this is what the monograph fits)
+
+
+==================== DAT111 n=106 ====================
+  collinearity: r(logP, logM) = 0.9755   VIF = 20.6
+                Var(logM) = 1.2524   Var(u) = 0.03340   ratio = 37.5
+
+  OLS   b1 (logP) = -0.3310 +- 0.0977     b2 (logM) = +0.4450 +- 0.0725
+        H_ratio  b1 + b2 = 0 : est +0.1139 +- 0.0314   F(1,103) =   13.17   p = 0.000445   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,103) =   33.36   p = 6.76e-12   -> REJECTED
+        restricted p_scale  = -0.6365 +- 0.0525   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.2055   B (u) = -0.3310   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =   13.17  p = 0.000445   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.1293 +- 0.0809     b2 (logM) = +0.2303 +- 0.0619   lam=0.943
+        H_ratio  b1 + b2 = 0 : est +0.1010 +- 0.0289   F(1,103) =   12.20   p = 0.000704   -> REJECTED
+        H_vbls   b1=-1,b2=+1 : F(2,103) =   83.85   p = 2.44e-22   -> REJECTED
+        restricted p_scale  = -0.3561 +- 0.0553   (this is what the monograph fits)
+
+
+==================== DAT35  n=34 ====================
+  collinearity: r(logP, logM) = 0.9876   VIF = 40.6
+                Var(logM) = 1.6782   Var(u) = 0.02764   ratio = 60.7
+
+  OLS   b1 (logP) = -0.3134 +- 0.2075     b2 (logM) = +0.3775 +- 0.1697
+        H_ratio  b1 + b2 = 0 : est +0.0641 +- 0.0481   F(1,31) =    1.78   p = 0.192   -> not rejected
+        H_vbls   b1=-1,b2=+1 : F(2,31) =    8.75   p = 0.000971   -> REJECTED
+        restricted p_scale  = -0.5439 +- 0.1164   (this is what the monograph fits)
+        orthogonal form: A (logM) = +0.1245   B (u) = -0.3134   [A must equal simple a; B must equal b1]
+        nested F-test (restricted vs full) F =    1.78  p = 0.192   [must match H_ratio]
+
+  PGLS  b1 (logP) = -0.3448 +- 0.1817     b2 (logM) = +0.3874 +- 0.1560   lam=1.019
+        H_ratio  b1 + b2 = 0 : est +0.0426 +- 0.0405   F(1,31) =    1.11   p = 0.301   -> not rejected
+        H_vbls   b1=-1,b2=+1 : F(2,31) =    8.65   p = 0.00104   -> REJECTED
+        restricted p_scale  = -0.4754 +- 0.1297   (this is what the monograph fits)
+
+
+===================== SUMMARY: RATIO RESTRICTION =====================
+  VBLS writes the prediction as T ~ (P/M)^p. That is legitimate only if
+  b1 + b2 = 0. A rejection means P and M act on lifespan through more
+  than their ratio, and p_scale is then a constrained summary, not the
+  full description.
+
+  set            meth      n      b1+b2         se          p   verdict
+  -------------------------------------------------------------------------- 
+  TAX  n=318     OLS     318    +0.1511     0.0210   4.21e-12   REJECTED
+  TAX  n=318     PGLS    318    +0.1538     0.0201   2.33e-13   REJECTED
+  OTL  n=316     OLS     316    +0.1524     0.0210   2.98e-12   REJECTED
+  OTL  n=316     PGLS    316    +0.1212     0.0205   9.03e-09   REJECTED
+  DATED n=305    OLS     305    +0.1533     0.0214   5.84e-12   REJECTED
+  DATED n=305    PGLS    305    +0.1106     0.0204   1.26e-07   REJECTED
+  TAX  n=111     OLS     111    +0.1118     0.0310   0.000471   REJECTED
+  TAX  n=111     PGLS    111    +0.0897     0.0309    0.00448   REJECTED
+  TAX  n=35      OLS      35    +0.0651     0.0473      0.178   not rejected
+  TAX  n=35      PGLS     35    +0.0845     0.0331     0.0158   REJECTED
+  DAT111 n=106   OLS     106    +0.1139     0.0314   0.000445   REJECTED
+  DAT111 n=106   PGLS    106    +0.1010     0.0289   0.000704   REJECTED
+  DAT35  n=34    OLS      34    +0.0641     0.0481      0.192   not rejected
+  DAT35  n=34    PGLS     34    +0.0426     0.0405      0.301   not rejected
+
+
+===================== SUMMARY: VBLS POINT PREDICTION =====================
+  H_vbls is b1 = -1 and b2 = +1 jointly, i.e. p_scale = -1 without
+  assuming the ratio form in advance.
+
+  set            meth          b1         b2     F(2,n-3)          p
+  ------------------------------------------------------------------ 
+  TAX  n=318     OLS      -0.2415    +0.3926        82.60   1.44e-29
+  TAX  n=318     PGLS     -0.1199    +0.2737       120.68   1.23e-39
+  OTL  n=316     OLS      -0.2335    +0.3858        83.14    1.1e-29
+  OTL  n=316     PGLS     -0.1041    +0.2253       171.23   5.79e-51
+  DATED n=305    OLS      -0.2336    +0.3869        78.02   4.83e-28
+  DATED n=305    PGLS     -0.0949    +0.2054       156.74   2.04e-47
+  TAX  n=111     OLS      -0.3385    +0.4503        36.06   1.01e-12
+  TAX  n=111     PGLS     -0.2486    +0.3383        68.07   7.46e-20
+  TAX  n=35      OLS      -0.3034    +0.3685         9.51   0.000575
+  TAX  n=35      PGLS     -0.1096    +0.1941        27.48   1.13e-07
+  DAT111 n=106   OLS      -0.3310    +0.4450        33.36   6.76e-12
+  DAT111 n=106   PGLS     -0.1293    +0.2303        83.85   2.44e-22
+  DAT35  n=34    OLS      -0.3134    +0.3775         8.75   0.000971
+  DAT35  n=34    PGLS     -0.3448    +0.3874         8.65    0.00104
+
+
+  Reference single-predictor values (monograph / p4_monograph_pgls.R, OLS):
+    a = +0.2173   beta = -0.2737   chi = +0.7263   p_scale = -0.6554
+
+
+============ DECOMPOSITION OF p_scale AND ATTENUATION REQUIRED ============
+
+  TAX  n=318
+    along mass      a/beta = -0.7870   weight 76.0%
+    at fixed mass   b1     = -0.2415   weight 24.0%
+    weighted mix           = -0.6561   fitted p_scale = -0.6561   (diff 4.4e-16)
+    for b1 = -1: 76% of the mass-independent variance in log P
+                 must be measurement error, i.e. sd = 0.154 dex, CV = 37%
+
+  OTL  n=316
+    along mass      a/beta = -0.7865   weight 75.9%
+    at fixed mass   b1     = -0.2335   weight 24.1%
+    weighted mix           = -0.6534   fitted p_scale = -0.6534   (diff 1.1e-16)
+    for b1 = -1: 77% of the mass-independent variance in log P
+                 must be measurement error, i.e. sd = 0.155 dex, CV = 37%
+
+  DATED n=305
+    along mass      a/beta = -0.7936   weight 75.3%
+    at fixed mass   b1     = -0.2336   weight 24.7%
+    weighted mix           = -0.6554   fitted p_scale = -0.6554   (diff 6.7e-16)
+    for b1 = -1: 77% of the mass-independent variance in log P
+                 must be measurement error, i.e. sd = 0.156 dex, CV = 37%
+
+  TAX  n=111
+    along mass      a/beta = -0.7341   weight 75.3%
+    at fixed mass   b1     = -0.3385   weight 24.7%
+    weighted mix           = -0.6365   fitted p_scale = -0.6365   (diff 4.4e-16)
+    for b1 = -1: 66% of the mass-independent variance in log P
+                 must be measurement error, i.e. sd = 0.148 dex, CV = 35%
+
+  DAT111 n=106
+    along mass      a/beta = -0.7429   weight 74.2%
+    at fixed mass   b1     = -0.3310   weight 25.8%
+    weighted mix           = -0.6365   fitted p_scale = -0.6365   (diff 5.6e-16)
+    for b1 = -1: 67% of the mass-independent variance in log P
+                 must be measurement error, i.e. sd = 0.149 dex, CV = 35%
+
+  results written to p5_two_predictor_results.csv

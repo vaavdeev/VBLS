@@ -21,6 +21,7 @@ Calibrated VBLS human parameters: σ₀ = 0.0162, α = 0.030 yr⁻¹ (April 2026
 | [InterspeciesAllometry/](InterspeciesAllometry/) | Full lifecycle curves E(t), R(t) for 11 species under two scaling conventions; initial-dip analysis | AnAge Build 14 + physiological literature | Appendix D.3 |
 | [Bertalanffy/](Bertalanffy/) | Mass-based fish growth: VBLS vs. classical von Bertalanffy growth function, Atlantic cod | ICES DATRAS NS-IBTS | Appendix D.4 |
 | [AnAge/](AnAge/) | Cross-species T_max allometry on 318/111 Mammalia (AnAge Build 14); allometric anomalies; attenuation-bias Monte Carlo | Tacutu et al. (2018) AnAge Build 14 | §17.4, Appendix D.6 |
+| [Alpha_optimum/](Alpha_optimum/) | The memory-sensitivity optimum α\* as the point where the dominant death channel switches from R to E; monotonicity of both lifetime branches; the sufficient threshold α &lt; α_guar; stability and residual checks | Calibrated (S) parameters for *Homo sapiens* (§17.1) | Appendix G, §8.2.1 |
 
 Each folder has its own `README.md` with the exact script→figure mapping and run instructions.
 

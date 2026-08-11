@@ -9,26 +9,39 @@
   LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Alpha sensitivity: non-monotonic dependence of t_B on α with optimum α* ≈ 0.10 yr⁻¹.
+VBLS — Alpha sensitivity: non-monotonic dependence of t_B on α with an interior optimum α*.
+
+α* is located from ALPHA_SCAN at runtime and printed below; on the calibrated
+Homo sapiens set it falls at α* ≈ 0.135 yr⁻¹ → t_B ≈ 93.3 yr. Appendix G
+(alpha_crossover.py) shows this optimum IS the R→E death-channel crossover.
+
+NOTE ON A CORRECTED VALUE. Earlier revisions of this script quoted α* ≈ 0.10 yr⁻¹
+(t_B ≈ 88.8 yr) in the plot labels and docstring. That was the argmax over the
+coarse 7-point trajectory set ALPHA_TRAJ — where the sampled points jump 0.100 →
+0.180 and straddle the true peak — not over the 60-point ALPHA_SCAN that the
+curve is actually drawn from. All individual t_B values were and remain correct;
+only the *location of the maximum* was mis-stated. Labels are now computed from
+the data so the annotation cannot drift from the curve again.
 
 Three distinct regimes (Homo sapiens, calibrated parameters):
   α ≤ 0.020 yr⁻¹  — α-passive regime: memory decay too slow to affect R-channel;
                      t_B = 73–75 yr, change < 2.1% vs baseline.
-  0.020 < α ≤ 0.10 — α-active regime: POSITIVE sensitivity (counter-intuitive);
+  0.020 < α ≤ α*  — α-active regime: POSITIVE sensitivity (counter-intuitive);
                      mechanism: α↑ → η_abs↓ → E↓ → F_diss↓ → σ_0·F_diss↓ → Σ slower
                               → ν·Σ·R weaker → R depletes slower → t_B increases.
-                     Peak at α* ≈ 0.10 yr⁻¹ → t_B ≈ 88.8 yr (maximum).
-  α > 0.10 yr⁻¹   — collapse regime: NEGATIVE sensitivity;
+                     Peak at α* ≈ 0.135 yr⁻¹ → t_B ≈ 93.3 yr (maximum).
+  α > α*          — collapse regime: NEGATIVE sensitivity;
                      η_abs decays so fast that E collapses before R-channel fires;
                      t_B falls sharply (α=0.18 → 87.1 yr; α=1.9 → 45 yr; α=10000 → 2.3 yr).
 
 Calibrated baseline: α = 0.030 yr⁻¹ → t_B = 76.9 yr (within WHO 75–83 yr target).
-Theoretical optimum: α* ≈ 0.10 yr⁻¹ → t_B = 88.8 yr (~12 yr above calibrated baseline).
+Theoretical optimum: α* ≈ 0.135 yr⁻¹ → t_B ≈ 93.3 yr (~16 yr above calibrated baseline).
 Biological interpretation: humans operate below α*, consistent with an evolutionary
 trade-off between lifespan maximisation and metabolic intensity for reproduction.
+The trade-off is quantified in reproductive_vitality.py (§19.3.6).
 
 Four panels:
-  (A) t_B vs α — non-monotonic curve, optimum at α* ≈ 0.10 yr⁻¹
+  (A) t_B vs α — non-monotonic curve, optimum marked at the computed α*
   (B) η_abs(t) trajectories for multiple α values
   (C) Σ(t) trajectories showing slower accumulation at higher α (α-active regime)
   (D) R(t) trajectories showing slower depletion at higher α (→ later R-channel death)
@@ -123,8 +136,20 @@ def run(alpha_val):
 # ============================================================================
 
 # Wide range: 0.01 to 0.20 (baseline = 0.030)
-ALPHA_SCAN  = np.linspace(0.005, 0.20, 60)
+# 240 points (not 60): the coarser grid resolved α* only to ~0.134, which printed
+# as a different rounding than Appendix G's 0.1346 and made figure and text disagree
+# in the third decimal. Matches alpha_crossover.py's resolution.
+ALPHA_SCAN  = np.linspace(0.005, 0.20, 240)
 t_B_scan    = np.array([run(a)[0] for a in ALPHA_SCAN])
+
+# α* is LOCATED FROM THE SCAN, never hard-coded. An earlier revision of this
+# script quoted α* ≈ 0.10 as a literal string in the plot labels; that figure
+# was the argmax over a coarse 7-point trajectory set, not over ALPHA_SCAN, and
+# it disagreed with the curve actually drawn. See Appendix G (alpha_crossover.py),
+# which characterises α* as the R→E channel crossover and resolves it to ≈0.135.
+I_STAR   = int(np.argmax(t_B_scan))
+A_STAR   = float(ALPHA_SCAN[I_STAR])
+TB_STAR  = float(t_B_scan[I_STAR])
 
 # Trajectory set: 7 representative α values for panels B/C/D
 ALPHA_TRAJ  = [0.0005, 0.005, 0.010, 0.020, 0.030, 0.060, 0.100, 0.180, 0.280, 0.380, 0.98, 1.9, 4.5, 20.0, 30.0, 70.0, 120.0, 300.0, 800.0, 10000.0]
@@ -148,7 +173,7 @@ print(f"\nBaseline α = {BASE['alpha']:.3f}  →  t_B = {trajs[BASE['alpha']][0]
 BG = '#f7f9fc'
 fig, axes = plt.subplots(2, 2, figsize=(14, 10), facecolor=BG)
 fig.suptitle(
-    r'VBLS — $\alpha$ sensitivity: non-monotonic $t_B(\alpha)$ with optimum $\alpha^* \approx 0.10$ yr$^{-1}$'
+    rf'VBLS — $\alpha$ sensitivity: non-monotonic $t_B(\alpha)$ with optimum $\alpha^* \approx {A_STAR:.3f}$ yr$^{{-1}}$'
     '\n'
     r'Active regime ($\alpha < \alpha^*$): $\alpha\uparrow$ $\Rightarrow$ $\eta_{abs}\downarrow$ $\Rightarrow$ $F_{diss}\downarrow$'
     r' $\Rightarrow$ $\Sigma\downarrow$ $\Rightarrow$ $t_B\uparrow$  |  '
@@ -169,14 +194,23 @@ ax_a.axvline(BASE['alpha'], color='#c0392b', lw=1.5, ls='--',
              label=f"Baseline α = {BASE['alpha']:.3f}")
 ax_a.axhspan(75, 83, alpha=0.12, color='#27ae60', label='WHO target 75–83 yr')
 
-# Mark trajectory points
+# Mark trajectory points — ONLY those inside the scan window.
+# ALPHA_TRAJ deliberately runs out to α = 10000 to expose the collapse regime in
+# panels B/C/D. Scattering those points here too dragged panel A's autoscaled
+# x-axis out to 10^4 and squashed the whole t_B(α) curve into an invisible sliver
+# at the origin — the panel showed a column of dots instead of the non-monotonic
+# shape its caption describes. Restrict to the scan window and pin the limits.
+A_LO, A_HI = float(ALPHA_SCAN[0]), float(ALPHA_SCAN[-1])
 for a, col in zip(ALPHA_TRAJ, TRAJ_COLORS):
-    tB = trajs[a][0]
-    ax_a.scatter([a], [tB], color=col, s=55, zorder=5)
+    if A_LO <= a <= A_HI:
+        ax_a.scatter([a], [trajs[a][0]], color=col, s=55, zorder=5)
+ax_a.set_xlim(0.0, A_HI * 1.02)
 
 ax_a.set_xlabel(r'$\alpha$ (yr$^{-1}$)', fontsize=10)
 ax_a.set_ylabel(r'$t_B$ (yr)', fontsize=10)
-ax_a.set_title(r'(A)  $t_B$ vs $\alpha$  — non-monotonic: optimum $\alpha^* \approx 0.10$ yr$^{-1}$',
+ax_a.axvline(A_STAR, color='#27ae60', lw=1.5, ls='-', zorder=3,
+             label=fr"Optimum $\alpha^*$ = {A_STAR:.3f}")
+ax_a.set_title(rf'(A)  $t_B$ vs $\alpha$  — non-monotonic: optimum $\alpha^* \approx {A_STAR:.3f}$ yr$^{{-1}}$',
                fontsize=10.5)
 ax_a.legend(fontsize=8.5, framealpha=0.8)
 ax_a.text(0.98, 0.06,
@@ -184,7 +218,7 @@ ax_a.text(0.98, 0.06,
           '\n'
           r'$\alpha > \alpha^*$: $t_B\downarrow$ (collapse of $\eta_{abs}$)'
           '\n'
-          r'$\alpha^* \approx 0.10$ yr$^{-1}$  →  $t_B^{max} \approx 88.8$ yr',
+          rf'$\alpha^* \approx {A_STAR:.3f}$ yr$^{{-1}}$  →  $t_B^{{max}} \approx {TB_STAR:.1f}$ yr',
           transform=ax_a.transAxes, ha='right', va='bottom',
           fontsize=8.5, color='#2c3e50',
           bbox=dict(boxstyle='round,pad=0.35', fc='white', ec='#aaa', alpha=0.85))
@@ -278,8 +312,8 @@ for a in ALPHA_TRAJ:
     marker = ' ← baseline' if abs(a - BASE['alpha']) < 1e-4 else ''
     print(f"  {a:>8.3f}  {tB:>10.1f}  {delta:>+12.1f}  {pct:>+9.1f}%{marker}")
 print(f"{'='*62}")
-print(f"\nConclusion: non-monotonic t_B(α) with optimum α* ≈ 0.10 yr⁻¹ (t_B = 88.8 yr).")
-print(f"Calibrated α = 0.030 yr⁻¹ lies in the α-active regime, ~3× below α*.")
+print(f"\nConclusion: non-monotonic t_B(α) with optimum α* = {A_STAR:.3f} yr⁻¹ (t_B = {TB_STAR:.1f} yr).")
+print(f"Calibrated α = {BASE['alpha']:.3f} yr⁻¹ lies in the α-active regime, ~{A_STAR/BASE['alpha']:.1f}× below α*.")
 print(f"Biological interpretation: humans trade lifespan maximisation for metabolic")
 print(f"intensity (reproduction, activity), operating below the theoretical optimum.")
 print(f"Qualitatively consistent with caloric restriction / rate-of-living observations.")
