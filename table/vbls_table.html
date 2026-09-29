@@ -130,7 +130,7 @@ const GROUPS = {
   "1-2": { name: "Natural minima with full memory",       desc: "Smallest autonomous genome (M. genitalium) · radiation-conditional boundary (Cladosporium)" },
   "2-1": { name: "Prokaryotes with frozen memory",        desc: "γ ≫ 1 · frozen via Mechanism B (α_bact ≪ α_euk)" },
   "2-2": { name: "Ultra-minimal free-living",             desc: "Oligotrophs near 𝓜min" },
-  "2-3": { name: "𝓜min boundary — verified",              desc: "τ_div ≈ τ_regen · experimental limit" },
+  "2-3": { name: "𝓜min boundary — characterized",              desc: "τ_div ≈ τ_regen · experimental limit" },
   "2-4": { name: "Parasites with frozen memory",          desc: "γ < 1 · R_bal(own) < R*" },
   "3-4": { name: "Eukaryote with borrowed memory",         desc: "α(own) > 0 retained, but powered by host · R_bal(own) < R* · R_bal(eff) > R*" },
   "3-5": { name: "Hyper-reduced endosymbionts",           desc: "Genome < 200 genes · ρ ≈ 0 · type II" },
@@ -295,9 +295,9 @@ const CELLS = {
   }],
   "2-3": [{
     name:"JCVI-syn3.0", italic:false, star:true,
-    genes:"473", gamma:"≈ 1.0–1.05", D:"≈ R*", B_hbar:"~2×10²¹", tau:"1.08 ★", phi:"~10⁻¹⁵ W",
+    genes:"473", gamma:"≈ 1.0–1.05", D:"≈ R*", B_hbar:"~2×10²¹", tau:"1.00 ★", phi:"~10⁻¹⁵ W",
     memory:"Frozen", status:"AT 𝓜min",
-    note:"τ_div ≈ τ_regen (§13.3, eq. 13.7) — experimental point on the boundary. Removal of 8 repair genes shifts to mutator mode. Direct laboratory verification of 𝓜min as a practically achievable limit."
+    note:"τ_div = τ_regen (§13.3, eq. 13.7). The equality is exact by construction: ν_info for syn3.0 is computed as I/τ_div, so τ_regen = I/ν_info = τ_div — it fixes the boundary condition, it does not independently test it. Removal of 8 repair genes shifts to mutator mode; syn3.0 is the experimentally characterized point at 𝓜min."
   }],
   "2-4": [{
     name:"Mycoplasma pneumoniae", italic:true,
