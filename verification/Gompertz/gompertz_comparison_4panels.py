@@ -54,12 +54,15 @@ NO-CHERRY-PICKING NOTES
       a mid-life window (stated explicitly), so the young-age and old-age
       DEVIATIONS remain visible rather than hidden by a global fit.
     * Panel D contains analytic *schematic* curves (clearly labelled) whose only
-      purpose is to show the three qualitative regimes and how a single control
-      parameter nu_eff = nu_0 + nu*Sigma_late maps onto them.
+      purpose is to show the qualitative regimes: two of them (pure Gompertz and
+      the plateau) are set by the single control parameter
+      nu_eff = nu_0 + nu*Sigma_late, while the Makeham background A is not set
+      by nu_eff and comes from a separate fast channel (§16.2.6).
 
 Dependencies: numpy, scipy, matplotlib
-Run:          python gompertz_vbls_4panels.py
-Output:       picture/gompertz_vbls_4panels.png
+Run:          python gompertz_comparison_4panels.py
+Output:       gompertz_comparison_4panels.png in the working directory
+              (the monograph uses a copy in picture/)
 ================================================================================
 """
 
@@ -221,14 +224,16 @@ ax.set_title('(C) Empirical hazard vs Gompertz line')
 ax.legend(fontsize=9)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Panel D — Three observable regimes as corners of ONE model (schematic, analytic)
+# Panel D — Two regimes set by nu_eff, plus the Makeham background (schematic)
 # ══════════════════════════════════════════════════════════════════════════════
 # These curves are explicitly ANALYTIC and SCHEMATIC (no data, no fitting). Their
 # sole purpose is to show that one control parameter, nu_eff = nu_0 + nu*Sigma_late
-# (which sets the hazard slope b ∝ nu_eff, §16.2.4 Step 5), maps onto the three
-# textbook mortality regimes (§16.2.6) WITHOUT changing the model structure:
+# (which sets the hazard slope b ∝ nu_eff, §16.2.4 Step 5), maps onto two textbook
+# mortality regimes (§16.2.6) WITHOUT changing the model structure, while the
+# additive Makeham background A is NOT set by nu_eff (a separate fast channel):
 #   * pure Gompertz     : nu ~ 0  => nu_eff = nu_0 (low)  => gentle straight line
-#   * Gompertz–Makeham  : same slope + age-independent background A => low-age floor
+#   * Gompertz–Makeham  : same slope + age-independent background A (outside
+#                          nu_eff) => low-age floor
 #   * plateau           : Sigma_late -> 1 => nu_eff at its ceiling nu_0 + nu (high)
 #                          => steepest early rise, then SATURATES (deceleration)
 # The constants below are chosen only for visual separation of the three shapes.
@@ -253,12 +258,12 @@ ax = axes[1, 1]
 ax.semilogy(t_d, mu1, color='steelblue', lw=2.2,
             label='Pure Gompertz ($\\nu\\approx0$)')
 ax.semilogy(t_d, mu2, color='darkorange', lw=2.2, linestyle='-.',
-            label='Gompertz–Makeham ($\\nu>0$)')
+            label='Gompertz–Makeham (+ background $A$)')
 ax.semilogy(t_d, mu3, color='seagreen', lw=2.2, linestyle='--',
             label='Plateau ($\\Sigma_{late}\\to1$)')
 ax.set_xlabel('Age (years)')
 ax.set_ylabel('Mortality intensity $\\mu(t)$')
-ax.set_title('(D) Three regimes: single parameter $\\nu_{eff}$')
+ax.set_title('(D) Two regimes from $\\nu_{eff}$, plus background $A$')
 ax.legend(fontsize=9)
 ax.set_xlim(30, 110)
 ax.set_ylim(1e-4, 1.5)
