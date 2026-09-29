@@ -55,7 +55,7 @@ def Phi_in(t):
 
 
 def Phi_cap(t):
-    return 0.003 * np.exp(-max(0.0, t - 40.0) * 0.008)
+    return 0.003
 
 
 def _rhs(t, y, alpha):

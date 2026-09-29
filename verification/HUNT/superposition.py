@@ -14,7 +14,7 @@ VBLS — Section 12.5 — Extended model: superposition of degradation channels
 Part 1: Three models (M1 VBLS / M2 VBLS+HR / M3 VBLS+HR+PAI)
 Part 2: Calibration analysis: Tls=75 vs Tls=82 vs T_max=122
 
-Data: HUNT4 (Stensvold et al. 2020, Prog.Cardiovasc.Dis. 63:85-91)
+Data: HUNT4 (Letnes et al. 2020, Prog.Cardiovasc.Dis. 63(6):730-737)
 """
 
 import numpy as np
@@ -77,10 +77,9 @@ def Phi_in(t):
 
 
 def Phi_cap(t):
-    """Entropy-export capacity — slow decline after age 40."""
+    """Entropy-export capacity — a property of the environment, constant over the life cycle."""
     baseline    = 0.003
-    age_decline = max(0.0, t - 40.0) * 0.008
-    return baseline * np.exp(-age_decline)
+    return baseline
 
 
 def vbls_run(t_end, sigma0, n=15000):
@@ -125,14 +124,22 @@ def dsig_at(ages, sigma0, t_end=None):
     ])
 
 
+# Ten-year decline per age decade, read off figure 3 (right panel) of
+# Letnes, Nes & Wisloff, Int.J.Cardiol.Cardiovasc.Risk Prev. 16:200171
+# (2023), which redraws the HUNT trajectories of Letnes et al. (2020)
+# separately by sex. That figure gives the annual decline in percent;
+# the decade value is ten times it, as the review's own text confirms
+# (men after 70 approach 25% per decade in both HUNT and BLSA).
+D_MEN = np.array([5.0, 5.6, 10.4, 12.8, 15.5, 24.5])
+
+
 def cumtraj(avg_decline_per_decade):
     """
     Normalised longitudinal HUNT4 trajectory for a given mean decade decline.
-    Nonlinear shape via quadratic reconstruction:
-      d(k) = (3 + 4.15k − 0.15k²) × scale
+    The shape is the measured profile D_MEN; only its level is moved, so the
+    activity strata share one shape and differ in mean decline.
     """
-    k = np.arange(6)
-    d = (3.0 + 4.15 * k - 0.15 * k**2) * (avg_decline_per_decade / 12.0)
+    d = D_MEN * (avg_decline_per_decade / D_MEN.mean())
     d = np.clip(d, 0.3, 30.0)
     traj = [1.0]
     for x in d:
@@ -166,16 +173,14 @@ AGES_FINE = np.linspace(25, 90, 200)
 S0_BASE = 0.0162
 
 # HUNT4 data by PAI group
-H4_MEN   = cumtraj(12.0)   # mean
+H4_MEN   = cumtraj(D_MEN.mean())   # mean
 H4_INACT = cumtraj(15.0)
 H4_MOD   = cumtraj(9.0)
 H4_HI    = cumtraj(5.0)
 
-# PAI scale factors (physical activity intensity modulates sigma0)
-# Re-tuned for canonical sigma0 = 0.0162 (June 2026): each fit to its group's decade decline.
-SC_INACT = 1.094
-SC_MOD   = 0.879
-SC_HI    = 0.621
+# PAI scale factors (physical activity intensity modulates sigma0).
+# Fitted below, once K2, B2, G2 are known: each group keeps the common
+# mapping and differs only through sigma0_eff = sigma0 * scale.
 
 # ── Model M1: VBLS only ───────────────────────────────────────────────────────
 DSIG_BASE = dsig_at(AGES, S0_BASE)
@@ -209,6 +214,27 @@ def model2(ages, dsig, g=None):
     return model2_local(K2, B2, g, ages, dsig)
 
 # ── Pre-compute ΔΣ for continuous curves ─────────────────────────────────────
+# ── PAI scale factors, fitted at fixed K2, B2, G2 ─────────────────────────────
+def fit_scale(target):
+    """Fit sigma0 scale so that M2 reproduces the group's trajectory."""
+    def loss(s):
+        if s[0] <= 0.05 or s[0] > 5.0:
+            return 1e6
+        return float(np.sum((model2(AGES, dsig_at(AGES, S0_BASE * s[0]))
+                             - target) ** 2))
+    res = minimize(loss, [1.0], method='Nelder-Mead',
+                   options={'xatol': 1e-6, 'fatol': 1e-14, 'maxiter': 4000})
+    return float(res.x[0])
+
+
+SC_INACT = fit_scale(H4_INACT)
+SC_MOD   = fit_scale(H4_MOD)
+SC_HI    = fit_scale(H4_HI)
+print(f"PAI scales: inactive={SC_INACT:.3f}  moderate={SC_MOD:.3f}  "
+      f"high={SC_HI:.3f}")
+print(f"  sigma0_eff: {S0_BASE*SC_INACT:.4f}  {S0_BASE*SC_MOD:.4f}  "
+      f"{S0_BASE*SC_HI:.4f}   ratio={SC_INACT/SC_HI:.2f}")
+
 DSIG_BASE_F  = dsig_at(AGES_FINE, S0_BASE)
 DSIG_INACT_F = dsig_at(AGES_FINE, S0_BASE * SC_INACT)
 DSIG_MOD_F   = dsig_at(AGES_FINE, S0_BASE * SC_MOD)
@@ -396,7 +422,8 @@ for name, s0, t_end in calibrations:
     pred = np.array([max(1 - k * (s ** b), 0.0) for s in dsig])
     rmse = float(np.sqrt(np.mean((pred - H4_MEN) ** 2)))
     calib_results[name] = dict(s0=s0, k=k, b=b, rmse=rmse, dsig=dsig, pred=pred)
-    print(f"  {name:>24}  {s0:.4f}  {k:.4f}  {b:.4f}  {rmse:.4f}")
+    print(f"  {name:>24}  {s0:.4f}  {k:.4f}  {b:.4f}  {rmse:.4f}"
+          f"  dSigma(75)={dsig[5]:.4f}")
 
 # ── FIGURE 2: calibrations ─────────────────────────────────────────────────────
 

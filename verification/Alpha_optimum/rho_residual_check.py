@@ -12,7 +12,7 @@ BASE = dict(mu=1.50, lam=0.30, sigma_0=0.0162, nu_0=0.006, nu=0.060,
 IC = [0.10, 0.01, 0.96, 0.99]
 E_RANGE = IC[0]-BASE['E_star']; T_MAX=130.0
 def Phi_in(t):  return (1-np.exp(-t/10))*np.exp(-max(0.0,t-60)/30)
-def Phi_cap(t): return 0.003*np.exp(-max(0.0,t-40)*0.008)
+def Phi_cap(t): return 0.003
 
 def rhs(t,y,alpha,rho):
     E,S,eta,R=y

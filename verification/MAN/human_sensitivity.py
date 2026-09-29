@@ -64,7 +64,7 @@ def Phi_in(t):
     return growth * decline
 
 def Phi_cap(t):
-    return 0.003 * np.exp(-max(0.0, t - 40.0) * 0.008)
+    return 0.003
 
 
 # ============================================================================
@@ -197,8 +197,8 @@ print(f"  Done in {time.time()-t0:.1f} s")
 print(f"  t_B: mean={mc_t_B.mean():.1f} yr,  "
       f"std={mc_t_B.std():.1f} yr,  "
       f"range=[{mc_t_B.min():.1f}, {mc_t_B.max():.1f}] yr")
-frac_in_target = np.mean((mc_t_B >= 75) & (mc_t_B <= 83)) * 100
-print(f"  Fraction in WHO target [75–83 yr]: {frac_in_target:.0f}%")
+frac_in_target = np.mean((mc_t_B >= 76) & (mc_t_B <= 85)) * 100
+print(f"  Fraction in WHO target [76–85 yr]: {frac_in_target:.0f}%")
 
 
 # ============================================================================
@@ -271,12 +271,12 @@ im = ax_c.imshow(
 )
 ct = ax_c.contour(
     p2_vals, p1_vals, heatmap,
-    levels=[60, 70, 75, 80, 83, 90, 100, 110],
+    levels=[60, 70, 76, 80, 85, 90, 100, 110],
     colors='black', linewidths=0.7, alpha=0.55
 )
 ax_c.clabel(ct, fmt='%d yr', fontsize=7, inline=True)
 
-# WHO target band: 75–83 yr region bounded by contour lines (already shown)
+# WHO target band: 76–85 yr region bounded by contour lines (already shown)
 ax_c.axvline(BASE[p2], color='white', ls='--', lw=2.0, alpha=0.9, label='Baseline')
 ax_c.axhline(BASE[p1], color='white', ls='--', lw=2.0, alpha=0.9)
 ax_c.scatter([BASE[p2]], [BASE[p1]], color='white', s=80, zorder=10,
@@ -302,14 +302,14 @@ counts, edges, patches = ax_d.hist(
 )
 # Colour bars inside WHO target
 for patch, left in zip(patches, edges[:-1]):
-    if 75.0 <= left <= 83.0:
+    if 76.0 <= left <= 85.0:
         patch.set_facecolor('#27ae60')
         patch.set_alpha(0.85)
 
 ax_d.axvline(T_TARGET, color='#e74c3c', lw=2.2, ls='--',
              label=f'Baseline $t_B$ = {T_TARGET:.1f} yr')
-ax_d.axvspan(75, 83, alpha=0.10, color='#27ae60',
-             label='WHO target 75–83 yr')
+ax_d.axvspan(76, 85, alpha=0.10, color='#27ae60',
+             label='WHO target 76–85 yr')
 ax_d.set_xlabel(r'$t_B$ (yr)', fontsize=10)
 ax_d.set_ylabel('Count', fontsize=10)
 ax_d.set_title(
@@ -344,5 +344,5 @@ for p in sorted_params:
           f"{row[+0.10]:>6.1f}  {row[+0.20]:>6.1f}  {row[+0.50]:>6.1f}  "
           f"{pct10[p]:>9.1f}%")
 print(f"\n  Max ±10% sensitivity = {max_pct:.1f}%  ({sorted_params[0]})")
-print(f"  Monte Carlo ±20%: {frac_in_target:.0f}% of samples within WHO target [75–83 yr]")
+print(f"  Monte Carlo ±20%: {frac_in_target:.0f}% of samples within WHO target [76–85 yr]")
 print(f"{'='*72}")

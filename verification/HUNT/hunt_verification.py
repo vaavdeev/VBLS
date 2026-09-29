@@ -14,13 +14,13 @@ VBLS — Section 12.5 — Verification of eta_abs(t) against HUNT3/HUNT4 data
 Data:
   - HUNT3: Loe et al. (2013) PLoS ONE 8(5):e64319
     N=3816, direct VO2max measurement, ages 20–90 yr
-  - HUNT4: Stensvold et al. (2020) Prog. Cardiovasc. Dis. 63:85–91
+  - HUNT4: Letnes et al. (2020) Prog. Cardiovasc. Dis. 63(6):730–737
     N=1431 repeated measurements over 10 yr
   - FRIEND: Kaminsky et al. (2019) Mayo Clin. Proc. — for ages 70–89
 
 Logic:
   1. HUNT3 cross-sectional data
-  2. HUNT4 longitudinal data (reconstructed via quadratic interpolation)
+  2. HUNT4 longitudinal data (decade declines read off Letnes 2023, fig.3)
   3. VBLS simulation (sigma0=0.0162, final calibration April 2026)
   4. Mapping: VO2max/VO2max_0 = 1 - k*(ΔΣ)^beta, k and beta fit by minimize()
   5. Panel D: Sigma(t) and eta_abs(t) vs cumulative VO2max decline
@@ -84,10 +84,9 @@ def Phi_in(t):
 
 
 def Phi_cap(t):
-    """Entropy-export capacity — slow decline after age 40 (kidney/lung clearance)."""
+    """Entropy-export capacity — a property of the environment, constant over the life cycle."""
     baseline    = 0.003
-    age_decline = max(0.0, t - 40.0) * 0.008
-    return baseline * np.exp(-age_decline)
+    return baseline
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -143,12 +142,16 @@ NM_WOM    = VO2_WOM / VO2_WOM[0]
 SD_REL_M  = 8.4  / 54.4
 SD_REL_W  = 7.7  / 43.0
 
-# HUNT4 longitudinal — reconstructed via quadratic interpolation
-# Boundary conditions: d(k=0)=3%, d(k=5)=20%, mean=12% (men), 10% (women)
+# HUNT4 longitudinal
+# Ten-year decline per age decade, read off figure 3 (right panel) of
+# Letnes, Nes & Wisloff, Int.J.Cardiol.Cardiovasc.Risk Prev. 16:200171
+# (2023), which redraws the HUNT trajectories of Letnes et al. (2020)
+# separately by sex. That figure gives the annual decline in percent;
+# the decade value is ten times it, as the review's own text confirms
+# (men after 70 approach 25% per decade in both HUNT and BLSA).
 AGES_LONG = np.array([25, 35, 45, 55, 65, 75, 85])
-k_arr     = np.arange(6)
-d_men_pct = 3.0 + 4.15 * k_arr - 0.15 * k_arr**2   # decade decline, men
-d_wom_pct = 3.0 + 2.80 * k_arr                       # decade decline, women
+d_men_pct = np.array([5.0, 5.6, 10.4, 12.8, 15.5, 24.5])
+d_wom_pct = np.array([3.1, 5.9, 10.3, 11.2, 13.6, 12.8])
 
 def cumulative_traj(d_pct):
     """Cumulative normalised trajectory from vector of decade declines."""

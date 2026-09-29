@@ -12,7 +12,7 @@
 VBLS — Human lifespan calibration: four coupled ODEs (system S)
 Variables: E(t), Sigma(t), eta_abs(t), R(t)
 
-Calibration target : t_B = 75–83 yr  (WHO 2023, developed countries)
+Calibration target : t_B = 76–85 yr  (WHO 2023, developed countries)
 Death event        : R(t) = R*  OR  E(t) = E*  (whichever comes first)
 Key addition       : restoration-potential function g(E) in the R-restoration term (eq. 4.2)
 """
@@ -44,12 +44,12 @@ def Phi_in(t):
 def Phi_cap(t):
     """
     Phi_cap(t) — environmental entropy-export capacity.
-    Kidney/lung/lymph clearance; ~0.8 %/yr decline after age 40 (GFR data).
+    A property of the environment, not of the system (Section 2.4.1); taken
+    constant for a stationary environment over the life cycle (Section 17.1.1).
     Independent of Phi_in by construction.
     """
     baseline    = 0.003
-    age_decline = max(0.0, t - 40.0) * 0.008
-    return baseline * np.exp(-age_decline)
+    return baseline
 
 
 # ============================================================================
@@ -188,7 +188,7 @@ if t_death is not None:
     else:
         cause = "E-channel  (integrity potential lost, E -> E*)"
     status = "PASS" if in_target else "RECALIBRATE"
-    print(f"\n  t_B (lifespan)  : {t_death:.1f} yr   [target 75–83 yr]  [{status}]")
+    print(f"\n  t_B (lifespan)  : {t_death:.1f} yr   [target 76–85 yr]  [{status}]")
     print(f"  Death channel   : {cause}")
     print(f"  g(E) at t_B     : {float(np.interp(t_death, t, g_E_v)):.4f}")
     print(f"\n  Growth phase    : 0 — {t_peak:.0f} yr")

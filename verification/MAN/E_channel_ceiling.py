@@ -59,7 +59,7 @@ def Phi_in_plateau(t):
     return 1.0 - np.exp(-t / 10.0)        # grows to 1, NO senescent decline
 
 def Phi_cap_human(t):
-    return 0.003 * np.exp(-max(0.0, t - 40.0) * 0.008)
+    return 0.003
 
 def Phi_cap_const(t):
     return 0.003

@@ -9,7 +9,7 @@
   LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-mde_hunt_aic.py
+hunt_aic.py
 VBLS — Appendix D.2.9 — AIC comparison
 eta_abs ~ exp(-alpha*int(Sigma)) vs simple exponential and alternatives
 
@@ -22,7 +22,8 @@ Models:
 
 Selection criterion: AICc (Akaike corrected for small samples)
 Data: HUNT4 men — 7 age groups (25, 35, 45, 55, 65, 75, 85 yr)
-      reconstructed from Stensvold et al. (2020) Prog.Cardiovasc.Dis. 63:85-91
+      men's decade declines from Letnes, Nes & Wisloff (2023) fig.3,
+      redrawing Letnes et al. (2020) Prog.Cardiovasc.Dis. 63(6):730-737
 """
 
 import numpy as np
@@ -50,8 +51,7 @@ def Phi_in(t):
 
 def Phi_cap(t):
     baseline    = 0.003
-    age_decline = max(0.0, t - 40.0) * 0.008
-    return baseline * np.exp(-age_decline)
+    return baseline
 
 # ── VBLS ODE simulation ────────────────────────────────────────────────────────
 def vbls_run(t_end=140, n=15000):
@@ -79,12 +79,17 @@ Sig_ = sol.y[1]
 eta_ = sol.y[2]
 print("  Done.")
 
-# ── HUNT4 data (reconstructed from Stensvold et al. 2020) ─────────────────────
+# ── HUNT4 data ────────────────────────────────────────────────────────────
 AGES    = np.array([25, 35, 45, 55, 65, 75, 85], dtype=float)
 N_DATA  = len(AGES)
 
-k_arr     = np.arange(6)
-d_men_pct = 3.0 + 4.15 * k_arr - 0.15 * k_arr**2   # quadratic fit to published deciles
+# Ten-year decline per age decade, read off figure 3 (right panel) of
+# Letnes, Nes & Wisloff, Int.J.Cardiol.Cardiovasc.Risk Prev. 16:200171
+# (2023), which redraws the HUNT trajectories of Letnes et al. (2020)
+# separately by sex. That figure gives the annual decline in percent;
+# the decade value is ten times it, as the review's own text confirms
+# (men after 70 approach 25% per decade in both HUNT and BLSA).
+d_men_pct = np.array([5.0, 5.6, 10.4, 12.8, 15.5, 24.5])
 
 def cumulative(d_pct):
     traj = [1.0]
@@ -93,18 +98,23 @@ def cumulative(d_pct):
     return np.array(traj)
 
 VO2_OBS = cumulative(d_men_pct)
-print(f"\nHUNT4 men (reconstructed):")
+print(f"\nHUNT4 men:")
 for a, v in zip(AGES, VO2_OBS):
     print(f"  age {int(a):3d}: {v:.4f}")
 
 # ── AICc helper ───────────────────────────────────────────────────────────────
-def aicc(rss, n, k):
+def aicc(rss, n, p):
     """
-    AICc = n*ln(RSS/n) + 2k + 2k(k+1)/(n-k-1)
-    Uses Gaussian MLE; RSS = sum of squared residuals.
+    AICc = n*ln(RSS/n) + 2K + 2K(K+1)/(n-K-1),  K = p + 1
+    Gaussian MLE; RSS = sum of squared residuals. In the least-squares form the
+    residual variance is itself an estimated parameter and is counted in K
+    (Burnham & Anderson 2002, p.63), hence K = p + 1 for p structural
+    parameters. At n = 7 the correction term is nonlinear in K, so omitting the
+    variance does not cancel between models of unequal p.
     """
-    aic = n * np.log(rss / n) + 2 * k
-    corr = 2 * k * (k + 1) / max(n - k - 1, 1)
+    K = p + 1
+    aic = n * np.log(rss / n) + 2 * K
+    corr = 2 * K * (K + 1) / max(n - K - 1, 1)
     return aic + corr
 
 # ── M1: VBLS ──────────────────────────────────────────────────────────────────
@@ -291,7 +301,7 @@ ax.plot(AGES_FINE, vo2_m4,   ':',   color='#e67e22', lw=1.8,
         label=f'M4 Power-law   AICc={aic4:.1f}  ΔAICc={aic4-aic3b:.1f}')
 ax.set_xlabel('Age (yr)')
 ax.set_ylabel('VO₂max / VO₂max(25 yr)')
-ax.set_title('A.  Model fits to HUNT4 (men, reconstructed)\nAICc comparison', fontweight='bold')
+ax.set_title('A.  Model fits to HUNT4 (men)\nAICc comparison', fontweight='bold')
 ax.legend(fontsize=8.5, framealpha=0.95, loc='lower left')
 
 # Panel B — eta_abs shape
@@ -332,4 +342,4 @@ ax.set_ylim(0.50, 1.05)
 
 plt.savefig('hunt_aic.png', dpi=180, bbox_inches='tight')
 plt.close()
-print("\nSaved: mde_hunt_aic.png")
+print("\nSaved: hunt_aic.png")
