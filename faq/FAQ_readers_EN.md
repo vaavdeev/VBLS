@@ -10,9 +10,9 @@ This document collects the questions that typically come up on a first reading o
 
 **Isn't it obvious that any system with irreversible damage will eventually fail? What does the theorem actually add?**
 
-Even within the class of systems VBLS considers, finiteness is not automatic: under an exact balance of parameters, a system could in principle sustain a stationary state indefinitely. The theorem proves that the specific structure of the equations rules out that scenario for any bounded external resource flow. What carries the proof is the mechanism of irreversible memory: the record of damage does not decay, so the accumulated integral grows without bound and the efficiency of resource assimilation tends to zero. The separation of timescales between the fast integrity potential and the slow repair reserve does not enter the proof itself — it serves only as a motivating picture and in the treatment of the second death channel.
+Even within the class of systems VBLS considers, finiteness is not automatic: if the export of damage covers its production, a system could in principle sustain a stationary state indefinitely. The theorem proves that the specific structure of the equations rules out that scenario for any bounded external resource flow. What carries the proof is the mechanism of irreversible memory: the record of damage does not decay, so the accumulated integral grows without bound and the efficiency of resource assimilation tends to zero. The separation of timescales between the fast integrity potential and the slow repair reserve does not enter the proof itself — it serves only as a motivating picture and in the treatment of the second death channel.
 
-The value of the result lies less in the bare fact that lifetime is finite than in what the theorem delivers: an explicit bound linking lifetime to the system's parameters; a proof that the guarantee comes specifically from the nonlocal, cumulative memory mechanism, not from the mere accumulation of damage; and a foundation from which the viability boundary is later derived (section 11).
+The value of the result lies less in the bare fact that lifetime is finite than in what the theorem delivers: an explicit bound in terms of the system's parameters, which certifies finiteness but does not set the scale of lifespan; a proof that the guarantee of finiteness comes from the irreversibility of the trace that damage leaves on assimilation efficiency, not from the mere accumulation of damage; and a foundation from which the viability boundary is later derived (section 11).
 
 **Doesn't the non-degeneracy condition amount to a loophole that makes the theorem unfalsifiable?**
 
@@ -53,7 +53,7 @@ It is indeed a strong assumption, but a physically grounded one. The repair rese
 
 **The death channel through the integrity potential shows almost no sensitivity of the final lifetime to the parameters that govern it. Does this mean this channel can't be tested experimentally?**
 
-Zero sensitivity is a property of one specific, and most common, regime (where the repair-reserve channel dominates) — not a sign that the mechanism itself is untestable. First, this is a regime property: as soon as dominance shifts to the integrity-potential channel (which can be modeled by weakening the mechanisms responsible for the first channel), the parameters of the second channel immediately become significant for the final lifetime. Second, there is direct observational support: in some long-lived species with a suppressed first channel, death does occur while the repair reserve is still high — that is, precisely through the second channel. Third, the theory makes a quantitative, testable prediction about the conditions under which sensitivity to the second channel's parameters should become detectable.
+Zero sensitivity is a property of one specific, and most common, regime (where the repair-reserve channel dominates) — not a sign that the mechanism itself is untestable. First, this is a regime property: as soon as dominance shifts to the integrity-potential channel (which can be modeled by weakening the mechanisms responsible for the first channel), the parameters of the second channel immediately become significant for the final lifetime. Second, there is an observational indication: in some long-lived species with a suppressed first channel, death occurs while the repair reserve is still high, which is consistent with the second channel at work. Third, the theory makes a quantitative, testable prediction about the conditions under which sensitivity to the second channel's parameters should become detectable.
 
 **Isn't the spontaneous-decay rate parameter of the repair reserve just the well-known Hayflick limit (the cap on the number of cell divisions) under another name?**
 
@@ -103,7 +103,7 @@ A deeper question remains — about identity, the analogue of the Ship of Theseu
 
 ---
 
-## 4. Structural entropy and nonlocal memory
+## 4. Structural entropy and cumulative (non-decaying) memory
 
 **Is structural entropy $\Sigma$ the same thing as Boltzmann entropy? How would one measure it in practice?**
 
@@ -147,7 +147,7 @@ No — this is the expected fraction, not a sign of instability, and here is why
 
 It helps to separate three different levels of claim here. The first is the memory mechanism itself as part of a rigorous mathematical result (Section 1): this is a proved fact about the structure of the equations, independent of what data happens to be available today. The second is the general empirical profile — that the rate of aging depends on history rather than only on the current state: this is supported by independent observations. The third is the specific mathematical form of that dependence: here, on the data currently available, there genuinely is no way to statistically distinguish the proposed form from a few reasonable alternatives — and this is openly acknowledged as a subject for further testing, not concealed. Conflating these three levels is what creates the impression that "the central idea hasn't been tested," when in fact only the finest, third level remains untested.
 
-**The nonlocal memory mechanism is claimed as the theory's central novelty. But couldn't all the confirmed cross-species regularities be explained without it — by combining already-known laws (Kleiber's metabolic scaling, the correlation between telomere length and lifespan, classical reliability theory)? Doesn't Occam's razor cut this mechanism away as redundant?**
+**The cumulative, non-decaying memory mechanism is claimed as the theory's central novelty. But couldn't all the confirmed cross-species regularities be explained without it — by combining already-known laws (Kleiber's metabolic scaling, the correlation between telomere length and lifespan, classical reliability theory)? Doesn't Occam's razor cut this mechanism away as redundant?**
 
 The honest answer: the regularities confirmed to date do not, on their own, single out memory. The product of mutation-accumulation rate and lifespan, the link between telomere-shortening rate and lifespan, can, if one wishes, be reproduced without a separate memory mechanism. As for the quantity with the dimension of action introduced in the work, its scaling with mass is not an independent check at all: under the adopted method of computation it reduces algebraically to the metabolic allometry, and the work now states this outright. Were the theory resting on results of that kind alone, Occam's razor would be fair.
 
@@ -185,7 +185,7 @@ No, this is an expected transient. At the very first moment, the incoming resour
 
 **Where does the specific quadratic form of the dissipation function come from? Is it a rigorous derivation from Onsager thermodynamics?**
 
-Not a rigorous derivation, but a structural reference point. The quadratic form is the most economical nonlinear form with the right boundary behavior (zero dissipation at zero potential, strict monotonic growth). Onsager's linear irreversible thermodynamics (1931) served as a reference point when choosing this form, but cannot be derived from directly: it holds near equilibrium, whereas the systems under consideration are far from it. Importantly, the finite lifetime theorem itself is proved for any dissipation function with these same general qualitative properties — the specific quadratic form is not critical to the proof, only to the quantitative calculations.
+Not a rigorous derivation, but a structural reference point. The dissipation function has two terms, one linear and one quadratic in the potential $E$. Onsager's linear irreversible thermodynamics (1931) corresponds to the linear term: near equilibrium, dissipation is proportional to the stock of potential itself, and for small $E$ this term is exact. The quadratic term is the most economical correction for the nonlinear growth of dissipation far from equilibrium; it cannot be derived from Onsager's theory, which holds only close to equilibrium. Importantly, the finite lifetime theorem itself is proved for any dissipation function with the same general qualitative properties (zero dissipation at zero potential, strictly monotonic growth): the specific form matters for the quantitative calculations, not for the proof.
 
 **What exactly is the "integrity potential" — is it energy? What are its units?**
 
