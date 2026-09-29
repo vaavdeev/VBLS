@@ -47,9 +47,9 @@ plt.rcParams.update({
     'figure.dpi':        150,
 })
 
-T_REF = 77.6
+T_REF = 76.9
 BASE = dict(
-    mu=1.50, lam=0.30, sigma0=0.018, alpha=0.060,
+    mu=1.50, lam=0.30, sigma0=0.0162, alpha=0.030,
     nu0=0.006, nu=0.060, rho=0.002,
     R_star=0.15, E_star=0.04,
 )
@@ -67,7 +67,7 @@ SPECIES = [
     ("Horse",      57.0,  30.0),
     ("Chimpanzee", 59.0,  40.0),
     ("Elephant",   86.0,  60.0),
-    ("Human",     122.5,  77.6),
+    ("Human",     122.5,  76.9),
 ]
 
 # ── Two Phi_in variants ─────────────────────────────────────────────────────
@@ -102,7 +102,9 @@ def system(t, y, p, T_ls, phi_func):
     dE   = eta * phi_func(t_norm) - diss
     dS   = max(0., p['sigma0']*diss - R*0.003)
     deta = -p['alpha']*S*eta
-    dR   = -p['nu0']*R - p['nu']*S*R + p['rho']*(1-S)*(1-R)
+    # Restoration requires active synthesis — gated by g(E), formula (4.2).
+    g_E  = max(0.0, min(1.0, (E - p['E_star']) / (Y0[0] - p['E_star'])))
+    dR   = -p['nu0']*R - p['nu']*S*R + p['rho']*g_E*(1-S)*(1-R)
     return [dE,dS,deta,dR]
 
 def run(T_ls, phi_func):

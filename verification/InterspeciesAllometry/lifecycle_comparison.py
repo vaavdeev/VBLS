@@ -45,11 +45,11 @@ plt.rcParams.update({
     'figure.dpi':        150,
 })
 
-# ── Reference parameters (Human, T_ref = 77.6 yr — population calibration) ──
-T_REF = 77.6   # mean human lifespan — calibration baseline
+# ── Reference parameters (Human, T_ref = 76.9 yr — population calibration) ──
+T_REF = 76.9   # human population lifespan — calibration baseline (Section 17.1)
 
 BASE = dict(
-    mu=1.50, lam=0.30, sigma0=0.018, alpha=0.060,
+    mu=1.50, lam=0.30, sigma0=0.0162, alpha=0.030,
     nu0=0.006, nu=0.060, rho=0.002,
     R_star=0.15, E_star=0.04,
 )
@@ -69,7 +69,7 @@ SPECIES = [
     ("Horse",      57.0,  30.0,  "lit."),
     ("Chimpanzee", 59.0,  40.0,  "lit."),
     ("Elephant",   86.0,  60.0,  "AnAge / lit."),
-    ("Human",     122.5,  77.6,  "AnAge / WHO"),
+    ("Human",     122.5,  76.9,  "AnAge / WHO"),
 ]
 
 def Phi_in(t_norm):
@@ -98,7 +98,9 @@ def system(t, y, p, T_scale):
     dE   = eta*Phi_in(t_norm) - diss
     dS   = max(0., p['sigma0']*diss - R*Phi_cap())
     deta = -p['alpha']*S*eta
-    dR   = -p['nu0']*R - p['nu']*S*R + p['rho']*(1-S)*(1-R)
+    # Restoration requires active synthesis — gated by g(E), formula (4.2).
+    g_E  = max(0.0, min(1.0, (E - p['E_star']) / (Y0[0] - p['E_star'])))
+    dR   = -p['nu0']*R - p['nu']*S*R + p['rho']*g_E*(1-S)*(1-R)
     return [dE,dS,deta,dR]
 
 def run(T_scale):
@@ -214,7 +216,7 @@ ax_sum.set_xlabel('T_observed (yr)', fontsize=9)
 ax_sum.set_ylabel('t_B model (yr)', fontsize=9)
 ax_sum.set_title(
     'Summary: model t_B vs observed T  |  11 species\n'
-    'Systematic ~40% underestimate in Variant A is explained by calibration on human T_ls',
+    'Both variants underestimate; the shortfall grows for short-lived species',
     fontsize=9, fontweight='bold'
 )
 ax_sum.legend(fontsize=9, framealpha=0.93)

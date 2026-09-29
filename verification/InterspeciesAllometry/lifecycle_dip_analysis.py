@@ -40,10 +40,10 @@ plt.rcParams.update({
     'figure.dpi':        150,
 })
 
-T_REF     = 77.6
+T_REF     = 76.9
 PHI_BIRTH = 0.45
 
-BASE = dict(mu=1.50, lam=0.30, sigma0=0.018, alpha=0.060,
+BASE = dict(mu=1.50, lam=0.30, sigma0=0.0162, alpha=0.030,
             nu0=0.006, nu=0.060, rho=0.002, R_star=0.15, E_star=0.04)
 Y0 = [0.10, 0.01, 0.96, 0.99]
 
@@ -58,7 +58,7 @@ SPECIES = [
     ("Horse",      57.0,  30.0),
     ("Chimpanzee", 59.0,  40.0),
     ("Elephant",   86.0,  60.0),
-    ("Human",     122.5,  77.6),
+    ("Human",     122.5,  76.9),
 ]
 
 def Phi_in_A(t_norm):
@@ -84,7 +84,9 @@ def system(t, y, p, T_ls, phi_f):
     return [eta*phi_f(t/T_ls) - d,
             max(0., p['sigma0']*d - R*0.003),
             -p['alpha']*S*eta,
-            -p['nu0']*R - p['nu']*S*R + p['rho']*(1-S)*(1-R)]
+            -p['nu0']*R - p['nu']*S*R
+            + p['rho']*max(0.0, min(1.0, (E - p['E_star'])/(Y0[0] - p['E_star'])))
+              *(1-S)*(1-R)]
 
 def run(T_ls, phi_f):
     p = scale(T_ls)
@@ -109,10 +111,14 @@ for name, Tmax, Tls in SPECIES:
     dip_depth = Y0[0] - dip_val
     dip_t_idx = np.argmin(early_A)
     dip_t = tA[dip_t_idx]
+    # Depth as a fraction of the starting value: the form that is comparable
+    # with the neonatal body-mass loss reported in the physiological literature.
+    dip_frac = dip_depth / Y0[0]
     res[name] = dict(tA=tA,yA=yA,tdA=tdA,tB=tB,yB=yB,tdB=tdB,
-                     Tls=Tls,Tmax=Tmax,dip_depth=dip_depth,dip_t=dip_t)
+                     Tls=Tls,Tmax=Tmax,dip_depth=dip_depth,dip_frac=dip_frac,
+                     dip_t=dip_t)
     print(f"  {name:<14} T_ls={Tls:5.1f}y  "
-          f"t_dip={dip_t:.3f}y  depth={dip_depth:.4f}  "
+          f"t_dip={dip_t:.3f}y  dE={dip_depth:.4f} ({dip_frac*100:.1f}% of E0)  "
           f"t_B(A)={tdA:.1f}y  t_B(B)={tdB:.1f}y  Δ={tdB-tdA:+.2f}y")
 
 # ── FIGURE 1: All species, E(t) for both variants ────────────────────────────
@@ -153,7 +159,7 @@ for idx,(name,Tmax,Tls) in enumerate(SPECIES):
     dt = r['tdB'] - r['tdA']
     ax.set_title(
         f'{name}  T_ls={Tls:.0f}y\n'
-        f'Dip:{r["dip_depth"]*100:.1f}%  t_dip={r["dip_t"]:.2f}y  '
+        f'Dip:{r["dip_frac"]*100:.1f}% of E0  t_dip={r["dip_t"]:.2f}y  '
         f'Δt_B={dt:+.1f}y',
         fontsize=7.5, pad=2
     )
@@ -195,7 +201,7 @@ ax1.axhline(BASE['E_star'], color='gray', ls=':', lw=1, alpha=0.6)
 
 if r['dip_depth'] > 0.003:
     ax1.annotate(
-        f'Dip: −{r["dip_depth"]*100:.1f}%\nt_dip = {r["dip_t"]:.1f} yr',
+        f'Dip: −{r["dip_frac"]*100:.1f}% of $E_0$\nt_dip = {r["dip_t"]:.1f} yr',
         xy=(r['dip_t'], Y0[0]-r['dip_depth']),
         xytext=(r['dip_t']+5, Y0[0]-r['dip_depth']-0.01),
         fontsize=9, color=CA,
