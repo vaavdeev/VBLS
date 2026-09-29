@@ -1,9 +1,7 @@
 ﻿Genus;Species;Common name;Class;Order;M_kg;T_obs;T_allom;ratio;log_ratio;param;mechanism
 Plethodon;cinereus;Eastern red-backed salamander;Amphibia;Caudata;0.001;25.0;2.61;9.577;0.981;—;—
 Sphenodon;punctatus;Tuatara;Reptilia;Rhynchocephalia;0.43;90.0;10.397;8.656;0.937;nu0 down;"Tuatara: relict reptilian metabolism, body temperature ~12-18C; New Zealand isolation"
-Somniosus;microcephalus;Greenland shark;Chondrichthyes;Squaliformes;400.0;392.0;46.154;8.493;0.929;nu0 down down (T down down);"Polar waters (~0C): nu0 suppressed by 2-3 orders of magnitude compared to endotherms; ectotherm + slow growth"
 Myotis;lucifugus;Little brown bat;Mammalia;Chiroptera;0.006;34.0;4.066;8.362;0.922;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
-Aldabrachelys;gigantea;Aldabra giant tortoise;Reptilia;Testudines;110.0;255.0;34.83;7.321;0.865;nu0 down + sigma0 down;Tortoises: extremely slow metabolism, ectotherm, powerful antioxidant defense in shell
 Ambystoma;tigrinum;Tiger salamander;Amphibia;Caudata;0.003;25.0;3.574;6.995;0.845;—;—
 Anaxyrus;americanus;American toad;Amphibia;Anura;0.022;36.0;5.416;6.647;0.823;—;—
 Ambystoma;maculatum;Spotted salamander;Amphibia;Caudata;0.013;32.0;4.832;6.623;0.821;—;—
@@ -193,4 +191,4 @@ Didelphis;marsupialis;Southern opossum;Mammalia;Didelphimorphia;1.244;4.2;13.108
 Metachirus;nudicaudatus;Brown four-eyed opossum;Mammalia;Didelphimorphia;0.336;3.0;9.853;0.304;-0.516;—;—
 Echymipera;rufescens;Long-nosed echymipera;Mammalia;Peramelemorphia;0.887;3.1;12.174;0.255;-0.594;—;—
 Chironectes;minimus;Water opossum (yapok);Mammalia;Didelphimorphia;0.94;3.1;12.332;0.251;-0.6;—;—
-Lutreolina;crassicaudata;Lutrine opossum;Mammalia;Didelphimorphia;0.812;2.9;11.943;0.243;-0.615;—;—
+Lutreolina;crassicaudata;Lutrine opossum;Mammalia;Didelphimorphia;0.812;2.9;11.943;0.243;-0.615;rho down;Opossums: r-strategist life history, evolutionarily low investment in repair

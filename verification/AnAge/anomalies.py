@@ -38,19 +38,24 @@ Theoretical basis (VBLS, section 13):
   4   | low       | high stress         | sigma0 up
   5   | low       | weak repair         | rho down
 
+Scope — one class per baseline:
+  The regression is fitted on Mammalia, so only Mammalia are scored against
+  it. Poikilotherms deviate from a homeotherm baseline by construction, and
+  such a deviation measures the class difference, not the species. Species
+  outside Mammalia are handled separately, each against its own class; see
+  the cross-class block below.
+
 Sources:
   AnAge Build 14: Tacutu et al. (2018), Nucleic Acids Research
-  Greenland shark: Nielsen et al. (2016), Science 353:702
-  Aldabra tortoise: Swingland & Coe (1979); AnAge
   Bats: Wilkinson & South (2002), Aging Cell
 
 Usage:
   python anomalies.py
-  Output files: anomalies_table.csv, anomalies_fig.png/.pdf
+  Output files: anomalies_table.csv, anomalies_focal.csv,
+                anomalies_crossclass.csv, anomalies_fig.png/.pdf
 
 For reviewers:
   All computations are reproducible. Input data: anage_data.csv (public database).
-  Additional species (Greenland shark) added manually from publications.
   Parameter B* = 0.32 J·s·kg^(-5/4) — from section 13 of VBLS.
 """
 
@@ -79,18 +84,6 @@ ALPHA_THEOR = 0.250     # theoretical exponent VBLS
 
 EXTRA_SPECIES = [
     # (Genus, Species, Common, Order, Class, M_kg, T_max_yrs, Source, Notes)
-    ('Somniosus',      'microcephalus', 'Greenland shark',
-     'Squaliformes',   'Chondrichthyes',
-     400.0, 392.0,
-     'Nielsen et al. 2016, Science 353:702',
-     'Eye lens radiocarbon dating'),
-
-    ('Aldabrachelys',  'gigantea',      'Aldabra giant tortoise',
-     'Testudines',     'Reptilia',
-     110.0, 255.0,
-     'AnAge / Swingland & Coe 1979',
-     'Record Jonathan: 191+ years'),
-
     ('Geochelone',     'sulcata',       'Sulcata tortoise',
      'Testudines',     'Reptilia',
      90.0, 54.0,
@@ -147,16 +140,13 @@ ANOMALY_INTERP = {
         'Monotremes: low body temperature (30C vs 37C), '
         'torpor; van t Hoff rule: x2-3 per 10C'
     ),
-    'Somniosus': (
-        'nu0 down down (T down down)',
-        'Polar waters (~0C): nu0 suppressed by 2-3 orders of magnitude '
-        'compared to endotherms; ectotherm + slow growth'
+    'Lutreolina': (
+        'rho down',
+        'Opossums: r-strategist life history, evolutionarily low '
+        'investment in repair'
     ),
-    'Aldabrachelys': (
-        'nu0 down + sigma0 down',
-        'Tortoises: extremely slow metabolism, '
-        'ectotherm, powerful antioxidant defense in shell'
-    ),
+    # Scored against the Reptilia baseline, not the mammalian one — see the
+    # cross-class block.
     'Sphenodon': (
         'nu0 down',
         'Tuatara: relict reptilian metabolism, '
@@ -276,16 +266,19 @@ all_valid[['param', 'mechanism']] = pd.DataFrame(
 # 4. ANOMALY TABLE
 # ══════════════════════════════════════════════════════════════════════
 
+# Mammalia only: these are scored against the Mammalia regression.
 FOCAL_GENERA = [
     # Anomalously LONG-LIVED
     'Myotis', 'Eptesicus', 'Desmodus', 'Plecotus',
     'Heterocephalus', 'Homo', 'Tachyglossus',
-    'Somniosus', 'Aldabrachelys', 'Sphenodon',
     # Anomalously SHORT-LIVED
-    'Didelphis', 'Crocidura',
+    'Didelphis', 'Lutreolina', 'Crocidura',
 ]
 
-focal = all_valid[all_valid['Genus'].isin(FOCAL_GENERA)].copy()
+focal = all_valid[
+    (all_valid['Genus'].isin(FOCAL_GENERA)) &
+    (all_valid['Class'] == 'Mammalia')
+].copy()
 
 focal_best = []
 for genus in FOCAL_GENERA:
@@ -338,6 +331,65 @@ focal_df[save_cols].round(3).to_csv(
 print(f"Saved: anomalies_focal.csv  ({len(focal_df)} species)")
 
 # ══════════════════════════════════════════════════════════════════════
+# 5. CROSS-CLASS CHECK — each class against its own baseline
+# ══════════════════════════════════════════════════════════════════════
+#
+# A poikilotherm departs from a homeothermic regression by construction, so
+# a species outside Mammalia is scored against a baseline fitted on its own
+# class.
+
+print("\n" + "=" * 60)
+print("CROSS-CLASS CHECK (own-class baselines)")
+print("=" * 60)
+
+
+def class_fit(cls):
+    """Allometric fit within one class, on database records only."""
+    s = df_all[
+        (df_all['Class'] == cls) &
+        (df_all['Data quality'] != 'low') &
+        (~df_all['_extra'].astype(bool))
+    ].dropna(subset=['Body mass (g)', 'Maximum longevity (yrs)'])
+    s = s[(s['Body mass (g)'] > 0) & (s['Maximum longevity (yrs)'] > 0)]
+    if len(s) < 5:
+        return len(s), None
+    f = stats.linregress(np.log10(s['Body mass (g)']),
+                         np.log10(s['Maximum longevity (yrs)']))
+    return len(s), f
+
+
+crossclass_rows = []
+for cls in ('Reptilia', 'Chondrichthyes'):
+    n_cls, f = class_fit(cls)
+    if f is None:
+        print(f"\n  {cls}: {n_cls} usable records — no baseline can be fitted.")
+        continue
+    print(f"\n  {cls}: N={n_cls}, a={f.slope:.4f}, A={10**f.intercept:.4f}, "
+          f"R2={f.rvalue**2:.3f}, p={f.pvalue:.3f}")
+    for _, row in all_valid[all_valid['Class'] == cls].iterrows():
+        if str(row['Genus']) not in ANOMALY_INTERP:
+            continue
+        t_cls = 10**(f.intercept + f.slope * np.log10(row['Body mass (g)']))
+        crossclass_rows.append({
+            'Genus': row['Genus'], 'Species': row['Species'],
+            'Class': cls, 'M_kg': row['M_kg'], 'T_obs': row['T_obs'],
+            'T_allom_own_class': t_cls,
+            'ratio_own_class': row['T_obs'] / t_cls,
+            'T_allom_Mammalia': row['T_allom'],
+            'ratio_Mammalia': row['ratio'],
+            'baseline_N': n_cls, 'baseline_R2': f.rvalue**2,
+        })
+        print(f"    {row['Genus']} {row['Species']}: "
+              f"{row['ratio'] / (row['T_obs'] / t_cls):.2f}x inflation when "
+              f"scored against Mammalia "
+              f"({row['ratio']:.2f}x vs {row['T_obs'] / t_cls:.2f}x own class)")
+
+if crossclass_rows:
+    pd.DataFrame(crossclass_rows).round(3).to_csv(
+        'anomalies_crossclass.csv', index=False, sep=';', encoding='utf-8-sig')
+    print(f"\nSaved: anomalies_crossclass.csv  ({len(crossclass_rows)} species)")
+
+# ══════════════════════════════════════════════════════════════════════
 # 6. FIGURE
 # ══════════════════════════════════════════════════════════════════════
 
@@ -368,8 +420,11 @@ gs = gridspec.GridSpec(2, 3, figure=fig,
 axes = [fig.add_subplot(gs[i // 3, i % 3]) for i in range(6)]
 
 # --- PANEL A: T_max vs M with anomalies ---
+# Mammalia only: the line drawn here is the Mammalia fit, so only Mammalia
+# may be scored against it.
 ax = axes[0]
-for cls, grp in all_valid.groupby('Class'):
+mam_valid = all_valid[all_valid['Class'] == 'Mammalia']
+for cls, grp in mam_valid.groupby('Class'):
     if cls not in CLASS_COLORS:
         continue
     c = CLASS_COLORS[cls]
@@ -394,8 +449,7 @@ LABELS_A = {
     'Myotis':        ('Myotis spp.',        'up'),
     'Heterocephalus':('Naked mole-rat',     'right'),
     'Homo':          ('Human',              'right'),
-    'Somniosus':     ('Greenl. shark',      'up'),
-    'Aldabrachelys': ('Aldabra tortoise',   'up'),
+    'Tachyglossus':  ('Echidna',            'up'),
     'Didelphis':     ('Opossum',            'down'),
     'Crocidura':     ('Shrew',              'down'),
 }
@@ -421,7 +475,7 @@ ax.legend(fontsize=8, framealpha=0.9)
 
 # --- PANEL B: ratio vs M ---
 ax = axes[1]
-mam_plot = all_valid[all_valid['Class'].isin(['Mammalia','Reptilia','Chondrichthyes'])].copy()
+mam_plot = all_valid[all_valid['Class'] == 'Mammalia'].copy()
 for cls, grp in mam_plot.groupby('Class'):
     c = CLASS_COLORS.get(cls, '#95a5a6')
     ax.scatter(grp['M_kg'], grp['ratio'],
@@ -481,6 +535,11 @@ for i, (_, row) in enumerate(focal_sorted.iterrows()):
     ax.text(xval + offset, i, f'{row["ratio"]:.1f}x',
             va='center', ha=ha, fontsize=7.5, color='#333')
 
+# Room for the value labels at both ends, so the leftmost one does not
+# collide with the species names on the axis.
+_lr = np.log10(focal_sorted['ratio'])
+ax.set_xlim(_lr.min() - 0.14, _lr.max() + 0.14)
+
 # --- PANEL D: parameter typology table ---
 ax = axes[3]
 ax.axis('off')
@@ -491,7 +550,7 @@ type_data = [
     ['Strong repair (+)',   '>2',   'rho up',           'Highly efficient DNA repair\n(naked mole-rat, Homo)'],
     ['Low metabolism (+)',  '>2',   'sigma0_eff down',  'Antioxidants, slow turnover\n(tortoises, ectotherms)'],
     ['Hibernation (+)',     '>2',   'nu0 down (seas.)', 'Effective < chronological lifespan\n(bats: Myotis, Plecotus)'],
-    ['Polar cold (+)',      '>10',  'nu0 << mammal',    'T~0C: degradation x100 slower\n(Greenland shark)'],
+    ['Lowered body T (+)',  '>2',   'nu0 down (T)',     'van t Hoff: x2-3 per 10C\n(echidna, 30-32C)'],
     ['r-strategist (-)',    '<0.5', 'rho down',         'Evolutionarily low repair invest.\n(opossums, mice)'],
 ]
 
@@ -535,9 +594,12 @@ M_bat = np.logspace(-3, 0, 100)
 ax.plot(M_bat, 10**(intercept + slope * np.log10(M_bat * 1000)),
         'k--', lw=1.5, alpha=0.5, label='Allom. norm (Mammalia)')
 
+# Label text is built from the computed ratios.
 bat_labels = {
-    'lucifugus': 'M. lucifugus\n34yr (6.6x)',
-    'auritus':   'P. auritus\n30yr (5.3x)',
+    str(row['Species']): '%s. %s\n%.0fyr (%.1fx)' % (
+        str(row['Genus'])[0], row['Species'], row['T_obs'], row['ratio'])
+    for _, row in bats_data.iterrows()
+    if str(row['Species']) in ('lucifugus', 'auritus')
 }
 for _, row in bats_data.iterrows():
     if str(row['Species']) in bat_labels and row['ratio'] > 4:
@@ -559,42 +621,55 @@ ax.legend(fontsize=8.5, framealpha=0.9)
 ax = axes[5]
 ax.axis('off')
 
+def focal_ratio(genus):
+    """Observed ratio for a focal genus, taken from the computed table."""
+    sub = focal_df[focal_df['Genus'] == genus]
+    return float(sub.iloc[0]['ratio']) if len(sub) else float('nan')
+
+
 summary = """VBLS interpretation of anomalies: key conclusions
 
 ^ ANOMALOUSLY LONG-LIVED:
 
-Chiroptera (Myotis, x6.6):
+Chiroptera (Myotis, x{myotis:.1f}):
   sigma0_eff down from flight — AMPK/FOXO3 activation
   of antioxidants reduces ROS production despite
   high metabolism. The flight paradox.
 
-Heterocephalus glaber (x4.3):
+Heterocephalus glaber (x{nmr:.1f}):
   rho up — PARP1 x3, ribosomal fidelity up,
   hypoxic adaptation -> low ROS
 
-Homo sapiens (x4.2):
+Homo sapiens (x{homo:.1f}):
   rho_eff up via medicine and social protection;
   biological rho not unique, but cultural
   'additional rho' is species-specific
 
-Somniosus microcephalus (x~100):
-  nu0 down down down at T~0C: van't Hoff rule
-  gives x2-3 per 10C -> x100+ over 40C
+Tachyglossus aculeatus (x{echidna:.1f}):
+  nu0 down — body temperature 30-32C against 37C
+  in placentals; van't Hoff slows degradation
 
 v ANOMALOUSLY SHORT-LIVED:
 
-Crocidura (x0.3):
+Crocidura (x{shrew:.2f}):
   sigma0 up — metabolism 35 W/kg, heart
   1200 bpm -> maximal ROS
 
-Didelphis (x0.28):
+Didelphis (x{opossum:.2f}):
   rho down — r-strategist, evolutionarily optimized
   for reproduction, not longevity
 
 ------------------------------------------
 All anomalies -> one parameter of system (S).
-No anomaly requires exclusion from the theory.
-"""
+Mammalia only: one class, one baseline.
+""".format(
+    myotis=focal_ratio('Myotis'),
+    nmr=focal_ratio('Heterocephalus'),
+    homo=focal_ratio('Homo'),
+    echidna=focal_ratio('Tachyglossus'),
+    shrew=focal_ratio('Crocidura'),
+    opossum=focal_ratio('Didelphis'),
+)
 
 ax.text(0.03, 0.97, summary,
         transform=ax.transAxes,
