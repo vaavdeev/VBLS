@@ -24,7 +24,13 @@ Outputs (printed and written to paper1_numbers.out.txt):
      continuation, Sigma_crit, the explicit E-channel bound;
   2. memory-sensitivity scan t_B(alpha), both branches, Brent maximisation;
   3. memory-kernel example in a constant environment: permanent versus
-     decaying kernel, same parameters and initial state.
+     decaying kernel, same parameters and initial state; the bound (9) in this
+     environment; a damage-free start of the canonical system;
+  4. an example satisfying the conditions (P1)-(P4) of Proposition 3 (start at
+     E(t_A) = 0.12): crossings of the production-export kink, finite-difference
+     slopes of t_B(alpha) at zero, and the same slope from the variational system;
+  5. the setting of 3 with Phi_cap alternating around the same mean: the
+     worst-phase margin of Proposition 1(b) and the resulting lifetimes.
 Figures: paper1_fig1.png and paper1_fig2.png, written next to this script.
 """
 
@@ -78,8 +84,9 @@ def rhs(t, y, p, phi_in, phi_cap, kappa):
 
 
 def run(p, phi_in, phi_cap, T, kappa=0.0, max_step=0.05, rtol=1e-9, atol=1e-12, method='RK45', n_out=4000,
-        log_grid=False):
-    y0 = [IC['E'], IC['S'], 0.0, IC['R']]
+        log_grid=False, y0=None):
+    if y0 is None:
+        y0 = [IC['E'], IC['S'], 0.0, IC['R']]
 
     def eE(t, y):
         return y[0] - p['E_star']
@@ -168,6 +175,9 @@ def main():
     say('Brent: alpha* = %.4f, t_B^max = %.3f (t_B^R = %.3f, t_B^E = %.3f)' % (a_star, min(e_s, r_s), r_s, e_s))
     say('t_B at alpha = 0.005: %.3f (%s); at alpha = 0.30: %.3f (%s)'
         % (tBs[0], 'R' if tRs[0] < tEs[0] else 'E', tBs[-1], 'R' if tRs[-1] < tEs[-1] else 'E'))
+    e_0, r_0 = branches(0.0)
+    say('alpha = 0 (no memory): t_B^R = %.3f, t_B^E on continuation = %.3f; the declining inflow alone '
+        'closes the potential channel' % (r_0, e_0))
 
     # 3. memory-kernel example ------------------------------------------------
     phi_in_k = lambda t: 1.0
@@ -176,7 +186,7 @@ def main():
     say('')
     say('== 3. Memory kernel: constant Phi_in = 1, Phi_cap = 0.1, horizon %.0f' % T_k)
     kern = {}
-    for name, kappa in (('permanent (K = 1)', 0.0), ('decaying (tau_K = 100)', 0.01)):
+    for name, kappa in (('permanent (K = 1)', 0.0), ('decaying (kappa = 0.01)', 0.01)):
         s, e, r = run(P, phi_in_k, phi_cap_k, T=T_k, kappa=kappa, max_step=2.0, rtol=1e-9, atol=1e-12,
                       method='LSODA', n_out=6000, log_grid=True)
         kern[name] = (s, e, r)
@@ -190,6 +200,111 @@ def main():
     R_low = P['rho'] * (1 - IC['S']) / (P['rho'] * (1 - IC['S']) + P['nu0'] + P['nu'] * IC['S'])
     say('proof check: E_plus = %.5f, sigma0 F(E_plus) = %.5f, R_low = R_bal(Sigma0) = %.5f, '
         'required Phi_cap > %.5f' % (E_plus, P['sigma0'] * F(E_plus, P), R_low, P['sigma0'] * F(E_plus, P) / R_low))
+    bound_k, _, _ = explicit_bound(P, 1.0)
+    e_perm = kern['permanent (K = 1)'][1]
+    say('bound (9) in this environment (Phi_max = 1, t_1 = t_A) = %.1f; t_B^E of the permanent trace = %.1f; '
+        'ratio %.3f' % (bound_k, e_perm, bound_k / e_perm))
+    # A damage-free state of the canonical system (K = 1) in the same environment:
+    # the argument of Proposition 1(b) with Sigma_0 = 0 (viability kernel not empty).
+    s_nd, e_nd, r_nd = run(P, phi_in_k, phi_cap_k, T=T_k, kappa=0.0, max_step=2.0, rtol=1e-9, atol=1e-12,
+                           method='LSODA', n_out=6000, log_grid=True, y0=[IC['E'], 0.0, 0.0, IC['R']])
+    R_bal0 = P['rho'] / (P['rho'] + P['nu0'])
+    say('damage-free start (Sigma_0 = 0, K = 1): t_B^E = %s, t_B^R = %s, max Sigma on [0, %.0f] = %.1e, '
+        'R_bal(0) = %.4f, Phi_cap * R_bal(0) = %.4f'
+        % (('%.1f' % e_nd) if np.isfinite(e_nd) else 'none', ('%.1f' % r_nd) if np.isfinite(r_nd) else 'none',
+           T_k, s_nd.y[1].max(), R_bal0, 0.1 * R_bal0))
+
+    # 4. Proposition 3: an example satisfying (P1)-(P4) -------------------------
+    # The illustrative set started above E_0, so that restoration is saturated
+    # on the whole life (P2); E_0 = 0.10 stays the constant of the field (5).
+    y0_p3 = [0.12, IC['S'], 0.0, IC['R']]
+    kw = dict(max_step=0.01, rtol=1e-11, atol=1e-13, n_out=200, y0=y0_p3)
+    p0 = dict(P, alpha=0.0)
+    s0, e0, r0 = run(p0, phi_in_canonical, phi_cap_c, T=100.0, **kw)
+    T0 = min(e0, r0)
+    tt0 = np.linspace(0.0, T0, 200001)
+    Y0 = s0.sol(tt0)
+    h = P['sigma0'] * np.array([F(e, P) for e in Y0[0]]) - 0.003 * Y0[3]
+    idx = np.where(np.sign(h[1:]) != np.sign(h[:-1]))[0]
+    j = int(np.argmin(Y0[0][1:])) + 1
+    say('')
+    say('== 4. Proposition 3: illustrative set started at E(t_A) = 0.12 (alpha = 0; rtol 1e-11, max_step 0.01)')
+    say('t_B = %.4f, channel = %s; min E on (t_A, t_B] = %.4f at t = %.2f (E_0 = %.2f); max Sigma on [t_A, t_B] = %.3f'
+        % (T0, 'R' if r0 < e0 else 'E', Y0[0][j], tt0[j], P['E0'], Y0[1].max()))
+    for k in idx:
+        tc = tt0[k]
+        d = rhs(tc, s0.sol(tc), p0, phi_in_canonical, phi_cap_c, 0.0)
+        dh = P['sigma0'] * (2 * P['mu'] * Y0[0][k] + P['lam']) * d[0] - 0.003 * d[3]
+        say('production-export kink crossed at t = %.3f, d/dt(production - export) = %.3e' % (tc, dh))
+    after = bool(len(idx)) and bool(np.all(h[idx[-1] + 1:] > 0))
+    dRT = rhs(T0, s0.sol(T0), p0, phi_in_canonical, phi_cap_c, 0.0)[3]
+    say('dR/dt at t_B = %.5f; production exceeds export from the last crossing to t_B: %s' % (dRT, after))
+    for a in (1e-5, 1e-4, 1e-3):
+        _, ea, ra = run(dict(P, alpha=a), phi_in_canonical, phi_cap_c, T=100.0, **kw)
+        say('alpha = %g: t_B = %.6f, (t_B - t_B(0))/alpha = %.1f' % (a, min(ea, ra), (min(ea, ra) - T0) / a))
+
+    # Variational system of Appendix A along the alpha = 0 trajectory; g = 1
+    # there, since E > E_0 on the whole life. u = (u_eta, u_E, u_Sigma, u_R).
+    def rhs_var(t, y):
+        E, S, H, R = y[:4]
+        u_eta, u_E, u_S, u_R = y[4:]
+        Fp = 2 * P['mu'] * E + P['lam']
+        chi = 1.0 if P['sigma0'] * F(E, P) > 0.003 * R else 0.0
+        a_c = P['nu0'] + P['nu'] * S + P['rho'] * max(0.0, 1.0 - S)
+        b_c = P['nu'] * R + P['rho'] * (1.0 - R) * (1.0 if S < 1.0 else 0.0)
+        du = [-IC['eta'] * S,
+              -Fp * u_E + phi_in_canonical(t) * u_eta,
+              chi * (P['sigma0'] * Fp * u_E - 0.003 * u_R),
+              -a_c * u_R - b_c * u_S]
+        return list(rhs(t, y[:4], p0, phi_in_canonical, phi_cap_c, 0.0)) + du
+
+    sv = solve_ivp(rhs_var, [0.0, T0], y0_p3 + [0.0] * 4, rtol=1e-11, atol=1e-13, max_step=0.01,
+                   dense_output=True)
+    U = sv.sol(np.linspace(0.0, T0, 20001))
+    say('variational system: u_R(t_B) / |dR/dt(t_B)| = %.2f; max u_E = %.1e, max u_Sigma = %.1e, min u_R = %.1e'
+        % (sv.y[7][-1] / abs(dRT), U[5].max(), U[6].max(), U[7].min()))
+
+    # 5. Worst phase of the environment ---------------------------------------
+    # Setting of section 3, but Phi_cap alternates between lo and hi with
+    # half-period 1 (low phase first); integrated piecewise between its jumps.
+    def run_square(lo, hi, kappa, T, half=1.0):
+        y = [IC['E'], IC['S'], 0.0, IC['R']]
+        t, low = 0.0, True
+        while t < T:
+            t1 = min(t + half, T)
+            cap = lo if low else hi
+
+            def eE(tt, yy):
+                return yy[0] - P['E_star']
+            eE.direction = -1
+
+            def eR(tt, yy):
+                return yy[3] - P['R_star']
+            eR.direction = -1
+            s = solve_ivp(lambda tt, yy, c=cap: rhs(tt, yy, P, phi_in_k, lambda u: c, kappa), [t, t1], y,
+                          rtol=1e-9, atol=1e-12, events=[eE, eR])
+            hits = [(s.t_events[i][0], 'ER'[i], s.y_events[i][0]) for i in (0, 1) if len(s.t_events[i])]
+            if hits:
+                return min(hits, key=lambda z: z[0])
+            y = list(s.y[:, -1])
+            t, low = t1, not low
+        return np.inf, '-', np.array(y)
+
+    say('')
+    say('== 5. Worst phase: Phi_in = 1, Phi_cap alternating with half-period 1, low phase first')
+    for lo, hi in ((0.06, 0.14), (0.08, 0.12)):
+        say('Phi_cap %.2f/%.2f: worst phase Phi_cap_min * R_low = %.5f, sigma0 F(E_bar) = %.5f'
+            % (lo, hi, lo * R_low, P['sigma0'] * F(E_plus, P)))
+        for name, kappa in (('decaying (kappa = 0.01)', 0.01), ('permanent (K = 1)', 0.0)):
+            if lo == 0.08 and kappa == 0.0:
+                continue
+            tb, ch, yb = run_square(lo, hi, kappa, T_k)
+            if np.isfinite(tb):
+                say('  %-24s t_B = %.1f via %s, Sigma(t_B) = %.4f, Sigma(t_B) - Sigma0 = %.1e'
+                    % (name, tb, ch, yb[1], yb[1] - IC['S']))
+            else:
+                say('  %-24s no exit up to %.0f, Sigma - Sigma0 = %.1e, eta = %.4f, E = %.4f, R = %.4f'
+                    % (name, T_k, yb[1] - IC['S'], eta_of(yb[2], P), yb[0], yb[3]))
 
     with open(os.path.join(HERE, 'paper1_numbers.out.txt'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(out) + '\n')
@@ -199,7 +314,7 @@ def main():
     t = np.linspace(0, 130, 2601)
     Y = sol.sol(t)
     alive = t <= tB
-    for k, (lab, col) in enumerate((('$E$', 'C0'), ('$\\Sigma$', 'C3'), ('$\\eta_{abs}$', 'C2'), ('$R$', 'C1'))):
+    for k, (lab, col) in enumerate((('$E$', 'C0'), ('$\\Sigma$', 'C3'), ('$\\eta$', 'C2'), ('$R$', 'C1'))):
         v = eta_of(Y[2], P) if k == 2 else Y[k]
         ax[0].plot(t[alive], v[alive], color=col, lw=1.8, label=lab)
         ax[0].plot(t[~alive], v[~alive], color=col, lw=1.0, ls=':')
@@ -233,19 +348,32 @@ def main():
 
     # Figure 2 ---------------------------------------------------------------
     fig, ax = plt.subplots(1, 2, figsize=(10.5, 3.8))
-    styles = {'permanent (K = 1)': ('k', '-'), 'decaying (tau_K = 100)': ('C2', '-')}
+    styles = {'permanent (K = 1)': 'k', 'decaying (kappa = 0.01)': 'C2'}
     for name, (s, e, r) in kern.items():
-        col, ls = styles[name]
+        col = styles[name]
+        t_end = min(e, r)
         tt_k = s.t[1:]
-        ax[0].semilogx(tt_k, eta_of(s.y[2][1:], P), color=col, ls=ls, lw=1.6, label=name.replace('tau_K', '$\\tau_K$'))
-        ax[1].semilogx(tt_k, s.y[0][1:], color=col, ls='-', lw=1.6, label='$E$, ' + name.split(' ')[0])
-        ax[1].semilogx(tt_k, s.y[3][1:], color=col, ls='--', lw=1.2, label='$R$, ' + name.split(' ')[0])
+        alive = tt_k <= t_end
+        short = name.split(' ')[0]
+        for a, v, ls, lw, lab in ((ax[0], eta_of(s.y[2][1:], P), '-', 1.6, name.replace('kappa', '$\\kappa$')),
+                                  (ax[1], s.y[0][1:], '-', 1.6, '$E$, ' + short),
+                                  (ax[1], s.y[3][1:], '--', 1.2, '$R$, ' + short)):
+            a.semilogx(tt_k[alive], v[alive], color=col, ls=ls, lw=lw, label=lab)
+            if (~alive).any():
+                a.semilogx(tt_k[~alive], v[~alive], color=col, ls=':', lw=1.0)
+        if np.isfinite(t_end):
+            for a in ax:
+                a.axvline(t_end, color=col, lw=0.8, ls='-.')
+            ax[1].text(t_end * 0.62, 0.92, '$t_B$', fontsize=9, color=col)
+    e_perm = kern['permanent (K = 1)'][1]
+    ax[1].axvline(e_perm, color='0.5', lw=0.8, ls=':')
+    ax[1].text(e_perm * 1.08, 0.80, '$t_B^E$', fontsize=9, color='0.35')
     ax[1].axhline(P['E_star'], color='0.5', lw=0.8, ls=':')
     ax[1].axhline(P['R_star'], color='0.5', lw=0.8, ls=':')
     ax[1].text(0.012, P['E_star'] + 0.015, '$E^*$', fontsize=9, color='0.35')
     ax[1].text(0.012, P['R_star'] + 0.015, '$R^*$', fontsize=9, color='0.35')
     ax[0].set_xlabel('time (model units)')
-    ax[0].set_ylabel('$\\eta_{abs}$')
+    ax[0].set_ylabel('$\\eta$')
     ax[0].legend(frameon=False, fontsize=9, loc='lower left')
     ax[0].set_title('(a) assimilation efficiency', fontsize=10, loc='left')
     ax[1].set_xlabel('time (model units)')
