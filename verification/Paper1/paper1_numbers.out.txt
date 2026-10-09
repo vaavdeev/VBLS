@@ -1,0 +1,17 @@
+== 1. Illustrative trajectory (exact field, rtol 1e-9, max_step 0.05)
+t_B = 76.978  channel = R   (t_B^R = 76.978, t_B^E on continuation = 132.030)
+state at t_B: E = 0.3324, Sigma = 0.6625, eta = 0.4489, R = 0.1500
+min E on [0, 2] = 0.0910
+Sigma_crit = 0.07477
+Phi_max = sup Phi_in = 0.99752; eps* = F(E*)/2 = 0.00720; E_bar = 0.70524
+explicit E-channel bound = 16393.6  (ratio to t_B = 213.0)
+
+== 2. Memory-sensitivity scan (exact field, rtol 1e-8, max_step 0.1)
+grid argmax: alpha = 0.1350, t_B = 93.605
+Brent: alpha* = 0.1344, t_B^max = 93.706 (t_B^R = 93.706, t_B^E = 93.707)
+t_B at alpha = 0.005: 73.037 (R); at alpha = 0.30: 76.977 (E)
+
+== 3. Memory kernel: constant Phi_in = 1, Phi_cap = 0.1, horizon 20000
+permanent (K = 1)        t_B^E = 14001.4, t_B^R = 11564.3, max(Sigma - Sigma0) on [0, t_B] = 0.00e+00, eta(T) = 0.0000, E(T) = 0.0000, R(T) = 0.0000
+decaying (tau_K = 100)   t_B^E = none, t_B^R = none, max(Sigma - Sigma0) on [0, t_B] = 0.00e+00, eta(T) = 0.9316, E(T) = 0.6944, R(T) = 0.2308
+proof check: E_plus = 0.70623, sigma0 F(E_plus) = 0.01555, R_low = R_bal(Sigma0) = 0.23077, required Phi_cap > 0.06739
