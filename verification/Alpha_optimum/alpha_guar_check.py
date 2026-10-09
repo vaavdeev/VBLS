@@ -8,39 +8,36 @@
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
 
-VBLS — Sturm bound alpha_guar for the H1 monotonicity closure (Appendix G.4).
+VBLS — Sturm bound alpha_guar for the auxiliary equation of Appendix G.4.
 
-WHAT THIS REPLACES
-------------------
-An earlier draft of G.4 bounded the forced oscillator
-      Ẅ + k(t) W = Σ̇,   k(t) = α σ₀ Φ_in(t) η_abs(t),   W(t_A)=0, Ẇ(t_A)=Σ₀>0
-by a WKB "accumulated-phase" argument (W stays positive while ∫√k dt < π). That
-step silently assumed (i) k(t) is slowly varying — false, since η_abs(t) decays on
-the very timescale in question — and (ii) positivity of the Green's function on the
-first half-period. Neither was proved.
+THE AUXILIARY EQUATION
+----------------------
+With W := d/d(alpha)[alpha * int Sigma], the exact equation in the adiabatically reduced
+system is  Ẅ + k(t) W = Σ̇ − α Φ_cap u_R,  k(t) = α σ₀ Φ_in(t) η_abs(t).  The last term is
+the response of the export R·Φ_cap to α; the adiabatic reduction does not remove it.
+Dropping it gives the auxiliary equation (a forced oscillator)
+      Ẅ + k(t) W = Σ̇,   W(t_A)=0, Ẇ(t_A)=Σ₀,
+for which this script evaluates the sufficient condition below. It is an argument for the
+rising branch, not a proof of its monotonicity for (S) (Appendix G.4, G.5).
 
-THE RIGOROUS REPLACEMENT (Sturm comparison, no WKB, no slow-variation assumption)
----------------------------------------------------------------------------------
-k(t) = α σ₀ Φ_in(t) η_abs(t) ≤ K := α σ₀ Φ_max η₀,   with Φ_max = sup_t Φ_in(t), η₀ = η_abs(t_A).
-By the Sturm comparison theorem, the first zero after t_A of any solution of Ẅ + k W = 0
-with W(t_A)=0, Ẇ(t_A)>0 occurs no earlier than the first zero of the constant-coefficient
-comparison equation Ẅ + K W = 0, i.e. no earlier than t_A + π/√K. Up to that first
-conjugate point the causal Green's function H(t,s) of the operator is POSITIVE (standard
-for a Hill operator before its first conjugate point). Hence with the nonnegative forcing
-Σ̇ ≥ 0 and the positive homogeneous part Σ₀·φ(t),
-      W(t) = Σ₀ φ(t) + ∫_{t_A}^t H(t,s) Σ̇(s) ds > 0   for all t_A < t ≤ t_B,
-provided the whole life interval fits inside the first half-period:
-      t_B − t_A < π/√K   ⟺   α < α_guar := π² / [σ₀ Φ_max η₀ (t_B − t_A)²].
+STURM COMPARISON (no slow-variation assumption on k)
+----------------------------------------------------
+k(t) ≤ k̄ := α σ₀ Φ_max η₀, with Φ_max = sup_t Φ_in(t), η₀ = η_abs(t_A). By the Sturm comparison
+theorem, the first zero after s of a solution of Ẅ + k W = 0 with W(s)=0, Ẇ(s)=1 comes no
+earlier than s + π/√k̄. On an interval shorter than π/√k̄ the equation is disconjugate, so
+φ(t) > 0 and the causal Green's function H(t,s) > 0 for t > s. With Σ̇ ≥ 0,
+      W(t) = Σ₀ φ(t) + ∫_{t_A}^t H(t,s) Σ̇(s) ds ≥ 0   (> 0 if Σ₀ > 0)   on (t_A, t_B],
+provided the life interval is shorter than the first half-period:
+      t_B − t_A < π/√k̄   ⟺   α < α_guar := π² / [σ₀ Φ_max η₀ (t_B − t_A)²].
 
-SELF-CONSISTENCY (removes the circular-t_B objection)
------------------------------------------------------
-t_B on the right is the very lifespan being bounded, so α_guar is a self-consistent
-condition, not a closed form. We solve it by simply evaluating, for each α, the actual
-t_B(α) and the Sturm quantity
+SELF-CONSISTENCY
+----------------
+t_B on the right is the very lifespan being bounded, so α_guar is a fixed-point condition,
+not a closed form. The script evaluates, for each α, the actual t_B(α) and
       q(α) := √(α σ₀ Φ_max η₀) · (t_B(α) − t_A),
-and reporting the largest α with q(α) < π. The earlier "0.07–0.13" was NOT an error bar:
-it is exactly the range obtained by substituting different finite t_B(α) (73–93 yr) and
-different Φ estimates. Here we pin Φ_max = sup Φ_in and report a single self-consistent value.
+and reports the largest α with q(α) < π. Substituting a constant t_B from 73–93 yr instead
+gives thresholds from 0.12 down to 0.07. The same quantity with the E-branch time t_B^E(α)
+(trajectory continued past death) shows how far the condition covers the decreasing branch.
 """
 
 import numpy as np
@@ -82,6 +79,14 @@ def tB(alpha):
     return float(min(tE, tR)) if (tE < np.inf or tR < np.inf) else T_MAX
 
 
+def tE_branch(alpha):
+    """E-branch time: first crossing of E* after 2 yr on the trajectory continued past death."""
+    s = solve_ivp(lambda t, y: rhs(t, y, alpha), [0, T_MAX], IC, method='RK45',
+                  rtol=1e-8, atol=1e-10, max_step=0.2)
+    m = (s.t >= 2.0) & (s.y[0] <= BASE['E_star'])
+    return float(s.t[m][0]) if m.any() else np.inf
+
+
 # Φ_max = sup_t Φ_in(t)  (peak of the intake profile, near t=60)
 tt = np.linspace(0.0, 120.0, 20001)
 PHI_MAX = float(max(Phi_in(t) for t in tt))
@@ -95,7 +100,7 @@ def q_of(alpha):
     return np.sqrt(alpha * BASE['sigma_0'] * PHI_MAX * ETA0) * (tB(alpha) - T_A)
 
 print("=" * 70)
-print("  VBLS — Sturm bound α_guar for H1 closure (Appendix G.4)")
+print("  VBLS — Sturm bound α_guar for the auxiliary equation (Appendix G.4)")
 print("=" * 70)
 print(f"  Φ_max = sup_t Φ_in(t) = {PHI_MAX:.4f}   (at t≈60)")
 print(f"  σ₀ = {BASE['sigma_0']}, η₀ = {ETA0}, t_A = {T_A}")
@@ -115,6 +120,14 @@ print(f"  self-consistent α_guar (largest α with q(α)<π) = {alpha_guar_sc:.4
 print(f"    q(α) at that point = {q_of(alpha_guar_sc):.4f}  (π = {np.pi:.4f})")
 print("-" * 70)
 
+# coverage of the decreasing E-branch: q_E(α) with t_B^E(α) on the continued trajectory
+A_E = np.arange(0.005, 0.0801, 0.005)
+Q_E = np.array([np.sqrt(a * BASE['sigma_0'] * PHI_MAX * ETA0) * (tE_branch(a) - T_A) for a in A_E])
+cov = A_E[Q_E < np.pi]
+print(f"  E-branch covered (q_E(α) < π) up to α ≈ {cov.max():.3f}  (grid step 0.005);"
+      f"  q_E(0.030) = {np.interp(0.030, A_E, Q_E):.3f}")
+print("-" * 70)
+
 # where the numerical optimum sits, for comparison
 f = lambda a: -tB(a)
 r = minimize_scalar(f, bracket=(0.125, 0.135, 0.145), method='brent', options={'xtol': 1e-5})
@@ -123,7 +136,8 @@ print(f"  calibrated α = {0.030}  ->  q = {q_of(0.030):.3f} < π : "
       f"{'INSIDE bound' if q_of(0.030) < np.pi else 'OUTSIDE'}")
 print(f"    margin α_guar/α_cal = {alpha_guar_sc/0.030:.1f}×")
 print("=" * 70)
-print("  Verdict: α_guar obtained by Sturm comparison (no WKB), self-consistent")
-print("  in t_B; calibrated α=0.030 lies safely inside; the upper reach of the")
-print("  bound approaches the numerical optimum α*≈0.135 from below.")
+print("  Summary: α_guar is a sufficient condition for the auxiliary equation")
+print("  (export response −αΦ_cap·u_R dropped), self-consistent in t_B; the calibrated")
+print("  α=0.030 lies inside. It covers the rising R-branch, not the decreasing E-branch")
+print("  near α*; beyond α_guar the signs are checked numerically (monotonicity_check.py).")
 print("=" * 70)

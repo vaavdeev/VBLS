@@ -8,25 +8,24 @@
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
 
-VBLS — Alpha-optimum CROSSOVER test.
+VBLS — Alpha-optimum CROSSOVER test (Appendix G.2–G.3).
 
-Hypothesis under test (analytical program, §8.2.1):
-    The lifespan optimum α* is NOT an isolated feature of t_B(α); it is the
-    point at which the dominant death channel switches from R to E. Formally,
-        t_B(α) = min( t_B^R(α), t_B^E(α) ),
-    with t_B^R INCREASING in α (higher α -> lower E -> lower F_diss -> slower Σ
-    -> slower ν·Σ·R depletion -> R lasts longer) and t_B^E DECREASING in α
-    (higher α -> faster η_abs decay -> earlier E starvation). The min of an
-    increasing and a decreasing branch peaks exactly at their crossing, so
-        α*  ==  α_switch  (the R→E channel switch).
+Question tested: on the calibrated Homo sapiens parameter set, does the lifespan optimum α*
+coincide with the point at which the dominant death channel switches from R to E? Formally,
+        t_B(α) = min( t_B^R(α), t_B^E(α) ).
+If t_B^R increases in α (higher α -> lower E -> lower F_diss -> slower Σ -> slower ν·Σ·R
+depletion) and t_B^E decreases (higher α -> faster η_abs decay -> earlier E starvation), the
+minimum of the two branches peaks at their crossing, so α* == α_switch. Both monotonicities are
+assumptions: Appendix G.2 gives an example within the class where they fail and the maximum
+lies inside the R-branch (h1_counterexamples.py, example 2).
 
-This script checks that prediction on the calibrated Homo sapiens parameter set
-(identical to alpha_sensitivity.py). It reports:
-    1. α*      = argmax_α t_B(α)                      (physical, terminal events)
-    2. α_switch = α where the firing channel changes R→E
-    3. whether they coincide  -> confirms / refutes the crossover mechanism
-Plus diagnostic branches t_B^R(α), t_B^E(α) integrated on the full horizon
-(non-physical past the first death, shown only to visualise the crossing).
+The script (parameters identical to alpha_sensitivity.py) reports:
+    1. α*       = argmax_α t_B(α)              (physical, terminal events)
+    2. α_switch = first grid node where the E-channel fires
+    3. α_cross  = crossing of the branches t_B^E(α) = t_B^R(α)
+With monotone branches these are one point found three ways, not independent estimates;
+agreement is resolved to the grid step (≈0.0012). The diagnostic branches t_B^R(α), t_B^E(α)
+are integrated on the full horizon (past the first death, shown only to visualise the crossing).
 
 Output: alpha_crossover.png  + console verdict.
 """
@@ -164,11 +163,11 @@ print(f"  α_switch (R→E)       = {alpha_switch:.4f}")
 print(f"  α_cross (t_E==t_R)   = {alpha_cross:.4f}")
 print("-" * 66)
 if np.isfinite(alpha_switch):
-    rel = abs(alpha_star - alpha_switch) / alpha_star * 100
-    print(f"  |α* - α_switch|      = {abs(alpha_star-alpha_switch):.4f}  ({rel:.1f}% of α*)")
-    verdict = "CONFIRMED" if rel < 10 else ("PARTIAL" if rel < 25 else "REFUTED")
-    print(f"  crossover hypothesis : {verdict}")
-    print(f"     -> optimum {'coincides with' if verdict=='CONFIRMED' else 'is near' if verdict=='PARTIAL' else 'is NOT at'} the R→E channel switch")
+    step = ALPHA[1] - ALPHA[0]
+    nsteps = abs(alpha_star - alpha_switch) / step
+    print(f"  |α* - α_switch|      = {abs(alpha_star-alpha_switch):.4f}  ({nsteps:.0f} grid step(s) of {step:.4f})")
+    print(f"     -> on this calibration the optimum {'coincides with' if nsteps <= 1 else 'is NOT at'}"
+          f" the R→E channel switch (to the grid step)")
 else:
     print("  channel does not switch in the scanned range — inspect range/model")
 print("-" * 66)

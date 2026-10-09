@@ -73,39 +73,35 @@ SPECIES = [
 # ── Two Phi_in variants ─────────────────────────────────────────────────────
 PHI_BIRTH = 0.45   # initial flow for live-bearing mammals
 
-def Phi_in_A(t_norm):
-    """Original: starts from zero. Egg-laying species, unicellular organisms."""
-    growth  = 1.0 - np.exp(-t_norm / 0.08)
-    decline = np.exp(-max(0.0, t_norm - 0.55) / 0.30)
-    return growth * decline
+def Phi_in_A(t_h):
+    """Phi_in(0) = 0: canonical shape of Section 17.1.1 (argument in human years)."""
+    return (1.0 - np.exp(-t_h / 10.0)) * np.exp(-max(0.0, t_h - 60.0) / 30.0)
 
-def Phi_in_B(t_norm):
-    """With an initial flow phi_birth. Live-bearing mammals."""
-    growth  = PHI_BIRTH + (1.0 - PHI_BIRTH) * (1.0 - np.exp(-t_norm / 0.08))
-    decline = np.exp(-max(0.0, t_norm - 0.55) / 0.30)
-    return growth * decline
+def Phi_in_B(t_h):
+    """Phi_in(0) = PHI_BIRTH: an initial maternal flow, otherwise the canonical shape."""
+    g = PHI_BIRTH + (1.0 - PHI_BIRTH) * (1.0 - np.exp(-t_h / 10.0))
+    return g * np.exp(-max(0.0, t_h - 60.0) / 30.0)
 
 def scale_params(T_ls):
+    """Consistent time rescaling (Appendix D.3.1): every rate (mu, lam, the amplitude of
+    Phi_in, Phi_cap, alpha, nu0, nu, rho) times sc = T_REF/T; sigma0 (a fraction, not a
+    rate), thresholds and initial conditions unchanged. Each species is the human
+    calibration of Section 17.1.1 in its own time scale."""
     sc = T_REF / T_ls
-    return dict(
-        mu=BASE['mu'], lam=BASE['lam']*sc,
-        sigma0=BASE['sigma0']*sc, alpha=BASE['alpha']*sc,
-        nu0=BASE['nu0']*sc, nu=BASE['nu']*sc, rho=BASE['rho']*sc,
-        R_star=BASE['R_star'], E_star=BASE['E_star'],
-    )
+    return dict(sc=sc, mu=BASE['mu']*sc, lam=BASE['lam']*sc,
+                sigma0=BASE['sigma0'], alpha=BASE['alpha']*sc,
+                nu0=BASE['nu0']*sc, nu=BASE['nu']*sc, rho=BASE['rho']*sc,
+                Phi_cap=0.003*sc, R_star=BASE['R_star'], E_star=BASE['E_star'])
 
 def system(t, y, p, T_ls, phi_func):
     E,S,eta,R = y
     E=max(E,0.); S=np.clip(S,0.,1.); eta=np.clip(eta,0.,1.); R=np.clip(R,0.,1.)
-    t_norm = t / T_ls
-    diss = p['mu']*E**2 + p['lam']*E
-    dE   = eta * phi_func(t_norm) - diss
-    dS   = max(0., p['sigma0']*diss - R*0.003)
-    deta = -p['alpha']*S*eta
-    # Restoration requires active synthesis — gated by g(E), formula (4.2).
-    g_E  = max(0.0, min(1.0, (E - p['E_star']) / (Y0[0] - p['E_star'])))
-    dR   = -p['nu0']*R - p['nu']*S*R + p['rho']*g_E*(1-S)*(1-R)
-    return [dE,dS,deta,dR]
+    d = p['mu']*E**2 + p['lam']*E
+    g_E = max(0.0, min(1.0, (E - p['E_star'])/(Y0[0] - p['E_star'])))
+    return [eta*p['sc']*phi_func(p['sc']*t) - d,
+            max(0., p['sigma0']*d - R*p['Phi_cap']),
+            -p['alpha']*S*eta,
+            -p['nu0']*R - p['nu']*S*R + p['rho']*g_E*(1-S)*(1-R)]
 
 def run(T_ls, phi_func):
     p = scale_params(T_ls)

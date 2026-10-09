@@ -65,16 +65,19 @@ sigma_0 = 0.0162  # damage production rate (somatic mutations, oxidation)
                    # cross-checked against Cagan et al. (2022) mutation rates
 
 # --- Absorption efficiency (eta_abs channel) ---
-alpha = 0.030     # eta_abs degradation rate; constrained by HUNT3/4 VO2max data
+alpha = 0.030     # eta_abs degradation rate; no direct measurement, fixed by
+                   # calibration to t_B and the shape of E(t) (Section 17.1.1)
 
 # --- Repair reserve (R channel) ---
-nu_0 = 0.006      # intrinsic R decay (Hayflick limit analog)
+nu_0 = 0.006      # spontaneous wear of the repair reserve (Section 4.6)
                    # consistent with Whittemore et al. (2019): nu* ~ 0.0047–0.006 /yr
 nu   = 0.060      # damage-accelerated R decay
-rho  = 0.002      # R restoration rate; physically constrained: rho << nu_0 + nu
+rho  = 0.002      # R restoration rate; condition (C4): rho <~ nu_0, so the
+                   # reserve has no high plateau (Section 4.6)
 
 # --- Death thresholds ---
-R_star = 0.15     # bifurcation threshold: repair reserve exhaustion
+R_star = 0.15     # critical threshold of the repair reserve; it does not enter
+                   # the equations and marks no bifurcation (Sections 9.2, 9.6)
 E_star = 0.04     # integrity potential threshold
 
 # --- Initial conditions (birth) ---
@@ -102,7 +105,7 @@ def system(t, y):
 
     F_diss = mu * E**2 + lam * E                               # eq. (6.2)
 
-    # Restoration-potential function  g(E) = (E - E*) / (E0 - E*)  in [0, 1]  (eq. 4.2)
+    # Restoration-potential function  g(E) = max(0, min(1, (E - E*) / (E0 - E*)))  (eq. 4.2)
     # Degradation terms in dR/dt are independent of E (time-scale separation).
     # Restoration requires active synthesis — gated by g(E).
     g_E = max(0.0, min(1.0, (E - E_star) / E_range))
@@ -111,7 +114,8 @@ def system(t, y):
     dE = eta_abs * Phi_in(t) - F_diss
 
     # ── Eq. 2: structural entropy Sigma(t)  (eq. 7.1) ───────────────────────
-    # max(0,·) enforces monotonicity (2nd law)
+    # max(0,·): Sigma counts irreversible loss only, so it is non-decreasing by
+    # definition of the variable (Section 7.4), not as a consequence of the 2nd law
     dSigma = max(0.0, sigma_0 * F_diss - R * Phi_cap(t))
 
     # ── Eq. 3: absorption efficiency eta_abs(t)  (eq. 5.1) ──────────────────
@@ -163,10 +167,13 @@ production_v  = sigma_0 * F_diss_v
 export_v      = R * Phi_cap_v
 int_Sigma     = np.cumsum(Sigma) * (t[1] - t[0])   # numerical integral of Sigma
 
-# Life-cycle phase boundaries
+# Life-cycle phase boundaries (Section 10): the phases are defined by E(t) alone.
+# t_peak = argmax E; t_col = point of minimum d2E/dt2 after t_peak, i.e. where the
+# decline of E accelerates most (a convention: the dynamics has no universal threshold).
 peak_idx = np.argmax(E);   t_peak = t[peak_idx]
-col_idx  = np.where(R < 0.50)[0]
-t_col    = t[col_idx[0]] if len(col_idx) > 0 else (t_death or t_max)
+d2E      = np.gradient(np.gradient(E, t), t)
+after    = np.where(t > t_peak + 1.0)[0]
+t_col    = t[after[np.argmin(d2E[after])]] if len(after) > 0 else (t_death or t_max)
 
 in_target = (75.0 <= (t_death or 0) <= 83.0)
 
@@ -193,7 +200,7 @@ if t_death is not None:
     print(f"  g(E) at t_B     : {float(np.interp(t_death, t, g_E_v)):.4f}")
     print(f"\n  Growth phase    : 0 — {t_peak:.0f} yr")
     print(f"  Plateau phase   : {t_peak:.0f} — {t_col:.0f} yr")
-    print(f"  Collapse phase  : {t_col:.0f} — {t_death:.0f} yr")
+    print(f"  Decline phase   : {t_col:.0f} — {t_death:.0f} yr")
     i70 = np.argmin(np.abs(t - 70))
     print(f"\n  Sigma(70 yr)    = {Sigma[i70]:.3f}   (accumulated structural damage)")
     print(f"  R(70 yr)        = {R[i70]:.3f}   (R* = {R_star})")
@@ -231,7 +238,7 @@ print(SEP)
 BG  = '#f7f9fc'
 c_g = '#27ae60'    # growth phase color
 c_p = '#2980b9'    # plateau phase color
-c_c = '#e74c3c'    # collapse phase color
+c_c = '#e74c3c'    # decline phase color
 c_d = '#8e44ad'    # death-event / threshold color
 
 t_xlim = min(t_max, (t_death or t_max) + 2)
@@ -261,7 +268,7 @@ def phase_labels(ax):
     ax.text(t_peak / 2,            yy, 'GROWTH',  ha='center', fontsize=8, color=c_g, fontweight='bold')
     ax.text((t_peak + t_col) / 2,  yy, 'PLATEAU', ha='center', fontsize=8, color=c_p, fontweight='bold')
     if t_death:
-        ax.text((t_col + t_death) / 2, yy, 'COLLAPSE', ha='center', fontsize=8, color=c_c, fontweight='bold')
+        ax.text((t_col + t_death) / 2, yy, 'DECLINE', ha='center', fontsize=8, color=c_c, fontweight='bold')
 
 
 # ── Panel 1: E(t) ────────────────────────────────────────────────────────────
@@ -286,13 +293,13 @@ ax2.set_ylim(0)
 # ── Panel 3: R(t) and eta_abs(t) ─────────────────────────────────────────────
 ax3 = fig.add_subplot(gs[2, :2])
 ax3.plot(t, R,       color='#27ae60', lw=2.8,
-         label='R(t) — repair reserve (Hayflick analog)')
+         label='R(t) — repair reserve')
 ax3.plot(t, eta_abs, color='#e67e22', lw=2.2, ls='--',
          label=r'$\eta_{abs}(t)$ — absorption efficiency')
 ax3.plot(t, g_E_v,   color='#9b59b6', lw=1.6, ls=':',
          label='g(E) — restoration-potential function (eq. 4.2)')
 ax3.axhline(R_star, color=c_d, ls=':', lw=1.8,
-            label=f'R* = {R_star}  (bifurcation threshold)')
+            label=f'R* = {R_star}  (critical threshold)')
 ax3.fill_between(t, 0, R_star, alpha=0.06, color=c_d)
 shading(ax3); phase_labels(ax3)
 ax3.set_title(r'Repair reserve R(t), $\eta_{abs}(t)$, and restoration potential g(E)', fontsize=10)

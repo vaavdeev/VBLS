@@ -14,10 +14,10 @@ VBLS — Comparison of two lifecycle-curve scaling variants
 Variant A: scaled by T_max (biological maximum)
 Variant B: scaled by T_ls  (mean lifespan)
 
-Takeaway:
-  - Variant A reproduces the upper bound of possible lifespan
-  - Variant B predicts the observed mean lifespan
-  - The difference visually shows that T_ls ≈ 0.5-0.7 × T_max
+Scaling: consistent time rescaling of the human calibration (Section 17.1.1):
+every rate times sc = T_REF/T, sigma0 unchanged. Each species is the human
+calibration in its own time scale, so t_B = T (to 0.1%) in both variants by
+construction; the figure shows that the shape of the life cycle is carried over.
 
 Sources for T_max / T_ls:
   AnAge Build 14: Mouse, Rat, Rabbit, Pig, Elephant, Human
@@ -72,31 +72,29 @@ SPECIES = [
     ("Human",     122.5,  76.9,  "AnAge / WHO"),
 ]
 
-def Phi_in(t_norm):
-    growth  = 1.0 - np.exp(-t_norm / 0.08)
-    decline = np.exp(-max(0.0, t_norm - 0.55) / 0.30)
-    return growth * decline
-
-def Phi_cap():
-    return 0.003
+def Phi_in(t_h):
+    """Canonical inflow shape of Section 17.1.1, argument in human years."""
+    return (1.0 - np.exp(-t_h / 10.0)) * np.exp(-max(0.0, t_h - 60.0) / 30.0)
 
 def scale_params(T_scale):
-    """sc = T_REF / T_scale — scales all rate parameters"""
+    """Consistent time rescaling (Appendix D.3.1): every rate (mu, lam, the amplitude of
+    Phi_in, Phi_cap, alpha, nu0, nu, rho) times sc = T_REF/T; sigma0 (a fraction, not a
+    rate), thresholds and initial conditions unchanged. Each species is the human
+    calibration of Section 17.1.1 in its own time scale."""
     sc = T_REF / T_scale
     return dict(
-        mu=BASE['mu'], lam=BASE['lam']*sc,
-        sigma0=BASE['sigma0']*sc, alpha=BASE['alpha']*sc,
+        sc=sc, mu=BASE['mu']*sc, lam=BASE['lam']*sc,
+        sigma0=BASE['sigma0'], alpha=BASE['alpha']*sc,
         nu0=BASE['nu0']*sc, nu=BASE['nu']*sc, rho=BASE['rho']*sc,
-        R_star=BASE['R_star'], E_star=BASE['E_star'],
+        Phi_cap=0.003*sc, R_star=BASE['R_star'], E_star=BASE['E_star'],
     )
 
 def system(t, y, p, T_scale):
     E,S,eta,R = y
     E=max(E,0.); S=np.clip(S,0.,1.); eta=np.clip(eta,0.,1.); R=np.clip(R,0.,1.)
-    t_norm = t / T_scale
     diss = p['mu']*E**2 + p['lam']*E
-    dE   = eta*Phi_in(t_norm) - diss
-    dS   = max(0., p['sigma0']*diss - R*Phi_cap())
+    dE   = eta*p['sc']*Phi_in(p['sc']*t) - diss
+    dS   = max(0., p['sigma0']*diss - R*p['Phi_cap'])
     deta = -p['alpha']*S*eta
     # Restoration requires active synthesis — gated by g(E), formula (4.2).
     g_E  = max(0.0, min(1.0, (E - p['E_star']) / (Y0[0] - p['E_star'])))
@@ -216,7 +214,7 @@ ax_sum.set_xlabel('T_observed (yr)', fontsize=9)
 ax_sum.set_ylabel('t_B model (yr)', fontsize=9)
 ax_sum.set_title(
     'Summary: model t_B vs observed T  |  11 species\n'
-    'Both variants underestimate; the shortfall grows for short-lived species',
+    'Consistent time rescaling: t_B = T by construction (both variants)',
     fontsize=9, fontweight='bold'
 )
 ax_sum.legend(fontsize=9, framealpha=0.93)

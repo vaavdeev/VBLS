@@ -61,32 +61,35 @@ SPECIES = [
     ("Human",     122.5,  76.9),
 ]
 
-def Phi_in_A(t_norm):
-    """Phi_in(0) = 0: flow builds up from zero"""
-    return (1.0 - np.exp(-t_norm / 0.08)) * np.exp(-max(0.0, t_norm - 0.55) / 0.30)
+def Phi_in_A(t_h):
+    """Phi_in(0) = 0: canonical shape of Section 17.1.1 (argument in human years)."""
+    return (1.0 - np.exp(-t_h / 10.0)) * np.exp(-max(0.0, t_h - 60.0) / 30.0)
 
-def Phi_in_B(t_norm):
-    """Phi_in(0) = PHI_BIRTH: initial flow from the mother"""
-    g = PHI_BIRTH + (1.0 - PHI_BIRTH) * (1.0 - np.exp(-t_norm / 0.08))
-    return g * np.exp(-max(0.0, t_norm - 0.55) / 0.30)
+def Phi_in_B(t_h):
+    """Phi_in(0) = PHI_BIRTH: an initial maternal flow, otherwise the canonical shape."""
+    g = PHI_BIRTH + (1.0 - PHI_BIRTH) * (1.0 - np.exp(-t_h / 10.0))
+    return g * np.exp(-max(0.0, t_h - 60.0) / 30.0)
 
 def scale(T_ls):
+    """Consistent time rescaling (Appendix D.3.1): every rate (mu, lam, the amplitude of
+    Phi_in, Phi_cap, alpha, nu0, nu, rho) times sc = T_REF/T; sigma0 (a fraction, not a
+    rate), thresholds and initial conditions unchanged. Each species is the human
+    calibration of Section 17.1.1 in its own time scale."""
     sc = T_REF / T_ls
-    return dict(mu=BASE['mu'], lam=BASE['lam']*sc,
-                sigma0=BASE['sigma0']*sc, alpha=BASE['alpha']*sc,
+    return dict(sc=sc, mu=BASE['mu']*sc, lam=BASE['lam']*sc,
+                sigma0=BASE['sigma0'], alpha=BASE['alpha']*sc,
                 nu0=BASE['nu0']*sc, nu=BASE['nu']*sc, rho=BASE['rho']*sc,
-                R_star=BASE['R_star'], E_star=BASE['E_star'])
+                Phi_cap=0.003*sc, R_star=BASE['R_star'], E_star=BASE['E_star'])
 
 def system(t, y, p, T_ls, phi_f):
     E,S,eta,R = y
     E=max(E,0.); S=np.clip(S,0.,1.); eta=np.clip(eta,0.,1.); R=np.clip(R,0.,1.)
     d = p['mu']*E**2 + p['lam']*E
-    return [eta*phi_f(t/T_ls) - d,
-            max(0., p['sigma0']*d - R*0.003),
+    g_E = max(0.0, min(1.0, (E - p['E_star'])/(Y0[0] - p['E_star'])))
+    return [eta*p['sc']*phi_f(p['sc']*t) - d,
+            max(0., p['sigma0']*d - R*p['Phi_cap']),
             -p['alpha']*S*eta,
-            -p['nu0']*R - p['nu']*S*R
-            + p['rho']*max(0.0, min(1.0, (E - p['E_star'])/(Y0[0] - p['E_star'])))
-              *(1-S)*(1-R)]
+            -p['nu0']*R - p['nu']*S*R + p['rho']*g_E*(1-S)*(1-R)]
 
 def run(T_ls, phi_f):
     p = scale(T_ls)
@@ -212,13 +215,14 @@ if r['dip_depth'] > 0.003:
 # Phase shading
 t_peak_A = r['tA'][np.argmax(r['yA'][0])]
 ax1.axvspan(0, t_peak_A, alpha=0.05, color='green')
-ax1.text(t_peak_A/2, 0.108, 'Phase I\n(growth)', ha='center',
+E_top = 1.08 * max(r['yA'][0].max(), r['yB'][0].max())
+ax1.text(t_peak_A/2, 0.92*E_top, 'Phase I\n(growth)', ha='center',
          fontsize=8, color='green', alpha=0.7)
 
 ax1.set_title('A.  Integrity potential $E(t)$ — full lifespan', fontsize=10)
 ax1.set_xlabel('Age (yr)'); ax1.set_ylabel('$E(t)$')
 ax1.legend(fontsize=8.5, framealpha=0.93)
-ax1.set_ylim(0, 0.115)
+ax1.set_ylim(0, E_top)
 
 # ── Panel B: Zoom on the early period ──────────────────────────────────────────
 ax2 = fig2.add_subplot(gs[0, 2])
@@ -234,8 +238,8 @@ ax2.axhline(BASE['E_star'], color='gray', ls='--', lw=0.8, alpha=0.4, label='$E^
 # Phi_in on the right-hand axis
 ax2r = ax2.twinx()
 t_zoom = np.linspace(0, zoom_end, 500)
-phiA_vals = np.array([Phi_in_A(tt/Tls) for tt in t_zoom])
-phiB_vals = np.array([Phi_in_B(tt/Tls) for tt in t_zoom])
+phiA_vals = np.array([Phi_in_A(tt*T_REF/Tls) for tt in t_zoom])
+phiB_vals = np.array([Phi_in_B(tt*T_REF/Tls) for tt in t_zoom])
 ax2r.plot(t_zoom, phiA_vals, color=CA, lw=1.3, ls=':', alpha=0.6)
 ax2r.plot(t_zoom, phiB_vals, color=CB, lw=1.3, ls=':', alpha=0.6)
 ax2r.set_ylabel('$\\Phi_{in}(t)$', fontsize=8, color='gray')
@@ -271,8 +275,8 @@ ax3.set_ylim(0, 1.05)
 ax4 = fig2.add_subplot(gs[1, 2])
 ax4.set_facecolor(BG)
 t_full = np.linspace(0, Tls*1.0, 1000)
-phiA_full = np.array([Phi_in_A(tt/Tls) for tt in t_full])
-phiB_full = np.array([Phi_in_B(tt/Tls) for tt in t_full])
+phiA_full = np.array([Phi_in_A(tt*T_REF/Tls) for tt in t_full])
+phiB_full = np.array([Phi_in_B(tt*T_REF/Tls) for tt in t_full])
 ax4.plot(t_full, phiA_full, color=CA, lw=2.2,
          label=f'$\\Phi_{{in}}(0)=0$\n(oviparous, seeds)')
 ax4.plot(t_full, phiB_full, color=CB, lw=2.2,

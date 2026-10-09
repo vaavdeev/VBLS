@@ -112,12 +112,18 @@ SP_COLORS = {
     'Black-and-white colobus': '#009688',
 }
 
-# ── VBLS parameters (calibrated for human, scaled by LS_REF/T_max) ───────────
+# ── VBLS parameters: canonical human calibration (Section 17.1.1) ────────────
+# Fluxes as in MAN/human_lifespan.py: Phi_in(t) = (1 - exp(-t/10)) exp(-max(0, t-60)/30),
+# Phi_cap = 0.003. Per species, time is rescaled: every rate (mu, lam, the amplitude of Phi_in,
+# Phi_cap, alpha, nu0, nu, rho) is multiplied by sc = LS_REF/T_max, the time constants of Phi_in
+# are divided by sc, and sigma0 (a fraction, not a rate) is unchanged. Each species is the human
+# calibration in its own time scale; for the human (sc = 1) this is the calibration itself.
 LS_REF   = 122.5
 BASE_ABS = dict(mu=1.50, lam=0.30, sigma0=0.0162, alpha=0.030,
                 nu0=0.006, nu=0.06, rho=0.002,
-                Phi_max=3.0, Phi_cap=0.042,
-                T_mature=20.0, R_star=0.15, E_star=0.04)
+                Phi_cap=0.003,
+                tau_growth=10.0, t_decline=60.0, tau_decline=30.0,
+                R_star=0.15, E_star=0.04)
 Y0 = [0.10, 0.01, 0.96, 0.99]
 
 # Denominator of g(E) = (E - E*) / (E0 - E*), formula 4.2
@@ -126,14 +132,14 @@ E_RANGE = Y0[0] - BASE_ABS['E_star']  # 0.10 - 0.04 = 0.06
 def scaled_args(T_max):
     sc = LS_REF / T_max
     p  = BASE_ABS
-    return (p['mu'], p['lam']*sc, p['sigma0']*sc, p['alpha']*sc,
+    return (p['mu']*sc, p['lam']*sc, p['sigma0'], p['alpha']*sc,
             p['nu0']*sc, p['nu']*sc, p['rho']*sc,
-            p['Phi_max'], p['Phi_cap'], p['T_mature']*T_max/LS_REF)
+            p['Phi_cap']*sc, p['tau_growth']/sc, p['t_decline']/sc, p['tau_decline']/sc, sc)
 
-def rhs(t, y, mu, lam, s0, alpha, nu0, nu, rho, Phi_max, Phi_cap, T_mat):
+def rhs(t, y, mu, lam, s0, alpha, nu0, nu, rho, Phi_cap, tau_g, t_d, tau_d, amp):
     E, S, eta, R = y
-    S=np.clip(S,0,1); eta=np.clip(eta,0,1); R=np.clip(R,0,1)
-    phi  = Phi_max * min(1.0, t / max(T_mat, 1e-9))
+    E=max(E,0.0); S=np.clip(S,0,1); eta=np.clip(eta,0,1); R=np.clip(R,0,1)
+    phi  = amp * (1.0 - np.exp(-t/tau_g)) * np.exp(-max(0.0, t - t_d)/tau_d)
     dE   = eta*phi - mu*E**2 - lam*E
     dS   = max(0.0, s0*(mu*E**2+lam*E) - R*Phi_cap)
     deta = -alpha*S*eta
@@ -149,7 +155,8 @@ def run_vbls(T_max, n=800):
     t_eval = np.linspace(0, T_max*2.0, n)
     sol = solve_ivp(rhs, [0, T_max*2.0], Y0, args=args,
                     t_eval=t_eval, method='RK45',
-                    events=[ev_R], dense_output=True)
+                    events=[ev_R], dense_output=True,
+                    rtol=1e-8, atol=1e-10, max_step=T_max/600)
     return sol
 
 def vbls_sigma_scaled(T_max, burden_at_end):
@@ -169,10 +176,8 @@ def vbls_dsigma(T_max):
     E    = sol.y[0]
     R    = sol.y[3]
     sc   = LS_REF / T_max
-    s0sc = BASE_ABS['sigma0'] * sc
-    lsc  = BASE_ABS['lam'] * sc
-    diss = s0sc * (BASE_ABS['mu'] * E**2 + lsc * E)
-    dSdt = np.maximum(0, diss - R * BASE_ABS['Phi_cap'])
+    diss = BASE_ABS['sigma0'] * sc * (BASE_ABS['mu'] * E**2 + BASE_ABS['lam'] * E)
+    dSdt = np.maximum(0, diss - R * BASE_ABS['Phi_cap'] * sc)
     return t_s, dSdt
 
 # ── Per-species mean burden at oldest age (Sigma* equivalent) ─────────────────
@@ -344,17 +349,16 @@ S_scaled_h = S_h / S_end_h * end_b_h
 
 # dSigma/dt from RHS
 sc_h   = LS_REF / T_max_h
-s0sc_h = BASE_ABS['sigma0'] * sc_h
-lsc_h  = BASE_ABS['lam'] * sc_h
-diss_h = s0sc_h * (BASE_ABS['mu']*E_h**2 + lsc_h*E_h)
-dSdt_h = np.maximum(0, diss_h - R_h * BASE_ABS['Phi_cap'])
+diss_h = BASE_ABS['sigma0'] * sc_h * (BASE_ABS['mu']*E_h**2 + BASE_ABS['lam']*E_h)
+dSdt_h = np.maximum(0, diss_h - R_h * BASE_ABS['Phi_cap'] * sc_h)
 dSdt_norm_h = dSdt_h / max(dSdt_h.max(), 1e-12)
 
-# Phases
+# Phases of E(t), Section 10: t_peak = argmax E; t_col = point of minimum d2E/dt2 after t_peak
 E_norm_h = E_h / max(E_h.max(), 1e-9)
 t_peak_h = float(t_h[np.argmax(E_norm_h)])
-col_idx_h = np.where((t_h > t_peak_h) & (R_h < 0.50))[0]
-t_col_h   = float(t_h[col_idx_h[0]]) if len(col_idx_h) else tB_h*0.75
+d2E_h    = np.gradient(np.gradient(E_norm_h, t_h), t_h)
+win_h    = np.where((t_h > t_peak_h + 0.01*tB_h) & (t_h < 0.99*tB_h))[0]
+t_col_h  = float(t_h[win_h[np.argmin(d2E_h[win_h])]]) if len(win_h) else tB_h
 
 # Individual means
 ind_h = (hum.groupby(['Individual','Age_years'])['Substitution_burden']
@@ -411,14 +415,14 @@ ax4.plot(t_h, S_scaled_h, color=COL_VBLS, lw=2.5, zorder=5,
 # t_B and T_max
 ax4.axvline(tB_h, color='#555', lw=1.1, ls=':', zorder=5)
 ax4.axvline(T_max_h, color=SP_COLORS['Human'], lw=0.9, ls='--', alpha=0.35)
-ax4.text(tB_h*0.99, ax4.get_ylim()[1]*0.97 if ax4.get_ylim()[1]>0 else 3500,
+ax4.text(tB_h*0.99, end_b_h*1.12,
          f'$t_B={tB_h:.0f}$ yr', ha='right', fontsize=9, color='#444')
 
 # Phase labels
 y_top = end_b_h * 1.05
 for xc, lbl, fc in [(t_peak_h/2, 'I Growth', '#2980b9'),
                     ((t_peak_h+t_col_h)/2, 'II Plateau', '#b7950b'),
-                    ((t_col_h+tB_h)/2, 'III Degradation', '#c0392b')]:
+                    ((t_col_h+tB_h)/2, 'III Decline', '#c0392b')]:
     ax4.text(xc, y_top, lbl, ha='center', fontsize=9,
              color=fc, fontweight='bold')
 

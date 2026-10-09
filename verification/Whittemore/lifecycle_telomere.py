@@ -17,7 +17,7 @@ Left axis (normalized values 0..1):
   R(t)   repair reserve                 — purple, solid
   E(t)   integrity potential (norm.)    — blue, solid
   T(t)   telomere reserve (Whittemore)  — green, dashed
-  R*     VBLS bifurcation threshold     — red, dotted
+  R*     VBLS critical threshold of R   — red, dotted
   E*     viability threshold (norm.)    — blue, dotted
   R*univ universal telomere threshold   — green, dotted
   ●/◆    threshold crossing moment; ◆ = first (= death)
@@ -25,10 +25,17 @@ Left axis (normalized values 0..1):
 Right axis:
   dS/dt  damage accumulation rate dSigma/dt — orange
 
-Background zones: Phase I / II / III
+Background zones: Phases I / II / III of E(t) (Section 10): t_peak = argmax E,
+t_col = point of minimum d2E/dt2 after t_peak.
 
 Data: Whittemore et al. (2019) PNAS, Table S1/S2
-Parameters: from mde_human_lifespan.py, scaled to LS_REF/T_max
+Parameters and fluxes: the canonical human calibration of Section 17.1.1
+(MAN/human_lifespan.py: Phi_in(t) = (1 - exp(-t/10)) exp(-max(0, t-60)/30), Phi_cap = 0.003).
+Per species, time is rescaled: every rate (mu, lam, the amplitude of Phi_in, Phi_cap, alpha,
+nu0, nu, rho) is multiplied by sc = LS_REF/T_max, the time constants of Phi_in are divided by
+sc, and sigma0 (a fraction, not a rate) is unchanged. Each species is therefore the human
+calibration in its own time scale: t_B = 0.63 T_max and the R-channel for all nine; no
+species-specific calibration is made. For the human (sc = 1) the run is the calibration itself.
 
 Run: python lifecycle_telomere.py
 Out: lifecycle_telomere.pdf / .png
@@ -84,13 +91,13 @@ R_STAR_OBS = {sp[0]: sp[4] / 100 for sp in SPECIES}
 cluster1   = [sp[0] for sp in SPECIES if sp[5] == 'R']
 R_UNIV     = np.mean([R_STAR_OBS[n] for n in cluster1])
 
-# ── VBLS: calibrated human params (mde_human_lifespan.py), scaled per species ──
+# ── VBLS: canonical human calibration (Section 17.1.1), scaled per species ───
 LS_REF = 122.5
 
 BASE_ABS = dict(mu=1.50, lam=0.30, sigma0=0.0162, alpha=0.030,
                 nu0=0.006, nu=0.06, rho=0.002,
-                Phi_max=3.0, Phi_cap=0.042,
-                T_mature=20.0,
+                Phi_cap=0.003,                                   # constant, Section 2.4.1
+                tau_growth=10.0, t_decline=60.0, tau_decline=30.0,  # shape of Phi_in (human)
                 R_star=0.15, E_star=0.04)
 
 Y0 = [0.10, 0.01, 0.96, 0.99]
@@ -101,17 +108,17 @@ E_RANGE = Y0[0] - BASE_ABS['E_star']  # 0.10 − 0.04 = 0.06
 def scaled_args(T_max):
     sc = LS_REF / T_max
     p  = BASE_ABS
-    T_mat = p['T_mature'] * T_max / LS_REF
-    return (p['mu'], p['lam']*sc, p['sigma0']*sc, p['alpha']*sc,
+    return (p['mu']*sc, p['lam']*sc, p['sigma0'], p['alpha']*sc,
             p['nu0']*sc, p['nu']*sc, p['rho']*sc,
-            p['Phi_max'], p['Phi_cap'], T_mat)
+            p['Phi_cap']*sc, p['tau_growth']/sc, p['t_decline']/sc, p['tau_decline']/sc, sc)
 
-def rhs(t, y, mu, lam, s0, alpha, nu0, nu, rho, Phi_max, Phi_cap, T_mat):
+def rhs(t, y, mu, lam, s0, alpha, nu0, nu, rho, Phi_cap, tau_g, t_d, tau_d, amp):
     E, S, eta, R = y
+    E   = max(E, 0.0)
     S   = np.clip(S,   0.0, 1.0)
     eta = np.clip(eta, 0.0, 1.0)
     R   = np.clip(R,   0.0, 1.0)
-    phi  = Phi_max * min(1.0, t / max(T_mat, 1e-9))
+    phi  = amp * (1.0 - np.exp(-t / tau_g)) * np.exp(-max(0.0, t - t_d) / tau_d)
     dE   = eta * phi - mu * E**2 - lam * E
     dS   = max(0.0, s0 * (mu * E**2 + lam * E) - R * Phi_cap)
     deta = -alpha * S * eta
@@ -127,10 +134,11 @@ def run_vbls(T_max):
     ev_R.terminal  = True
     ev_R.direction = -1
 
-    t_eval = np.linspace(0, T_max * 2.5, 1500)
+    t_eval = np.linspace(0, T_max * 2.5, 3000)
     sol = solve_ivp(rhs, [0, T_max * 2.5], Y0, args=args,
                     method='RK45', t_eval=t_eval,
-                    events=[ev_R], dense_output=True)
+                    events=[ev_R], dense_output=True,
+                    rtol=1e-8, atol=1e-10, max_step=T_max / 600)
     return sol
 
 def first_crossing(t, arr, thr, direction='down'):
@@ -138,9 +146,12 @@ def first_crossing(t, arr, thr, direction='down'):
     return float(t[idx[0]]) if len(idx) else None
 
 def find_phases(t, E_norm, R_norm, tB):
+    """Phases of E(t), Section 10: t_peak = argmax E; t_col = point of minimum d2E/dt2
+    after t_peak (where the decline of E accelerates most; a convention)."""
     t_peak  = float(t[np.argmax(E_norm)])
-    col_idx = np.where((t > t_peak) & (R_norm < 0.50))[0]
-    t_col   = float(t[col_idx[0]]) if len(col_idx) else tB * 0.75
+    d2E     = np.gradient(np.gradient(E_norm, t), t)
+    win     = np.where((t > t_peak + 0.01 * tB) & (t < 0.99 * tB))[0]
+    t_col   = float(t[win[np.argmin(d2E[win])]]) if len(win) else tB
     return t_peak, t_col
 
 # ── Figure ────────────────────────────────────────────────────────────────────
@@ -193,10 +204,9 @@ for idx, (name, L0, rate, T_max, res_pct, cluster) in enumerate(SPECIES):
           f"t_R*={rstr}  t_E*={estr}  ch={first_ch}")
 
     # ── dSigma/dt — directly from RHS (no numerical noise) ──────────────
-    sc_sp   = LS_REF / T_max
-    s0sc    = BASE_ABS['sigma0'] * sc_sp
-    lam_sc  = BASE_ABS['lam']    * sc_sp
-    diss    = s0sc * (BASE_ABS['mu'] * E**2 + lam_sc * E)
+    # With the time rescaling the rate is sc times the human expression; it is
+    # plotted normalized, so the human expression is used.
+    diss    = BASE_ABS['sigma0'] * (BASE_ABS['mu'] * E**2 + BASE_ABS['lam'] * E)
     dS      = np.maximum(0.0, diss - R * BASE_ABS['Phi_cap'])
     dS_max  = max(dS.max(), 1e-12)
     dS_norm = dS / dS_max
@@ -287,7 +297,7 @@ for idx, (name, L0, rate, T_max, res_pct, cluster) in enumerate(SPECIES):
             bbox=dict(boxstyle='round,pad=0.25', fc=bc, ec='none', alpha=0.88))
     # Note when ODE result differs from expected channel (telomere analysis)
     if first_ch != cluster:
-        ax.text(0.98, 0.15, f'expected: {cluster}(t) channel', transform=ax.transAxes,
+        ax.text(0.98, 0.15, f'telomere cluster: {cluster}-channel', transform=ax.transAxes,
                 ha='right', va='bottom', fontsize=6.5, color='#c0392b',
                 style='italic')
 
@@ -306,7 +316,7 @@ for idx, (name, L0, rate, T_max, res_pct, cluster) in enumerate(SPECIES):
 leg = [
     mpatches.Patch(color=PH_COL[0], alpha=0.55, label='Phase I — Growth'),
     mpatches.Patch(color=PH_COL[1], alpha=0.55, label='Phase II — Plateau'),
-    mpatches.Patch(color=PH_COL[2], alpha=0.55, label='Phase III — Degradation'),
+    mpatches.Patch(color=PH_COL[2], alpha=0.55, label='Phase III — Decline'),
     plt.Line2D([0],[0], color=COL_R,    lw=2.1,           label='$R(t)$ — repair reserve (VBLS)'),
     plt.Line2D([0],[0], color=COL_E,    lw=1.7, alpha=0.8, label='$E(t)$ — integrity potential (VBLS, norm.)'),
     plt.Line2D([0],[0], color=COL_TEL,  lw=1.8, ls='--',  label='$T(t)$ — telomere reserve (Whittemore 2019)'),
@@ -326,7 +336,7 @@ fig.legend(handles=leg, loc='lower center', ncol=4, fontsize=8.0,
 fig.suptitle(
     'Lifecycle curves for 9 species: VBLS + telomere dynamics + damage accumulation rate $d\\Sigma/dt$\n'
     'Whittemore et al. (2019) PNAS  |  '
-    'Blue — $R(t)$ channel,  red — $E(t)$ channel  |  [1] = first active threshold',
+    'Title colour — telomere cluster (blue R, red E)  |  badge — channel in the model  |  [1] = first active threshold',
     fontsize=11.0, fontweight='bold', y=0.975
 )
 
