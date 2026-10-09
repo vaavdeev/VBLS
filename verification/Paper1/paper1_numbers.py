@@ -25,8 +25,7 @@ Outputs (printed and written to paper1_numbers.out.txt):
   2. memory-sensitivity scan t_B(alpha), both branches, Brent maximisation;
   3. memory-kernel example in a constant environment: permanent versus
      decaying kernel, same parameters and initial state.
-Figures: paper1_fig1.png and paper1_fig2.png, written next to this script
-(and copied to the monograph's picture/ folder when that folder exists).
+Figures: paper1_fig1.png and paper1_fig2.png, written next to this script.
 """
 
 import os
@@ -42,17 +41,10 @@ plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.right'] = False
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-# Figures are written next to this script; inside the monograph project they are
-# also copied to its picture/ folder, from which the manuscripts include them.
-FIG_DIRS = [HERE]
-_PROJECT_PIC = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(HERE))), 'picture')
-if os.path.isdir(_PROJECT_PIC):
-    FIG_DIRS.append(_PROJECT_PIC)
 
 
 def save_fig(fig, name):
-    for d in FIG_DIRS:
-        fig.savefig(os.path.join(d, name), dpi=200)
+    fig.savefig(os.path.join(HERE, name), dpi=200)
 
 # ---------------------------------------------------------------------------
 # Illustrative parameter set (monograph, Section 17.1); time in model units
@@ -263,7 +255,7 @@ def main():
     fig.tight_layout()
     save_fig(fig, 'paper1_fig2.png')
     plt.close(fig)
-    print('figures written to', ', '.join(FIG_DIRS))
+    print('figures written to', HERE)
 
 
 if __name__ == '__main__':
