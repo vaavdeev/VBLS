@@ -395,6 +395,7 @@ def main():
     styles = {'permanent (K = 1)': 'k', 'decaying (kappa = 0.01)': 'C2'}
     for name, (s, e, r) in kern.items():
         col = styles[name]
+        z = 3 if col == 'k' else 2   # permanent-trace curves drawn on top: they coincide with the other run early on
         t_end = min(e, r)
         tt_k = s.t[1:]
         alive = tt_k <= t_end
@@ -402,27 +403,27 @@ def main():
         for a, v, ls, lw, lab in ((ax[0], eta_of(s.y[2][1:], P), '-', 1.6, name.replace('kappa', '$\\kappa$')),
                                   (ax[1], s.y[0][1:], '-', 1.6, '$E$, ' + short),
                                   (ax[1], s.y[3][1:], '--', 1.2, '$R$, ' + short)):
-            a.semilogx(tt_k[alive], v[alive], color=col, ls=ls, lw=lw, label=lab)
+            a.semilogx(tt_k[alive], v[alive], color=col, ls=ls, lw=lw, label=lab, zorder=z)
             if (~alive).any():
-                a.semilogx(tt_k[~alive], v[~alive], color=col, ls=':', lw=1.0)
+                a.semilogx(tt_k[~alive], v[~alive], color=col, ls=':', lw=1.0, zorder=z)
         if np.isfinite(t_end):
             for a in ax:
                 a.axvline(t_end, color=col, lw=0.8, ls='-.')
-            ax[1].text(t_end * 0.62, 0.92, '$t_B$', fontsize=9, color=col)
+            ax[1].text(t_end * 0.62, 0.92, '$t_B$', fontsize=12, color=col)
     e_perm = kern['permanent (K = 1)'][1]
     ax[1].axvline(e_perm, color='0.5', lw=0.8, ls=':')
-    ax[1].text(e_perm * 1.08, 0.80, '$t_B^E$', fontsize=9, color='0.35')
+    ax[1].text(e_perm * 1.08, 0.80, '$t_B^E$', fontsize=12, color='0.35')
     ax[1].axhline(P['E_star'], color='0.5', lw=0.8, ls=':')
     ax[1].axhline(P['R_star'], color='0.5', lw=0.8, ls=':')
-    ax[1].text(0.012, P['E_star'] + 0.015, '$E^*$', fontsize=9, color='0.35')
-    ax[1].text(0.012, P['R_star'] + 0.015, '$R^*$', fontsize=9, color='0.35')
+    ax[1].text(0.012, P['E_star'] + 0.015, '$E^*$', fontsize=11, color='0.35')
+    ax[1].text(0.012, P['R_star'] + 0.015, '$R^*$', fontsize=11, color='0.35')
     ax[0].set_xlabel('time (model units)')
     ax[0].set_ylabel('$\\eta$')
     ax[0].legend(frameon=False, fontsize=9, loc='lower left')
     ax[0].set_title('(a) assimilation efficiency', fontsize=10, loc='left')
     ax[1].set_xlabel('time (model units)')
     ax[1].set_ylabel('$E$, $R$')
-    ax[1].legend(frameon=False, fontsize=8, loc='center left')
+    ax[1].legend(frameon=False, fontsize=9, loc='center left')
     ax[1].set_title('(b) potential and reserve', fontsize=10, loc='left')
     fig.tight_layout()
     save_fig(fig, 'paper1_fig2.png')
