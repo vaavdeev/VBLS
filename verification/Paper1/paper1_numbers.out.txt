@@ -34,3 +34,20 @@ Phi_cap 0.06/0.14: worst phase Phi_cap_min * R_low = 0.01385, sigma0 F(E_bar) = 
   permanent (K = 1)        t_B = 11564.3 via R, Sigma(t_B) = 0.0100, Sigma(t_B) - Sigma0 = 0.0e+00
 Phi_cap 0.08/0.12: worst phase Phi_cap_min * R_low = 0.01846, sigma0 F(E_bar) = 0.01555
   decaying (kappa = 0.01)  no exit up to 20000, Sigma - Sigma0 = 0.0e+00, eta = 0.9316, E = 0.6944, R = 0.2308
+
+== 6. Counterexamples of Section 6 (exact field, RK45, rtol 1e-9, atol 1e-12, max_step 0.5)
+Example 1 (restoration not saturated): nu = 0.02, rho = 0.0055, E* = 0.20, Phi_in(t) = 0.234 + 0.266 exp(-max(0, t - 20)/20)
+  alpha = 0: potential on [200, t_B] between 0.2997 and 0.2997 (E0 = 0.427)
+  alpha = 0        t_B = 609.671 via R
+  alpha = 0.0001   t_B = 609.341 via R
+  alpha = 0.000496 t_B = 608.024 via R
+  alpha = 0.00246  t_B = 601.413 via R
+  alpha = 0.0122   t_B = 572.545 via R
+  alpha = 0.0605   t_B = 494.555 via R
+  alpha = 0.3      t_B = 210.144 via E
+Example 2 (maximum inside the reserve branch): rho = 0.004, Phi_in = 0.5
+  scan of [0.25, 0.45] with step 0.0025: max t_B = 710.68 at alpha = 0.3100 via R
+  alpha = 0.3075: t_B = 703.45 via R, max over the life of production - export = +1.15e-05
+  alpha = 0.3100: t_B = 710.68 via R, max over the life of production - export = -4.40e-06
+  alpha = 0.3125: t_B = 706.25 via R, max over the life of production - export = -2.11e-05
+  first death through the potential channel on [0.80, 1.20] with step 0.01: alpha = 1.00

@@ -30,7 +30,11 @@ Outputs (printed and written to paper1_numbers.out.txt):
      E(t_A) = 0.12): crossings of the production-export kink, finite-difference
      slopes of t_B(alpha) at zero, and the same slope from the variational system;
   5. the setting of 3 with Phi_cap alternating around the same mean: the
-     worst-phase margin of Proposition 1(b) and the resulting lifetimes.
+     worst-phase margin of Proposition 1(b) and the resulting lifetimes;
+  6. the two counterexamples of Section 6 of the paper (also in Appendix G of
+     the monograph): unsaturated restoration, where t_B(alpha) decreases from
+     alpha = 0, and a maximum of t_B inside the reserve branch, at a kink of
+     the field rather than at the switch of the death channel.
 Figures: paper1_fig1.png and paper1_fig2.png, written next to this script.
 """
 
@@ -305,6 +309,46 @@ def main():
             else:
                 say('  %-24s no exit up to %.0f, Sigma - Sigma0 = %.1e, eta = %.4f, E = %.4f, R = %.4f'
                     % (name, T_k, yb[1] - IC['S'], eta_of(yb[2], P), yb[0], yb[3]))
+
+    # 6. counterexamples of Section 6 -----------------------------------------
+    # Initial state E(t_A) = E0 = 0.427, Sigma0 = 0.01, eta0 = 0.96, R0 = 0.99,
+    # Phi_cap = 0.01; the remaining values as in Table 1 unless set here.
+    say('')
+    say('== 6. Counterexamples of Section 6 (exact field, RK45, rtol 1e-9, atol 1e-12, max_step 0.5)')
+    y0_ex = [0.427, 0.01, 0.0, 0.99]
+    cap_ex = lambda t: 0.01
+    ex1 = dict(P, E0=0.427, nu=0.02, rho=0.0055, E_star=0.20)
+    phi_ex1 = lambda t: 0.234 + 0.266 * np.exp(-max(0.0, t - 20.0) / 20.0)
+    ex2 = dict(P, E0=0.427, nu=0.06, rho=0.004, E_star=0.04)
+    phi_ex2 = lambda t: 0.5
+
+    def tb_ex(p, phi, a):
+        s, e, r = run(dict(p, alpha=a), phi, cap_ex, T=1500.0, max_step=0.5, y0=y0_ex, n_out=3001)
+        return (r, 'R', s) if r <= e else (e, 'E', s)
+
+    say('Example 1 (restoration not saturated): nu = 0.02, rho = 0.0055, E* = 0.20, '
+        'Phi_in(t) = 0.234 + 0.266 exp(-max(0, t - 20)/20)')
+    t0, ch0, s0 = tb_ex(ex1, phi_ex1, 0.0)
+    tt = np.linspace(200.0, t0, 2001)
+    say('  alpha = 0: potential on [200, t_B] between %.4f and %.4f (E0 = 0.427)'
+        % (s0.sol(tt)[0].min(), s0.sol(tt)[0].max()))
+    for a in (0.0, 1e-4, 4.96e-4, 2.46e-3, 0.0122, 0.0605, 0.3):
+        tb, ch, _ = tb_ex(ex1, phi_ex1, a)
+        say('  alpha = %-8g t_B = %.3f via %s' % (a, tb, ch))
+    say('Example 2 (maximum inside the reserve branch): rho = 0.004, Phi_in = 0.5')
+    A = np.arange(0.25, 0.45, 0.0025)
+    v = [tb_ex(ex2, phi_ex2, a)[:2] for a in A]
+    k = int(np.argmax([x[0] for x in v]))
+    say('  scan of [0.25, 0.45] with step 0.0025: max t_B = %.2f at alpha = %.4f via %s' % (v[k][0], A[k], v[k][1]))
+    for a in (A[k] - 0.0025, A[k], A[k] + 0.0025):
+        tb, ch, s = tb_ex(ex2, phi_ex2, a)
+        E, S, H, R = s.sol(np.linspace(0.0, tb, 20001))
+        net = ex2['sigma0'] * (ex2['mu'] * E * E + ex2['lam'] * E) - R * 0.01
+        say('  alpha = %.4f: t_B = %.2f via %s, max over the life of production - export = %+.2e'
+            % (a, tb, ch, net.max()))
+    A2 = np.arange(0.80, 1.20, 0.01)
+    sw = next((a for a in A2 if tb_ex(ex2, phi_ex2, a)[1] == 'E'), np.nan)
+    say('  first death through the potential channel on [0.80, 1.20] with step 0.01: alpha = %.2f' % sw)
 
     with open(os.path.join(HERE, 'paper1_numbers.out.txt'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(out) + '\n')
