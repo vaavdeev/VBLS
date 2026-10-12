@@ -126,7 +126,7 @@ const ROWS = [
 ];
 
 const GROUPS = {
-  "1-1": { name: "Eukaryotes with full memory",           desc: "Multicellular · α > 0 · τ_div/τ_regen ≫ 1", hint: "ℬ/ℏ scale →" },
+  "1-1": { name: "Eukaryotes with full memory",           desc: "Multicellular · α > 0 · τ_div/τ_regen ≫ 1", hint: "ℬ scale (relative) →" },
   "1-2": { name: "Natural minima with full memory",       desc: "Smallest autonomous genome (M. genitalium) · radiation-conditional boundary (Cladosporium)" },
   "2-1": { name: "Prokaryotes with frozen memory",        desc: "γ ≫ 1 · frozen via Mechanism B (α_bact ≪ α_euk)" },
   "2-2": { name: "Ultra-minimal free-living",             desc: "Oligotrophs near 𝓜min" },
@@ -146,116 +146,116 @@ const GROUPS = {
 
 const CELLS = {
   "1-1": [
-  // ─── AnAge data (B*=0.32 J·s·kg^-5/4) + human cell · sorted by log₁₀(ℬ/ℏ) ───
-  {name:"Lesser horseshoe bat", italic:true, order:"Chiroptera", mass_g:4.6, log_B:30.56,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁰·⁶", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  // ─── AnAge data · log_B = log₁₀(ℬ/ℬ_human): relative scale; absolute ℬ of multicellular organisms is not determined (monograph, App. C.9.2) ───
+  {name:"Lesser horseshoe bat", italic:true, order:"Chiroptera", mass_g:4.6, log_B:-5.23,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁵·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Rhinolophus hipposideros. Chiroptera — biological anomaly: flight reduces effective predation mortality, systematically increasing T_max at small M and pushing ℬ above the allometric trend."},
-  {name:"Western barbastelle", italic:true, order:"Chiroptera", mass_g:10.2, log_B:31.00,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Western barbastelle", italic:true, order:"Chiroptera", mass_g:10.2, log_B:-4.79,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Barbastella barbastellus. Long-lived temperate-zone bat. Like other Chiroptera — T_max disproportionately large for body mass."},
-  {name:"Forest dormouse", italic:true, order:"Rodentia", mass_g:26.0, log_B:31.50,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹·⁵", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Forest dormouse", italic:true, order:"Rodentia", mass_g:26.0, log_B:-4.29,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Dryomys nitedula. Extended winter hibernation reduces effective ν₀ — classic example of temperature effect on ν₀ via Arrhenius equation (16.17)."},
-  {name:"Naked mole rat", italic:true, order:"Rodentia", mass_g:35.0, log_B:31.66,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹·⁷", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Naked mole rat", italic:true, order:"Rodentia", mass_g:35.0, log_B:-4.13,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Heterocephalus glaber. Lives >30 years at 35 g — rodent record. Anomalously low terminal Σ* (727 mutations vs median ~2,271): death via E-channel with intact R. Exception to universal ℬ* — theoretically justified through elevated Φ_cap."},
-  {name:"Bulldog bat", italic:true, order:"Chiroptera", mass_g:50.0, log_B:31.86,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³¹·⁹", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Bulldog bat", italic:true, order:"Chiroptera", mass_g:50.0, log_B:-3.93,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Noctilio leporinus. Largest fishing bat. Chiroptera: T_max > 20 years at M = 50 g."},
-  {name:"Southern flying squirrel", italic:true, order:"Rodentia", mass_g:65.4, log_B:32.00,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³²", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Southern flying squirrel", italic:true, order:"Rodentia", mass_g:65.4, log_B:-3.79,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Glaucomys volans. T_max ≈ 13 years. Gliding flight reduces predation → demographic effect on T_max analogous to Chiroptera."},
-  {name:"Round-tailed ground squirrel", italic:true, order:"Rodentia", mass_g:163.3, log_B:32.50,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³²·⁵", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Round-tailed ground squirrel", italic:true, order:"Rodentia", mass_g:163.3, log_B:-3.29,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Xerospermophilus tereticaudus. 6–7 month hibernation: ν₀ during dormancy reduced 2–3× by van't Hoff rule."},
-  {name:"Brown rat", italic:true, order:"Rodentia", mass_g:300.0, log_B:32.83,
-   genes:"~2 300", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³²·⁸", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Brown rat", italic:true, order:"Rodentia", mass_g:300.0, log_B:-2.96,
+   genes:"~2 300", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁰", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Rattus norvegicus. Standard laboratory model. T_max ≈ 3.8 years. VBLS verification via Cagan et al. 2022: mutation accumulation ~55/year in intestinal crypts."},
-  {name:"Golden-headed lion tamarin", italic:true, order:"Primates", mass_g:535.0, log_B:33.14,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³³·¹", tau:"≫ 1", phi:"~10⁻¹¹ W",
+  {name:"Golden-headed lion tamarin", italic:true, order:"Primates", mass_g:535.0, log_B:-2.65,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻²·⁶", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Leontopithecus chrysomelas. T_max ≈ 28 years. Primates systematically above Mammalia allometric trend — social structure effect on survival."},
-  {name:"Ringtail possum", italic:true, order:"Diprotodontia", mass_g:1040.0, log_B:33.50,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³³·⁵", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+  {name:"Ringtail possum", italic:true, order:"Diprotodontia", mass_g:1040.0, log_B:-2.29,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻²·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Hemibelideus lemuroides. Marsupial. T_max ≈ 15 years. ℬ/ℏ ~ 10^33.5 — midpoint of small-mammal scale."},
-  {name:"Wedge-capped capuchin", italic:true, order:"Primates", mass_g:2552.5, log_B:33.99,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁴", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+   note:"Hemibelideus lemuroides. Marsupial. T_max ≈ 15 years. ℬ ≈ 10^−2.3 × human — middle of the small-mammal range."},
+  {name:"Wedge-capped capuchin", italic:true, order:"Primates", mass_g:2552.5, log_B:-1.80,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻¹·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Cebus olivaceus. T_max ≈ 45 years. High longevity for 2.5 kg — primate pattern. Capuchin cells: Hayflick limit ~60 divisions."},
-  {name:"Sumatran surili", italic:true, order:"Primates", mass_g:6540.0, log_B:34.50,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁴·⁵", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+  {name:"Sumatran surili", italic:true, order:"Primates", mass_g:6540.0, log_B:-1.29,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻¹·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Presbytis melalophos. T_max ≈ 30 years at M = 6.5 kg."},
-  {name:"Wolverine", italic:true, order:"Carnivora", mass_g:16333.3, log_B:35.00,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁵", tau:"≫ 1", phi:"~10⁻⁹ W",
+  {name:"Wolverine", italic:true, order:"Carnivora", mass_g:16333.3, log_B:-0.79,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁰·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Gulo gulo. T_max ≈ 13 years at M = 16 kg. Carnivore with moderate T_max — carnivory correlates with higher ν₀ (high-calorie diet → higher cell turnover)."},
-  {name:"Bonobo", italic:true, order:"Primates", mass_g:39925.0, log_B:35.48,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁵·⁵", tau:"≫ 1", phi:"~10⁻⁹ W",
+  {name:"Bonobo", italic:true, order:"Primates", mass_g:39925.0, log_B:-0.31,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁰·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Pan paniscus. T_max ≈ 50 years at M = 40 kg. Nearest living relative of humans. ℬ/ℏ 2.5 orders below humans at similar T_max — difference only in M^{5/4}."},
-  {name:"Human cell", italic:false, order:"Primates", mass_g:70000.0, log_B:35.79,
-   genes:"~21 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~6×10³⁵", tau:"≫ 1", phi:"~10⁻¹² W",
+   note:"Pan paniscus. T_max ≈ 50 years at M = 40 kg. Nearest living relative of humans. ℬ 0.3 orders below humans — the difference comes only from M^{5/4}."},
+  {name:"Human", italic:false, order:"Primates", mass_g:70000.0, log_B:0.00,
+   genes:"~21 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · reference point: ℬ/ℬ_human = 1", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Homo sapiens · M = 70 kg. Hayflick limit (~50 divisions) — direct consequence of E-channel with full memory. ℬ* = 0.32 J·s·kg^{-5/4} → ℬ ≈ 64.8 J·s → ℬ/ℏ ≈ 6.1×10^35. Each division transfers non-zero Σ₀ > 0 to daughter cell. Verification: Whittemore et al. 2019 (telomeres), Cagan et al. 2022 (mutations)."},
-  {name:"Asian black bear", italic:true, order:"Carnivora", mass_g:103750.0, log_B:36.00,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁶", tau:"≫ 1", phi:"~10⁻⁸ W",
+   note:"Homo sapiens · M = 70 kg. Hayflick limit (~50 divisions) — direct consequence of E-channel with full memory. Reference point of the relative scale (ℬ/ℬ_human = 1); the absolute ℬ of multicellular organisms is not determined, since the share of the structural flux in total metabolism is not established (monograph, App. C.9.2). Each division transfers non-zero Σ₀ > 0 to daughter cell. Verification: Whittemore et al. 2019 (telomeres), Cagan et al. 2022 (mutations)."},
+  {name:"Asian black bear", italic:true, order:"Carnivora", mass_g:103750.0, log_B:0.21,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁰·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Ursus thibetanus. T_max ≈ 35 years at M = 100 kg. Winter sleep: not true anabiosis (T_body drops only 4–5°C) — ν₀ changes negligibly."},
-  {name:"Grey seal", italic:true, order:"Carnivora", mass_g:268000.0, log_B:36.52,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁶·⁵", tau:"≫ 1", phi:"~10⁻⁸ W",
+  {name:"Grey seal", italic:true, order:"Carnivora", mass_g:268000.0, log_B:0.73,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁰·⁷", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Halichoerus grypus. T_max ≈ 46 years. Marine mammals form a distinct cluster on the ℬ/ℏ scale — large M with moderate metabolism."},
-  {name:"Giant eland", italic:true, order:"Artiodactyla", mass_g:680000.0, log_B:37.02,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁷", tau:"≫ 1", phi:"~10⁻⁷ W",
+   note:"Halichoerus grypus. T_max ≈ 46 years. Marine mammals form a distinct cluster on the ℬ scale — large M with moderate metabolism."},
+  {name:"Giant eland", italic:true, order:"Artiodactyla", mass_g:680000.0, log_B:1.23,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10¹·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Taurotragus derbianus. Largest antelope. M = 680 kg, T_max ≈ 25 years. Artiodactyla: stable ℬ* cluster in AnAge database."},
-  {name:"Indian rhinoceros", italic:true, order:"Perissodactyla", mass_g:1602330.0, log_B:37.49,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁷·⁵", tau:"≫ 1", phi:"~10⁻⁷ W",
+  {name:"Indian rhinoceros", italic:true, order:"Perissodactyla", mass_g:1602330.0, log_B:1.70,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10¹·⁷", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Rhinoceros unicornis. M = 1.6 t, T_max ≈ 45 years. One of four surviving rhinoceros species. ℬ/ℏ = 10^37.5 — upper limit of large terrestrial mammals."},
-  {name:"Killer whale", italic:true, order:"Cetacea", mass_g:3987500.0, log_B:37.98,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁸", tau:"≫ 1", phi:"~10⁻⁷ W",
+   note:"Rhinoceros unicornis. M = 1.6 t, T_max ≈ 45 years. One of four surviving rhinoceros species. ℬ ≈ 10^1.7 × human — upper limit of large terrestrial mammals."},
+  {name:"Killer whale", italic:true, order:"Cetacea", mass_g:3987500.0, log_B:2.19,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Orcinus orca. M = 4 t, T_max ≈ 90 years (females). Post-menopausal killer whale — biological anomaly: longevity without reproduction. VBLS: reproductive viability (16.9) and biological age diverge."},
-  {name:"African elephant", italic:true, order:"Proboscidea", mass_g:4800000.0, log_B:38.08,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁸·¹", tau:"≫ 1", phi:"~10⁻⁶ W",
+  {name:"African elephant", italic:true, order:"Proboscidea", mass_g:4800000.0, log_B:2.29,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Loxodonta africana. M = 4.8 t, T_max ≈ 65–70 years. Peto's paradox: with vast cell numbers and ℬ/ℏ = 10^38, extreme cancer burden would be expected — but elephants carry 20 copies of TP53."},
-  {name:"Baird's beaked whale", italic:true, order:"Cetacea", mass_g:11380000.0, log_B:38.55,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁸·⁶", tau:"≫ 1", phi:"~10⁻⁶ W",
+   note:"Loxodonta africana. M = 4.8 t, T_max ≈ 65–70 years. Peto's paradox: with vast cell numbers, extreme cancer burden would be expected — but elephants carry 20 copies of TP53."},
+  {name:"Baird's beaked whale", italic:true, order:"Cetacea", mass_g:11380000.0, log_B:2.76,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Berardius bairdii. M = 11.4 t, T_max ≈ 84 years. Beaked whale with one of the largest T_max among toothed whales."},
-  {name:"Gray whale", italic:true, order:"Cetacea", mass_g:28500000.0, log_B:39.05,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹", tau:"≫ 1", phi:"~10⁻⁶ W",
+  {name:"Gray whale", italic:true, order:"Cetacea", mass_g:28500000.0, log_B:3.26,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Eschrichtius robustus. M = 28.5 t, T_max ≈ 77 years. Annual migration ~20,000 km — mammalian record."},
-  {name:"Fin whale", italic:true, order:"Cetacea", mass_g:70000000.0, log_B:39.54,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹·⁵", tau:"≫ 1", phi:"~10⁻⁵ W",
+  {name:"Fin whale", italic:true, order:"Cetacea", mass_g:70000000.0, log_B:3.75,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Balaenoptera physalus. M = 70 t, T_max ≈ 140 years. Second largest species on Earth. ℬ/ℏ = 10^39.5 — near absolute maximum for Mammalia."},
-  {name:"Bowhead whale", italic:true, order:"Cetacea", mass_g:100000000.0, log_B:39.73,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹·⁷", tau:"≫ 1", phi:"~10⁻⁵ W",
+   note:"Balaenoptera physalus. M = 70 t, T_max ≈ 140 years. Second largest species on Earth. ℬ ≈ 10^3.75 × human — near the maximum for Mammalia."},
+  {name:"Bowhead whale", italic:true, order:"Cetacea", mass_g:100000000.0, log_B:3.94,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Balaena mysticetus. M = 100 t, T_max > 200 years (age determined from 19th-century harpoon tips found in bodies). Longest-lived mammal. ℬ/ℏ ~ 10^39.7 — at upper limit of Mammalia scale."},
-  {name:"Blue whale", italic:true, order:"Cetacea", mass_g:136000000.0, log_B:39.90,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10³⁹·⁹", tau:"≫ 1", phi:"~10⁻⁵ W",
+   note:"Balaena mysticetus. M = 100 t, T_max > 200 years (age determined from 19th-century harpoon tips found in bodies). Longest-lived mammal. ℬ ≈ 10^3.9 × human — at the upper end of the Mammalia scale."},
+  {name:"Blue whale", italic:true, order:"Cetacea", mass_g:136000000.0, log_B:4.11,
+   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Balaenoptera musculus. M = 136 t — largest animal in Earth's history. ℬ/ℏ ~ 10^39.9 — absolute maximum on the ℬ scale for Mammalia. ℬ ≈ 836,000 J·s = 836 kJ·s."},
+   note:"Balaenoptera musculus. M = 136 t — largest animal in Earth's history. ℬ ≈ 10^4.1 × human — the maximum on the ℬ scale for Mammalia."},
   // ─── Outside Mammalia scale ───
   {name:"Tardigrade (active)", italic:true, order:"Tardigrada", mass_g:0.001, log_B:null,
-   genes:"~38 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"— (β not calib., non-Mammalia eukaryote)", tau:"≫ 1", phi:"~10⁻¹⁰ W",
+   genes:"~38 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"— (β not calib., non-Mammalia eukaryote)", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Milnesium tardigradum. Invertebrate — Mammalia allometry inapplicable. ℬ/ℏ estimated independently as ~10^18. Two modes: active (full memory, γ≫1) and cryptobiosis (Φ_in→0, (𝒮) equations frozen). Σ does not reset during freezing."}
+   note:"Milnesium tardigradum. Invertebrate — Mammalia allometry inapplicable; the absolute ℬ of multicellular organisms is not determined. Two modes: active (full memory, γ≫1) and cryptobiosis (Φ_in→0, (𝒮) equations frozen). Σ does not reset during freezing."}
   ],
   "1-2": [{
     name:"Mycoplasma genitalium", italic:true,
@@ -591,7 +591,7 @@ function openSpeciesModal(organisms, col, key) {
 }
 
 // ══════════════════════════════════════════════════════
-//  B/ℏ STRIP BUILDER  (cell 1-1 only)
+//  B STRIP BUILDER, relative to the human (cell 1-1 only)
 // ══════════════════════════════════════════════════════
 function buildBStrip(organisms, color) {
   const wrap = document.createElement('div');
@@ -599,7 +599,7 @@ function buildBStrip(organisms, color) {
   const scaled = organisms.filter(o => o.log_B !== null);
   const outscale = organisms.filter(o => o.log_B === null);
 
-  const logMin = 30.0, logMax = 40.2;
+  const logMin = -5.8, logMax = 4.4;   // log10(B/B_human)
   const range = logMax - logMin;
 
   const ORDER_COLORS = {
@@ -643,7 +643,7 @@ function buildBStrip(organisms, color) {
   fill.setAttribute('rx','2'); fill.setAttribute('fill','url(#bgrad)');
   svg.appendChild(fill);
 
-  for (let lg = 31; lg <= 40; lg++) {
+  for (let lg = -5; lg <= 4; lg++) {
     const x = ((lg - logMin) / range * 600).toFixed(1);
     const tick = document.createElementNS(svgNS, 'line');
     tick.setAttribute('x1', x); tick.setAttribute('x2', x);
@@ -655,7 +655,7 @@ function buildBStrip(organisms, color) {
     lbl.setAttribute('text-anchor','middle');
     lbl.setAttribute('font-size','7'); lbl.setAttribute('fill','rgba(255,255,255,0.4)');
     lbl.setAttribute('font-family','monospace');
-    lbl.textContent = lg;
+    lbl.textContent = (lg > 0 ? '+' : '') + lg;
     svg.appendChild(lbl);
   }
 
@@ -664,12 +664,12 @@ function buildBStrip(organisms, color) {
   axLbl.setAttribute('text-anchor','middle');
   axLbl.setAttribute('font-size','7.5'); axLbl.setAttribute('fill','rgba(255,255,255,0.35)');
   axLbl.setAttribute('font-family','monospace');
-  axLbl.textContent = 'log₁₀(ℬ/ℏ) — minimum life action quantum';
+  axLbl.textContent = 'log₁₀(ℬ/ℬ_human) — relative scale; absolute ℬ of multicellular organisms not determined';
   svg.appendChild(axLbl);
 
   scaled.forEach(o => {
     const x = ((o.log_B - logMin) / range * 600);
-    const isHuman = o.name === 'Human cell';
+    const isHuman = o.name === 'Human';
     const c = isHuman ? '#ffd600' : orderColor(o);
     const r = isHuman ? 5.5 : 4;
 
@@ -720,7 +720,7 @@ function buildBStrip(organisms, color) {
 
   const stripLbl = document.createElement('div');
   stripLbl.className = 'b-section-label';
-  stripLbl.textContent = 'ℬ/ℏ — life action scale  ·  27 Mammalia species + Tardigrada';
+  stripLbl.textContent = 'ℬ relative to human  ·  26 Mammalia species';
   stripWrap.appendChild(stripLbl);
   stripWrap.appendChild(svg);
   stripWrap.appendChild(legendSvg);
@@ -728,7 +728,7 @@ function buildBStrip(organisms, color) {
 
   const listLbl = document.createElement('div');
   listLbl.className = 'b-section-label';
-  listLbl.textContent = 'Ranked by ℬ/ℏ · click row for details';
+  listLbl.textContent = 'Ranked by ℬ relative to human · click row for details';
   wrap.appendChild(listLbl);
 
   const listWrap = document.createElement('div');
@@ -737,11 +737,11 @@ function buildBStrip(organisms, color) {
   const hdr = document.createElement('div');
   hdr.className = 'b-list-header';
   hdr.style.cssText = 'padding:6px 10px;background:var(--panel2)';
-  hdr.innerHTML = `<span style="width:22px">#</span><span style="flex:1">Species</span><span style="width:110px;text-align:center">ℬ/ℏ (log)</span><span style="width:60px;text-align:right">log₁₀</span><span style="width:62px;text-align:right">Mass</span>`;
+  hdr.innerHTML = `<span style="width:22px">#</span><span style="flex:1">Species</span><span style="width:110px;text-align:center">ℬ/ℬ_human (log)</span><span style="width:60px;text-align:right">log₁₀</span><span style="width:62px;text-align:right">Mass</span>`;
   listWrap.appendChild(hdr);
 
   scaled.forEach((o, idx) => {
-    const isHuman = o.name === 'Human cell';
+    const isHuman = o.name === 'Human';
     const c = isHuman ? '#ffd600' : orderColor(o);
     const frac = (o.log_B - logMin) / range;
 
@@ -752,7 +752,7 @@ function buildBStrip(organisms, color) {
       <span class="b-org-rank">${idx+1}</span>
       <span class="b-org-name${o.italic?' italic':''}${isHuman?' highlight':''}">${o.name}</span>
       <div class="b-bar-wrap"><div class="b-bar" style="width:${(frac*100).toFixed(1)}%;background:${c}"></div></div>
-      <span class="b-org-val">10<sup>${o.log_B.toFixed(1)}</sup></span>
+      <span class="b-org-val">10<sup>${(o.log_B > 0 ? '+' : '') + o.log_B.toFixed(1)}</sup></span>
       <span class="b-org-mass">${o.mass_g >= 1e6 ? (o.mass_g/1e6).toFixed(1)+' t' : o.mass_g >= 1e3 ? (o.mass_g/1e3).toFixed(1)+' kg' : o.mass_g+' g'}</span>`;
 
     const noteDiv = document.createElement('div');
