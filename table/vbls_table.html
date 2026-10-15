@@ -33,11 +33,11 @@
 
 <!-- ══ LEGEND ══ -->
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>γ ≫ 1 · far above</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>γ > 1 · near boundary</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div>γ ≈ 1 · at 𝓜<sub>min</sub></div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c4)"></div>γ ~ 0.1–0.3 · below type I</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div>γ ~ 0 · below type II</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>γ ≫ 1 · large inflow margin</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>γ > 1 · small inflow margin</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div>γ ≈ 1 · stationary start</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c4)"></div>γ ~ 0.1–0.3 · host-dependent, type I</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div>γ ~ 0 · host-dependent, type II</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c6)"></div>γ = 0 · organelle</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c7)"></div>outside (𝒮)</div>
   <span class="legend-sep">·</span>
@@ -57,11 +57,11 @@
     <div class="super-empty"></div>
     <div class="super-header">
       <div class="super-header-label">Horizontal axis</div>
-      <div class="super-header-desc">System position relative to the dissipative viability boundary 𝓜<sub>min</sub> — determined by parameter γ = Φ<sub>in</sub><sup>(aut)</sup> / Φ<sub>in</sub><sup>min</sup>(θ)</div>
+      <div class="super-header-desc">Own inflow γ = η<sub>0</sub>Φ<sub>in</sub><sup>(aut)</sup> / F<sub>diss</sub>(E<sub>0</sub>); γ = 1 is a stationary start. Position relative to the dissipative viability boundary 𝓜<sub>min</sub> is set by Barrier I (R<sub>bal</sub> vs R*) and given in each species card</div>
       <div class="super-arrow">
         <span class="super-arrow-label-left">autonomous life</span>
         <div class="super-arrow-line"></div>
-        <span class="super-arrow-label-right">below boundary →</span>
+        <span class="super-arrow-label-right">host-dependent →</span>
       </div>
     </div>
   </div>
@@ -69,11 +69,11 @@
   <!-- COLUMN HEADERS -->
   <div class="col-headers">
     <div class="ch-empty"></div>
-    <div class="col-header ch1"><span class="col-num">I</span><span class="col-gamma">γ ≫ 1</span><span class="col-desc">Far above 𝓜<sub>min</sub></span></div>
-    <div class="col-header ch2"><span class="col-num">II</span><span class="col-gamma">γ > 1</span><span class="col-desc">Near 𝓜<sub>min</sub></span></div>
-    <div class="col-header ch3"><span class="col-num">III</span><span class="col-gamma">γ ≈ 1</span><span class="col-desc">★ At 𝓜<sub>min</sub></span></div>
-    <div class="col-header ch4"><span class="col-num">IV</span><span class="col-gamma">γ ~ 0.1–0.3</span><span class="col-desc">Below · type I</span></div>
-    <div class="col-header ch5"><span class="col-num">V</span><span class="col-gamma">γ ~ 0–0.05</span><span class="col-desc">Below · type II</span></div>
+    <div class="col-header ch1"><span class="col-num">I</span><span class="col-gamma">γ ≫ 1</span><span class="col-desc">Large inflow margin</span></div>
+    <div class="col-header ch2"><span class="col-num">II</span><span class="col-gamma">γ > 1</span><span class="col-desc">Small inflow margin</span></div>
+    <div class="col-header ch3"><span class="col-num">III</span><span class="col-gamma">γ ≈ 1</span><span class="col-desc">★ Stationary start</span></div>
+    <div class="col-header ch4"><span class="col-num">IV</span><span class="col-gamma">γ ~ 0.1–0.3</span><span class="col-desc">Host-dependent · type I</span></div>
+    <div class="col-header ch5"><span class="col-num">V</span><span class="col-gamma">γ ~ 0–0.05</span><span class="col-desc">Host-dependent · type II</span></div>
     <div class="col-header ch6"><span class="col-num">VI</span><span class="col-gamma">γ = 0</span><span class="col-desc">Organelle</span></div>
     <div class="col-header ch7"><span class="col-num">VII</span><span class="col-gamma">—</span><span class="col-desc">Outside (𝒮)</span></div>
   </div>
@@ -118,160 +118,151 @@ const COL_COLORS = ['','#00e5ff','#1de9b6','#ffd600','#ff6d00','#f44336','#ce93d
 const COL_CHIPS  = ['','chip-s1','chip-s2','chip-s3','chip-s4','chip-s5','chip-s6','chip-s7'];
 
 const ROWS = [
-  { title: "FULL MEMORY",      cond: "α > 0\nτ_div/τ_regen ≫ 1",  desc: "Damage history accumulates and degrades η_abs" },
-  { title: "FROZEN",           cond: "Mech A: τ_div/τ_regen ≪ 1\nMech B: small α_bact",  desc: "Lineage does not age via E-channel — kinematically (fast eukaryotes) or parametrically (prokaryotes)" },
-  { title: "BORROWED",         cond: "κ > 0\nfrom host",      desc: "Memory and reserve attractor (R_bal^eff) sustained by another system's resources" },
-  { title: "NO MEMORY",        cond: "α ≈ 0",                 desc: "Integral barrier III is physically inactive" },
+  { title: "FULL MEMORY",      cond: "α > 0\nα·Σ̄·τ_div ≳ 1",  desc: "Damage history accumulates and degrades η_abs" },
+  { title: "FROZEN",           cond: "α·Σ̄·τ_div ≪ 1\nMech A: short τ_div · Mech B: small α_bact",  desc: "Memory effect suppressed — kinematically (fast eukaryotes) or parametrically (prokaryotes); the trace is still recorded, α > 0" },
+  { title: "BORROWED",         cond: "η₀ provisioned\nby the host's inflow", desc: "The initial provision of memory and the reserve attractor (R_bal^eff) run on another system's resources; the trace is recorded permanently, α(own) > 0" },
+  { title: "NO MEMORY",        cond: "α ≈ 0",                 desc: "Integral memory mechanism not realized · no known organisms" },
   { title: "ANABIOSIS / OUT",  cond: "Φ_in → 0\noutside (𝒮)", desc: "Dynamics frozen or variables E,R,η undefined" },
 ];
 
 const GROUPS = {
-  "1-1": { name: "Eukaryotes with full memory",           desc: "Multicellular · α > 0 · τ_div/τ_regen ≫ 1", hint: "ℬ scale (relative) →" },
-  "1-2": { name: "Natural minima with full memory",       desc: "Smallest autonomous genome (M. genitalium) · radiation-conditional boundary (Cladosporium)" },
+  "1-1": { name: "Eukaryotes with full memory",           desc: "Multicellular · α > 0 · α·Σ̄·τ_div ≳ 1 (τ_div — the life of an individual, §15.1.1.2)", hint: "ℬ scale (relative) →" },
+  "1-2": { name: "Radiation-conditional boundary",       desc: "Cladosporium on the ISS: the living-start boundary depends on the radiation field (App. B.4.3)" },
   "2-1": { name: "Prokaryotes with frozen memory",        desc: "γ ≫ 1 · frozen via Mechanism B (α_bact ≪ α_euk)" },
-  "2-2": { name: "Ultra-minimal free-living",             desc: "Oligotrophs near 𝓜min" },
-  "2-3": { name: "𝓜min boundary — characterized",              desc: "τ_div ≈ τ_regen · experimental limit" },
-  "2-4": { name: "Parasites with frozen memory",          desc: "γ < 1 · R_bal(own) < R*" },
-  "3-4": { name: "Eukaryote with borrowed memory",         desc: "α(own) > 0 retained, but powered by host · R_bal(own) < R* · R_bal(eff) > R*" },
+  "2-2": { name: "Minimal genomes near 𝓜min (estimates)", desc: "SAR11 (free-living oligotroph) · M. genitalium (natural minimum among organisms grown in pure culture)" },
+  "2-3": { name: "𝓜min — reference point",              desc: "τ_div ≈ τ_regen · taken at the boundary (§11.10)" },
+  "3-4": { name: "Parasites with borrowed memory",          desc: "α(own) > 0, memory provisioned by the host · R_bal(own) < R* · R_bal(eff) > R*" },
   "3-5": { name: "Hyper-reduced endosymbionts",           desc: "Genome < 200 genes · ρ ≈ 0 · type II" },
-  "4-1": { name: "Mutator lineages",                      desc: "γ ≫ 1 at α ≈ 0 · R- and I-barriers independent" },
-  "4-4": { name: "Host-dependent parasites without memory", desc: "α(own) ≈ 0, no memory machinery at all · R_bal(own) < R*" },
-  "4-5": { name: "Ultra-reduced symbionts",               desc: "Record-small genomes · collective R_bal only" },
   "4-6": { name: "Organelles",                            desc: "γ(own) = 0 · cell subsystems" },
-  "4-7": { name: "Outside (𝒮) — pre-biological models",    desc: "Approaching 𝓜min from below · E,R,η undefined or ρ=0" },
+  "4-7": { name: "Pre-biological models",    desc: "Compartment present, own repair absent (Barrier I not satisfied) · inside the coordinates, below 𝓜min (§15.4) · γ not determined" },
   "5-1": { name: "Retrospective anabiants",               desc: "Were (𝒮) · entered dormancy · Φ_in → 0 · only ν₀" },
   "5-3": { name: "Prospective anabiants",                 desc: "Not yet (𝒮) · parameters ready · awaiting Φ_in" },
-  "5-7": { name: "Sub-biological agents",                 desc: "Viruses, viroids, prions · E,R,η undefined · below ribozyme limit" },
+  "5-7": { name: "Sub-biological agents",                 desc: "Viruses, viroids, prions · E,R,η undefined · outside (𝒮)" },
 };
 
 const CELLS = {
   "1-1": [
-  // ─── AnAge data · log_B = log₁₀(ℬ/ℬ_human): relative scale; absolute ℬ of multicellular organisms is not determined (monograph, App. C.9.2) ───
+  // ─── masses from AnAge · log_B = (5/4)·log₁₀(M/M_human): the relative ℬ depends on mass alone; absolute ℬ of multicellular organisms is not determined (monograph, App. C.9.2) ───
   {name:"Lesser horseshoe bat", italic:true, order:"Chiroptera", mass_g:4.6, log_B:-5.23,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁵·²", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁵·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Rhinolophus hipposideros. Chiroptera — biological anomaly: flight reduces effective predation mortality, systematically increasing T_max at small M and pushing ℬ above the allometric trend."},
+   note:"Rhinolophus hipposideros. Chiroptera — biological anomaly: flight reduces effective predation mortality, systematically increasing T_max at small M. The ℬ scale depends on mass alone, so on it the species lies on the trend like every other."},
   {name:"Western barbastelle", italic:true, order:"Chiroptera", mass_g:10.2, log_B:-4.79,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Barbastella barbastellus. Long-lived temperate-zone bat. Like other Chiroptera — T_max disproportionately large for body mass."},
   {name:"Forest dormouse", italic:true, order:"Rodentia", mass_g:26.0, log_B:-4.29,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Dryomys nitedula. Extended winter hibernation reduces effective ν₀ — classic example of temperature effect on ν₀ via Arrhenius equation (16.17)."},
+   note:"Dryomys nitedula. Extended winter hibernation reduces effective ν₀ — classic example of temperature effect on ν₀ via the Arrhenius equation (12.9)."},
   {name:"Naked mole rat", italic:true, order:"Rodentia", mass_g:35.0, log_B:-4.13,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Heterocephalus glaber. Lives >30 years at 35 g — rodent record. Anomalously low terminal Σ* (727 mutations vs median ~2,271): death via E-channel with intact R. Exception to universal ℬ* — theoretically justified through elevated Φ_cap."},
+   note:"Heterocephalus glaber. Lives >30 years at 35 g — rodent record. Anomalously low terminal Σ* (727 mutations vs median ~2,271): interpreted in VBLS as death via the E-channel with an intact reserve (§17.3.5.3); awaits data (criterion F9)."},
   {name:"Bulldog bat", italic:true, order:"Chiroptera", mass_g:50.0, log_B:-3.93,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Noctilio leporinus. Largest fishing bat. Chiroptera: T_max > 20 years at M = 50 g."},
   {name:"Southern flying squirrel", italic:true, order:"Rodentia", mass_g:65.4, log_B:-3.79,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Glaucomys volans. T_max ≈ 13 years. Gliding flight reduces predation → demographic effect on T_max analogous to Chiroptera."},
   {name:"Round-tailed ground squirrel", italic:true, order:"Rodentia", mass_g:163.3, log_B:-3.29,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Xerospermophilus tereticaudus. 6–7 month hibernation: ν₀ during dormancy reduced 2–3× by van't Hoff rule."},
   {name:"Brown rat", italic:true, order:"Rodentia", mass_g:300.0, log_B:-2.96,
-   genes:"~2 300", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁰", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁰", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Rattus norvegicus. Standard laboratory model. T_max ≈ 3.8 years. VBLS verification via Cagan et al. 2022: mutation accumulation ~55/year in intestinal crypts."},
+   note:"Rattus norvegicus. Standard laboratory model. T_max ≈ 3.8 years. Cagan et al. 2022: somatic mutation rate in intestinal crypts; in VBLS σ₀ of the human calibration is anchored to these data (calibration, not a test)."},
   {name:"Golden-headed lion tamarin", italic:true, order:"Primates", mass_g:535.0, log_B:-2.65,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻²·⁶", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻²·⁶", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Leontopithecus chrysomelas. T_max ≈ 28 years. Primates systematically above Mammalia allometric trend — social structure effect on survival."},
+   note:"Leontopithecus chrysomelas. T_max ≈ 28 years. Primates lie systematically above the Mammalia T_max–mass trend — social structure effect on survival."},
   {name:"Ringtail possum", italic:true, order:"Diprotodontia", mass_g:1040.0, log_B:-2.29,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻²·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻²·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Hemibelideus lemuroides. Marsupial. T_max ≈ 15 years. ℬ ≈ 10^−2.3 × human — middle of the small-mammal range."},
   {name:"Wedge-capped capuchin", italic:true, order:"Primates", mass_g:2552.5, log_B:-1.80,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻¹·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻¹·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Cebus olivaceus. T_max ≈ 45 years. High longevity for 2.5 kg — primate pattern. Capuchin cells: Hayflick limit ~60 divisions."},
   {name:"Sumatran surili", italic:true, order:"Primates", mass_g:6540.0, log_B:-1.29,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻¹·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻¹·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Presbytis melalophos. T_max ≈ 30 years at M = 6.5 kg."},
   {name:"Wolverine", italic:true, order:"Carnivora", mass_g:16333.3, log_B:-0.79,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁰·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁰·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Gulo gulo. T_max ≈ 13 years at M = 16 kg. Carnivore with moderate T_max — carnivory correlates with higher ν₀ (high-calorie diet → higher cell turnover)."},
+   note:"Gulo gulo. T_max ≈ 13 years at M = 16 kg. Carnivore with moderate T_max."},
   {name:"Bonobo", italic:true, order:"Primates", mass_g:39925.0, log_B:-0.31,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁰·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁰·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Pan paniscus. T_max ≈ 50 years at M = 40 kg. Nearest living relative of humans. ℬ 0.3 orders below humans — the difference comes only from M^{5/4}."},
   {name:"Human", italic:false, order:"Primates", mass_g:70000.0, log_B:0.00,
    genes:"~21 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · reference point: ℬ/ℬ_human = 1", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Homo sapiens · M = 70 kg. Hayflick limit (~50 divisions) — direct consequence of E-channel with full memory. Reference point of the relative scale (ℬ/ℬ_human = 1); the absolute ℬ of multicellular organisms is not determined, since the share of the structural flux in total metabolism is not established (monograph, App. C.9.2). Each division transfers non-zero Σ₀ > 0 to daughter cell. Verification: Whittemore et al. 2019 (telomeres), Cagan et al. 2022 (mutations)."},
+   note:"Homo sapiens · M = 70 kg. Hayflick limit (~50 divisions) — compared with the R-channel threshold R* (Table 10.1). Reference point of the relative scale (ℬ/ℬ_human = 1); the absolute ℬ of multicellular organisms is not determined, since the share of the structural flux in total metabolism is not established (monograph, App. C.9.2). Each division transfers non-zero Σ₀ > 0 to daughter cell. Interspecies comparison: Whittemore et al. 2019 (telomere shortening, an example of R); calibration anchor of σ₀: Cagan et al. 2022."},
   {name:"Asian black bear", italic:true, order:"Carnivora", mass_g:103750.0, log_B:0.21,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁰·²", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁰·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Ursus thibetanus. T_max ≈ 35 years at M = 100 kg. Winter sleep: not true anabiosis (T_body drops only 4–5°C) — ν₀ changes negligibly."},
   {name:"Grey seal", italic:true, order:"Carnivora", mass_g:268000.0, log_B:0.73,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁰·⁷", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁰·⁷", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Halichoerus grypus. T_max ≈ 46 years. Marine mammals form a distinct cluster on the ℬ scale — large M with moderate metabolism."},
+   note:"Halichoerus grypus. T_max ≈ 46 years."},
   {name:"Giant eland", italic:true, order:"Artiodactyla", mass_g:680000.0, log_B:1.23,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10¹·²", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10¹·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Taurotragus derbianus. Largest antelope. M = 680 kg, T_max ≈ 25 years. Artiodactyla: stable ℬ* cluster in AnAge database."},
+   note:"Taurotragus derbianus. Largest antelope. M = 680 kg, T_max ≈ 25 years."},
   {name:"Indian rhinoceros", italic:true, order:"Perissodactyla", mass_g:1602330.0, log_B:1.70,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10¹·⁷", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10¹·⁷", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Rhinoceros unicornis. M = 1.6 t, T_max ≈ 45 years. One of four surviving rhinoceros species. ℬ ≈ 10^1.7 × human — upper limit of large terrestrial mammals."},
+   note:"Rhinoceros unicornis. M = 1.6 t, T_max ≈ 45 years. One of four surviving rhinoceros species. ℬ ≈ 10^1.7 × human; the elephant lies higher (10^2.3) on this mass-only scale."},
   {name:"Killer whale", italic:true, order:"Cetacea", mass_g:3987500.0, log_B:2.19,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·²", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·²", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Orcinus orca. M = 4 t, T_max ≈ 90 years (females). Post-menopausal killer whale — biological anomaly: longevity without reproduction. VBLS: reproductive viability (16.9) and biological age diverge."},
+   note:"Orcinus orca. M = 4 t, T_max ≈ 90 years (females). Post-menopausal killer whale — biological anomaly: longevity without reproduction. VBLS: reproductive vitality (§19.3.6) and biological age diverge."},
   {name:"African elephant", italic:true, order:"Proboscidea", mass_g:4800000.0, log_B:2.29,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Loxodonta africana. M = 4.8 t, T_max ≈ 65–70 years. Peto's paradox: with vast cell numbers, extreme cancer burden would be expected — but elephants carry 20 copies of TP53."},
   {name:"Baird's beaked whale", italic:true, order:"Cetacea", mass_g:11380000.0, log_B:2.76,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10²·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Berardius bairdii. M = 11.4 t, T_max ≈ 84 years. Beaked whale with one of the largest T_max among toothed whales."},
   {name:"Gray whale", italic:true, order:"Cetacea", mass_g:28500000.0, log_B:3.26,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·³", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·³", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Eschrichtius robustus. M = 28.5 t, T_max ≈ 77 years. Annual migration ~20,000 km — mammalian record."},
   {name:"Fin whale", italic:true, order:"Cetacea", mass_g:70000000.0, log_B:3.75,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·⁸", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Balaenoptera physalus. M = 70 t, T_max ≈ 140 years. Second largest species on Earth. ℬ ≈ 10^3.75 × human — near the maximum for Mammalia."},
   {name:"Bowhead whale", italic:true, order:"Cetacea", mass_g:100000000.0, log_B:3.94,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Balaena mysticetus. M = 100 t, T_max > 200 years (age determined from 19th-century harpoon tips found in bodies). Longest-lived mammal. ℬ ≈ 10^3.9 × human — at the upper end of the Mammalia scale."},
   {name:"Blue whale", italic:true, order:"Cetacea", mass_g:136000000.0, log_B:4.11,
-   genes:"~2 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Balaenoptera musculus. M = 136 t — largest animal in Earth's history. ℬ ≈ 10^4.1 × human — the maximum on the ℬ scale for Mammalia."},
   // ─── Outside Mammalia scale ───
   {name:"Tardigrade (active)", italic:true, order:"Tardigrada", mass_g:0.001, log_B:null,
-   genes:"~38 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"— (β not calib., non-Mammalia eukaryote)", tau:"≫ 1", phi:"not determined (multicellular)",
+   genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"— (β not calib., non-Mammalia eukaryote)", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
    note:"Milnesium tardigradum. Invertebrate — Mammalia allometry inapplicable; the absolute ℬ of multicellular organisms is not determined. Two modes: active (full memory, γ≫1) and cryptobiosis (Φ_in→0, (𝒮) equations frozen). Σ does not reset during freezing."}
   ],
   "1-2": [{
-    name:"Mycoplasma genitalium", italic:true,
-    genes:"525", gamma:"1.1–1.3", D:"> R*, small", B_hbar:"~10²¹", tau:"~1.2", phi:"~10⁻¹⁶ W",
-    memory:"Full", status:"Near 𝓜min",
-    note:"Natural free-living minimum. τ_div/τ_regen ≈ 1.2 ≈ γ (estimated): ages in the VBLS sense. Without host survives a few hours — on timescale τ_regen·(γ−1)."
-  },{
     name:"Cladosporium sp. (ISS)", italic:true,
-    genes:"—", gamma:"≳ 1 (rad.)", D:"≈ R*", B_hbar:"—", tau:"—", phi:"~10⁻¹⁴ W (ion. rad.)",
+    genes:"—", gamma:"≳ 1 (rad.)", D:"not determined", B_hbar:"—", tau:"—", phi:"~10⁻¹⁴ W (chemical)",
     memory:"Full", status:"Conditional boundary",
-    note:"Φ_in from ionizing radiation via melanin — analogue of radiotrophic photosynthesis. The only organism for which 𝓜min depends on the ISS radiation field. Full eukaryotic memory (α>0, not frozen) — moved here from R2 (frozen), where it had been grouped with SAR11 despite its own data already reading 'Active'."
+    note:"Radiation adds no energy: its direct contribution is five orders below the chemical Φ_in (App. B.4.3). The only organism whose living-start boundary depends on the ISS radiation field: via melanin, radiation lowers σ₀^eff (Barrier II) and raises η_abs (the inflow condition). Full eukaryotic memory (α>0, not frozen) — moved here from R2 (frozen), where it had been grouped with SAR11 despite its own data already reading 'Active'."
   }],
   "1-3":{ predicted:true, col:3,
     name:"Organism with full memory at 𝓜min",
-    desc:"Theory predicts: an organism is possible with τ_div/τ_regen ≫ 1 (memory active) and simultaneously γ ≈ 1. Requires: large number of regulatory modules N > N_crit at minimal Φ_in.",
-    verify:"Chemostat with JCVI-syn3.0 at gradual addition of regulatory genes — searching for γ ≈ 1 with active memory τ_div/τ_regen > 10.",
+    desc:"Theory predicts: an organism is possible with full memory (α·Σ̄·τ_div ≳ 1) and simultaneously γ ≈ 1. Requires a developed regulatory memory block at a minimal incoming flux (App. C.5.1).",
+    verify:"Chemostat with JCVI-syn3.0 at gradual addition of regulatory genes — searching for γ ≈ 1 with full memory, α·Σ̄·τ_div ≳ 1.",
     status:"Predicted · not found"
   },
   "1-4":"F","1-5":"F","1-6":"F","1-7":"F",
@@ -280,31 +271,36 @@ const CELLS = {
     name:"Deinococcus radiodurans", italic:true,
     genes:"~3 200", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~2×10⁻¹³ W",
     memory:"Frozen", status:"Above 𝓜min",
-    note:"Repair record: 1.5×10⁶ rad. Resistance through record-high ρ, not insensitivity to damage. Barrier I maximized among known organisms."
+    note:"Repair record: 1.5×10⁶ rad. Resistance through record-high ρ, not insensitivity to damage. Presumably a large Barrier I margin (no measured repair parameters)."
   },{
     name:"Escherichia coli", italic:true,
     genes:"4 377", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1†", phi:"~10⁻¹² W",
     memory:"Frozen (Mech. B)", status:"Above 𝓜min",
-    note:"† τ_div/τ_regen ≫ 1 (far above 𝓜min, γ ≫ 1), yet memory is frozen via Mechanism B: α_bact ≈ 0. Clonal E. coli lineage does not age in the VBLS sense."
+    note:"† τ_div/τ_regen ≫ 1, R_bal(own) ≫ R*. Memory is frozen via Mechanism B: α_bact > 0 but small, so η_abs declines negligibly over a division cycle. The lineage persists through the asymmetric reset of Σ₀ at division; the old-pole cell ages and dies (App. B.3.3)."
+  },{
+    name:"E. coli ΔmutS (mutator)", italic:true,
+    genes:"~4 300", gamma:"≫ 1", D:"> R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~10⁻¹² W",
+    memory:"Frozen (Mech. B)", status:"Above 𝓜min",
+    note:"Mismatch-repair mutator. Loss of error correction raises σ₀ and lowers ρ (§11.7), not α: the mutator stays in the frozen-memory row. Row R4 (α ≈ 0) has no known organisms (App. C.4.4)."
   }],
   "2-2": [{
     name:"SAR11 / Pelagibacter ubique", italic:true,
-    genes:"~1 354", gamma:"≳ 1", D:"≈ R*", B_hbar:"~10²¹", tau:"≳ 1", phi:"~10⁻¹⁵ W",
+    genes:"~1 354", gamma:"≳ 1", D:"≈ R* (est.)", B_hbar:"~10²¹", tau:"≳ 1", phi:"~10⁻¹⁵ W",
     memory:"Frozen", status:"Near 𝓜min",
-    note:"Most abundant organism on Earth (~10²⁸ cells). Evolutionary analogue of JCVI-syn3.0: natural selection in oligotrophic ocean reduced R_bal to R*."
+    note:"Most abundant organism on Earth (~10²⁸ cells). Evolutionary analogue of JCVI-syn3.0: estimated near R_bal ≈ R*; no measured repair parameters (§11.7)."
+  },{
+    name:"Mycoplasma genitalium", italic:true,
+    genes:"525", gamma:"1.1–1.3", D:"> R*, small", B_hbar:"~10²¹", tau:"~1.2 (est.)", phi:"~10⁻¹⁶ W",
+    memory:"Frozen (Mech. B)", status:"Near 𝓜min",
+    note:"Natural minimum among organisms grown in pure culture (App. B.4.2). γ(own) 1.1–1.3 and τ_div/τ_regen ≈ 1.2 are estimates, the latter without an independent calculation of ν_info. As a prokaryote it has frozen memory via Mechanism B, like syn3.0; τ_div/τ_regen is an informational indicator and does not set the memory regime (§15.3.2)."
   }],
   "2-3": [{
     name:"JCVI-syn3.0", italic:false, star:true,
-    genes:"473", gamma:"≈ 1.0–1.05", D:"≈ R*", B_hbar:"~2×10²¹", tau:"1.00 ★", phi:"~10⁻¹⁵ W",
+    genes:"473", gamma:"≈ 1.0", D:"≈ R*", B_hbar:"~2×10²¹ (architecture scale, §14.4; living starts 6×10¹⁷–2×10²⁰)", tau:"1.00 ★", phi:"~10⁻¹⁵ W",
     memory:"Frozen", status:"AT 𝓜min",
-    note:"τ_div = τ_regen (§13.3, eq. 13.7). The equality is exact by construction: ν_info for syn3.0 is computed as I/τ_div, so τ_regen = I/ν_info = τ_div — it fixes the boundary condition, it does not independently test it. Removal of 8 repair genes shifts to mutator mode; syn3.0 is the experimentally characterized point at 𝓜min."
+    note:"τ_div = τ_regen (§13.3, eq. 13.7). The equality is exact by construction: ν_info for syn3.0 is computed as I/τ_div, so τ_regen = I/ν_info = τ_div — it fixes the boundary condition, it does not independently test it. Removal of 8 repair genes shifts to mutator mode; syn3.0 is the reference point taken to lie at 𝓜min (§11.10); its position is not checked by measured parameters (§11.7)."
   }],
-  "2-4": [{
-    name:"Mycoplasma pneumoniae", italic:true,
-    genes:"~689", gamma:"~0.2–0.4", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁷ W (est.)",
-    memory:"Frozen", status:"Below · type I",
-    note:"Obligate lung parasite. No amino acid synthesis, no TCA cycle. Memory frozen (Mechanism B, small α_bact), R_bal(own)<R*. Intermediate niche between M. genitalium and N. equitans."
-  }],
+  "2-4":null,
   "2-5":"F","2-6":"F","2-7":"F",
 
   "3-1":null,
@@ -316,7 +312,7 @@ const CELLS = {
   },
   "3-3":{ predicted:true, col:3,
     name:"Obligate parasite exactly at 𝓜min",
-    desc:"Parasite with R_bal(eff) ≈ R* and borrowed memory κ>0. τ_div/τ_regen(eff) ≈ 1. Predicts anomalously wide distribution of lifetimes — consequence of the asymptotics t_B ~ C/𝒟.",
+    desc:"Parasite with R_bal(eff) ≈ R* and borrowed memory (η₀ provisioned by the host). τ_div/τ_regen(eff) ≈ 1. The N. equitans + Ignicoccus system at minimal substrate would be sensitive to substrate fluctuations (App. C.6).",
     verify:"Chemostat N. equitans + Ignicoccus hospitalis at gradually reduced host substrate. Criterion: τ_div(eff) ≈ τ_regen.",
     status:"Predicted · not found"
   },
@@ -324,73 +320,73 @@ const CELLS = {
     name:"Encephalitozoon cuniculi", italic:true,
     genes:"~2 000", gamma:"~0.2", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁶ W (est.)",
     memory:"Borrowed", status:"Below · eukaryote!",
-    note:"The only known eukaryote below 𝓜min. Mitochondria loss → Φ_in drops. Proves: 𝓜min is determined by dynamic balance, not taxonomy. Unlike Rickettsia/Chlamydia (α≈0, no memory machinery at all — see R4×IV), E. cuniculi retains some regulatory genes (α(own)>0): the memory mechanism itself survives, just powered by the host — the one cataloged organism that is genuinely 'Borrowed' rather than merely 'Absent'."
+    note:"The only known eukaryote below 𝓜min. Mitochondria loss → Φ_in drops: with γ(own) < 1 weakened restoration lowers the effective reserve attractor (App. C.2.1), and the own repair parameters place the parasite below 𝓜min — a matter of dynamics, not taxonomy. Retains its own memory mechanism (α(own) > 0), powered by the host (App. B.6.3)."
+  },{
+    name:"Rickettsia prowazekii", italic:true,
+    genes:"~834", gamma:"~0.3", D:"< R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
+    memory:"Borrowed", status:"Below · type I",
+    note:"Evolutionary ancestor of mitochondria. ATP via ADP/ATP translocase from host. Own memory mechanism (α(own) > 0) provisioned by the host. Outside the cell it dies within hours; VBLS gives no numerical estimate, since γ_in is not calibrated (App. B.6.1)."
+  },{
+    name:"Chlamydia trachomatis", italic:true,
+    genes:"~895", gamma:"≈ 0", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
+    memory:"Borrowed", status:"Below · type I",
+    note:"Complete loss of ATP synthesis. Two-stage cycle: EB (dormant form) → RB (active only inside cell). 'Parasitic launch' through barrier III. Own memory mechanism (α(own) > 0) provisioned by the host (App. B.6.2)."
+  },{
+    name:"Nanoarchaeum equitans", italic:true,
+    genes:"536", gamma:"0.10", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁸ W",
+    memory:"Borrowed", status:"Below · type I",
+    note:"Obligate archaeal parasite of Ignicoccus hospitalis; cannot be cultured outside the host. Own memory mechanism (α(own) > 0) provisioned by the host. Lifetime alone is not estimated (App. B.6.4)."
+  },{
+    name:"Mycoplasma pneumoniae", italic:true,
+    genes:"~689", gamma:"~0.2–0.4", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁷ W (est.)",
+    memory:"Borrowed", status:"Below · type I",
+    note:"Obligate lung parasite. No amino acid synthesis, no TCA cycle. R_bal(own) < R*; labelled 'Borrowed' like the other obligate parasites of the catalog. Intermediate niche between M. genitalium and N. equitans."
   }],
   "3-5": [{
     name:"Tremblaya princeps", italic:true,
     genes:"~120", gamma:"≈ 0.05", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"None", status:"Below · type II",
-    note:"Contains Moranella endobia inside (~200 genes). Three-level hierarchy: collective balance 𝒟(Tremblaya) + 𝒟(Moranella) + δ𝒟(host) keeps R_bal(eff) > R*. Viability as a collective property."
+    memory:"Borrowed", status:"Below · type II",
+    note:"Contains Moranella endobia inside (~400 genes). Three-level hierarchy: own restoration plus the subsidies of the two other levels keep R_bal(eff) > R* (App. B.7.1, eq. B.10.8). Viability as a collective property."
   },{
     name:"Carsonella ruddii", italic:true,
-    genes:"~160", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"None", status:"Below · type II",
-    note:"No DNA repair genes (ρ ≈ 0). Genome degrades at record rate. Survival provided exclusively by δ𝒟(host)."
-  }],
-  "3-6":null,"3-7":null,
-
-  "4-1": [{
-    name:"E. coli ΔmutS (mutator)", italic:true,
-    genes:"~4 300", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~10⁻¹² W",
-    memory:"Absent (α≈0)", status:"Above 𝓜min · α=0",
-    note:"γ≫1 preserved at α≈0. Lineage accumulates mutations but does not 'age' via E-channel. Demonstrates independence of barriers I and III."
-  }],
-  "4-2":null,
-  "4-3":{ predicted:true, col:3,
-    name:"Mutator exactly at 𝓜min",
-    desc:"An organism with fully lost η_abs regulation (α≈0) but γ(own)≈1 — a mutator living not in resource abundance but exactly at the threshold. Unlike R1×III (deficient resource with active memory), here the resource is deficient with memory fully absent. Since the E-channel is structurally excluded by α≈0, death is governed purely by Barrier I, without the sigmoidal three-phase curve.",
-    verify:"Minimal-genome mutator strain (e.g., a JCVI-syn3.0 variant with η_abs-regulation genes deleted) in a chemostat at gradually reduced Φ_in down to γ(own)→1. Criterion distinguishing it from R1×III: absence of a plateau before death — a purely exponential survival curve, not sigmoidal.",
-    status:"Predicted · not found"
-  },
-  "4-4": [{
-    name:"Rickettsia prowazekii", italic:true,
-    genes:"~834", gamma:"~0.3", D:"< R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
-    memory:"Absent", status:"Below · type I",
-    note:"Evolutionary ancestor of mitochondria. ATP via ADP/ATP translocase from host. α(own)≈0 — no memory machinery at all (moved here from R3, where 'borrowed reserve' had been conflated with 'borrowed memory'; see E. cuniculi, R3×IV, for the one organism that actually retains α>0). VBLS prediction: death in ~14 h outside cell."
+    genes:"182", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
+    memory:"Borrowed", status:"Below · type II",
+    note:"Almost all DNA-repair genes lost (ρ ≈ 0). Genome degrades at record rate. Only the host's subsidy keeps R_bal(eff) > R* (eq. 15.10)."
   },{
-    name:"Chlamydia trachomatis", italic:true,
-    genes:"~895", gamma:"≈ 0", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
-    memory:"Absent", status:"Below · type I",
-    note:"Complete loss of ATP synthesis. Two-stage cycle: EB (dormant form) → RB (active only inside cell). 'Parasitic launch' through barrier III. α(own)≈0 — no memory machinery at all."
-  },{
-    name:"Nanoarchaeum equitans", italic:true,
-    genes:"490", gamma:"0.10", D:"< R*", B_hbar:"—", tau:"123 (eff)", phi:"~5×10⁻¹⁸ W",
-    memory:"Absent", status:"Below · type I",
-    note:"α ≈ 0 — no memory regulation genes. VBLS prediction: death in ~2 h without Ignicoccus hospitalis. Cannot be cultured outside host."
-  }],
-  "4-5": [{
     name:"Hodgkinia cicadicola", italic:true,
-    genes:"~144", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"None", status:"Below · type II",
-    note:"Genome fragmented across multiple lineages: collective viability without a single complete genome."
+    genes:"169", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
+    memory:"Borrowed", status:"Below · type II",
+    note:"Genome fragmented across multiple lineages: collective viability without a single complete genome; R_bal(eff) > R* holds for the ensemble with the host's subsidy (App. B.7.3)."
   },{
     name:"Nasuia deltocephalinicola", italic:true,
     genes:"~137", gamma:"≈ 0.02", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"None", status:"Below · type II",
-    note:"Record: smallest genome among cellular organisms. Empirical lower limit of cellular organization on the VBLS scale."
+    memory:"Borrowed", status:"Below · type II",
+    note:"Record: smallest genome among cellular organisms by base pairs (by protein-coding genes — Tremblaya). Empirical lower limit of cellular organization on the VBLS scale."
   }],
+  "3-6":null,"3-7":null,
+
+  "4-1":null,
+  "4-2":null,
+  "4-3":{ predicted:true, col:3,
+    name:"System without integral memory at 𝓜min",
+    desc:"An organism without an integral memory mechanism (α ≈ 0) and with γ(own) ≈ 1 — living not in resource surplus but at the threshold. Unlike R1×III (deficient resource, memory working), here the resource is deficient with memory absent. While its inflow keeps the potential equilibrium above E*, such a system can die only through the R-channel, and finiteness itself is conditional (Lemma A.4); with insufficient inflow the potential crosses E* (Section 11.4.5.1). Row R4 has no known organisms; mutators belong to the frozen-memory row (App. C.4.4, C.5.5).",
+    verify:"A minimal-genome strain whose assimilation efficiency does not depend on the accumulated history of damage (e.g., a JCVI-syn3.0 variant), in a chemostat at gradually reduced Φ_in down to γ(own) → 1. Criterion distinguishing it from R1×III: at a constant environment the assimilation efficiency does not decline with age.",
+    status:"Predicted · not found"
+  },
+  "4-4":null,
+  "4-5":null,
   "4-6": [{
     name:"Mitochondrion", italic:false,
-    genes:"37", gamma:"0", D:"→ 0", B_hbar:"0", tau:"—", phi:"0 (substrate from host)",
+    genes:"37", gamma:"0", D:"→ 0", B_hbar:"— (own Φ_in = 0: τ_energy undefined)", tau:"—", phi:"0 (substrate from host)",
     memory:"None", status:"Organelle",
-    note:"Survived 2 billion years at γ(own)=0 — as a cell subsystem where γ(cell)≫1. Degradation of mtDNA reduces Φ_in(cell) → γ(cell) ↘ → cell approaches 𝓜min."
+    note:"Survived 2 billion years at γ(own)=0 — as a cell subsystem where γ(cell)≫1. Degradation of mtDNA reduces Φ_in(cell) → γ(cell) ↘; once γ(cell) < 1, weaker restoration (g(E) < 1) lowers the cell's reserve attractor (App. C.2.1)."
   }],
   "4-7": [{
     name:"Szostak protocell (vesicle + RNA)", italic:false,
-    subclass:"Class B · pre-biological models · below 𝓜min from below",
+    subclass:"Class B · pre-biological models · below 𝓜min",
     genes:"0 (no genome)", gamma:"undef.", D:"< R*", B_hbar:"—", tau:"undef.", phi:"> 0 (external)",
     memory:"None (α = 0)", status:"Below 𝓜min · experimental model",
-    note:"Fatty acid vesicle with RNA inside (Szostak et al. 2001–2023). Barrier III partial: η_abs > 0 — RNA copied without enzymes (Adamala & Szostak, Science 2013). Passive endocytosis: vesicle captures molecules upon fusion (Zhang et al. PNAS 2023). Barrier I not realized: ρ = 0, no repair. Barrier II not realized: R(t) undefined. Closest laboratory model to 𝓜min from below — barrier I (ρ > 0) is the critical missing condition for crossing 𝓜min."
+    note:"Fatty acid vesicle with RNA inside (Szostak et al. 2001–2023). Barrier III (η₀ > η_crit) plausibly satisfied — RNA copied without enzymes (Adamala & Szostak, Science 2013). Passive endocytosis: vesicle captures molecules upon fusion (Zhang et al. PNAS 2023). Barrier II partial. Barrier I not satisfied: no repair (ρ < ρ_min, eq. 11.5). Closest laboratory model below 𝓜min — Barrier I is the missing condition (§15.4)."
   }],
 
   "5-1": [{
@@ -400,13 +396,13 @@ const CELLS = {
     note:"In active state far above 𝓜min. In spore: Φ_in→0, F_diss→0. Only ν₀ — spontaneous decay of R. t_dormancy ≈ 250 years (formula 12.11). Upon activation returns to (𝒮) with Σ₀ > 0 — accumulated damage does not reset."
   },{
     name:"Tardigrade (cryptobiosis)", italic:true, anab:true,
-    genes:"~38 000", gamma:"→ 0/0", D:"→ 0", B_hbar:"—", tau:"—", phi:"→ 0",
+    genes:"~20 000", gamma:"→ 0/0", D:"→ 0", B_hbar:"—", tau:"—", phi:"→ 0",
     memory:"Frozen", status:"Retrospective anabiant",
-    note:"Φ_in→0 and F_diss→0 simultaneously: γ undefined, theorem inapplicable. Only ν₀: spontaneous decay of R. t_dormancy ≈ 10–100 years. Σ does not reset during freezing. Upon activation — full (𝒮) with γ≫1."
+    note:"Φ_in→0 and F_diss→0 simultaneously: γ undefined. Only ν₀: spontaneous decay of R. t_dormancy ≈ 10–100 years. Σ does not reset during freezing. Upon activation — full (𝒮) with γ≫1."
   }],
   "5-2":{ predicted:true, col:2,
     name:"Anabiant at the 𝓜min boundary",
-    desc:"Organism emerging from anabiosis with γ ≈ 1 (not γ≫1). Upon activation immediately finds itself at the boundary — 'awakening at the limit'. Predicts anomalously wide survival distribution.",
+    desc:"Organism emerging from anabiosis with R_bal ≈ R* and γ ≈ 1 (not γ≫1). Upon activation immediately finds itself at the boundary — 'awakening at the limit'. Predicts anomalously wide survival distribution.",
     verify:"JCVI-syn3.0 in dried state with subsequent reactivation at minimal substrate. Criterion: wide scatter of t_B under identical conditions.",
     status:"Predicted · not found"
   },
@@ -414,12 +410,12 @@ const CELLS = {
     name:"Lotus seeds", italic:false, anab:true,
     genes:"—", gamma:"≫ 1 (potential)", D:"≫ R* (potential)", B_hbar:"—", tau:"undef.", phi:"→ 0",
     memory:"Not activated", status:"Prospective anabiant",
-    note:"Record: ~1,300 years dormancy (Shen-Miller, 2002). All (𝒮) parameters structurally ready: ρ>0, α>0, R₀>R*, E₀>E*. But Φ_in=0, η_abs not activated. Upon water and heat: ρ>0 gives R_bal > R*, and γ > 1 — crossing 𝓜min is deterministic. t_dormancy = (1/ν₀)·ln(R_entry/R*) ≈ 2,000–4,000 years."
+    note:"Record: ~1,300 years dormancy (Shen-Miller, 2002). All (𝒮) parameters structurally ready: ρ>0, α>0, R₀>R*, E₀>E*. But Φ_in=0, η_abs not activated. Upon water and heat, ρ > ρ_min gives R_bal > R*: the start follows from the inherited parameters. t_dormancy = (1/ν₀)·ln(R_entry/R*): ~7,000 years at the wear rate of bare DNA, about five times the observed (App. E.4)."
   },{
     name:"Egg (multicellular)", italic:false, anab:true,
     genes:"—", gamma:"≫ 1 (potential)", D:"≫ R* (potential)", B_hbar:"—", tau:"undef.", phi:"→ 0",
     memory:"Not activated", status:"Prospective anabiant",
-    note:"Carries complete parameter set of future (𝒮): structural potential, mitochondria (R₀), epigenetic matrix (α). Distinction from non-living dissipative structure: ρ>0 gives R_bal > R*, so upon Φ_in activation γ > 1 and 𝓜min is crossed deterministically, not spontaneously. Cannot arise independently: R₀, E₀, ρ, α received from parent (𝒮)."
+    note:"Carries complete parameter set of future (𝒮): structural potential, mitochondria (R₀), epigenetic matrix (α). Distinction from a non-living dissipative structure: ρ > ρ_min gives R_bal > R*, so upon activation of Φ_in the living start follows from the inherited parameters, not from chance. Cannot arise independently: R₀, E₀, ρ, α received from parent (𝒮)."
   }],
   "5-4":{ predicted:true, col:4,
     name:"Obligate parasite in anabiosis",
@@ -431,14 +427,14 @@ const CELLS = {
   "5-7": [{
     name:"Viruses (DNA/RNA)", italic:false,
     subclass:"Class A · operators on foreign 𝓜min",
-    genes:"2–1000", gamma:"0", D:"—", B_hbar:"—", tau:"—", phi:"0",
+    genes:"2–1000", gamma:"—", D:"—", B_hbar:"—", tau:"—", phi:"0",
     memory:"—", status:"Type III · outside (𝒮)",
-    note:"E(t), R(t), η_abs(t) undefined. Virus acts as an operator reducing host ρ: cell death = transition through 𝓜min under external agent. Moved here from R4 (No memory): R4 presupposes system (𝒮) exists with α≈0, but for viruses E,R,η_abs are not merely absent — they are undefined, exactly as for viroids and prions below."
+    note:"E(t), R(t), η_abs(t) undefined. Virus acts as an operator reducing host ρ: the virus carries the cell below 𝓜min, after which the reserve crosses its threshold in finite time (§11.3, item (ii)). Moved here from R4 (No memory): R4 presupposes system (𝒮) exists with α≈0, but for viruses E,R,η_abs are not merely absent — they are undefined, exactly as for viroids and prions below."
   },{
     name:"Viroids", italic:false,
     genes:"—", gamma:"—", D:"—", B_hbar:"—", tau:"—", phi:"—",
     memory:"—", status:"Outside (𝒮)",
-    note:"RNA only, 246–399 nt, no proteins. Below ribozyme limit 𝓜min. Lower boundary of VBLS applicability domain."
+    note:"RNA only, 246–399 nt, no proteins. Outside (𝒮): the variables E, R, η are undefined. Outside the domain of applicability of the theory (the first layer of the demarcation, §11.9), not below 𝓜min."
   },{
     name:"Prions", italic:false,
     genes:"0", gamma:"—", D:"—", B_hbar:"—", tau:"—", phi:"—",
@@ -468,7 +464,7 @@ function buildGrid() {
 
       if (data === 'F') {
         div.className = 'cell forbidden';
-        div.innerHTML = `<div class="forbidden-label"><span class="forbidden-x">×</span>forbidden by theorem</div>`;
+        div.innerHTML = `<div class="forbidden-label"><span class="forbidden-x">×</span>expected empty</div>`;
 
       } else if (data && data.predicted) {
         div.className = `cell predicted c${data.col}`;
