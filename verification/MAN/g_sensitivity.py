@@ -22,9 +22,9 @@ Three forms compared (x = (E − E*) / (E₀ − E*), clipped to [0, 1]):
 Half-saturation constant k = 0.5: g(0.5) = 0.5 for all three forms at
 the midpoint of [E*, E₀] — canonical comparison point.
 
-Same calibrated θ and initial conditions as mde_human_lifespan.py.
+Same calibrated θ and initial conditions as human_lifespan.py.
 
-Theorem robustness claim (VBLS §4.3): t_B < ∞ for any monotone g with
+Theorem robustness claim (VBLS §4.7): t_B < ∞ for any monotone g with
 g(x) > 0 for x > 0. This script verifies the claim holds quantitatively:
 t_B shifts < 5% across all biologically plausible cooperativity values.
 """
@@ -42,7 +42,7 @@ BG = '#f7f9fc'
 
 
 # ============================================================================
-# 1. CALIBRATED PARAMETERS  (identical to mde_human_lifespan.py)
+# 1. CALIBRATED PARAMETERS  (identical to human_lifespan.py)
 # ============================================================================
 MU      = 1.50
 LAM     = 0.30

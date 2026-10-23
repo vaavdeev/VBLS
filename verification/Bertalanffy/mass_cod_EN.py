@@ -8,11 +8,14 @@ Atlantic Cod (Gadus morhua), ICES DATRAS NS-IBTS, 1989–2026
 ============================================================
 
 Primary variable: individual body mass (kg), NOT body length.
-Reason: VBLS is fundamentally a theory of energy and mass (§18.2, §11.5).
+Reason: the growth extension of VBLS (§18.5, eq. 18.2) is written for body mass.
 
-VBLS mass growth equation (§18.2, VBLS_THEORY.md):
+VBLS mass growth equation (§18.5, eq. 18.2 of the monograph):
     dM/dt = H · η_abs(t) · M^(2/3)  −  k · M                     (18.2)
-    η_abs(t) = exp(−α·t)            [Barrier III, §5, eq. 5.2]
+    η_abs(t) = exp(−α·t)            [eq. 5.2 at a constant damage level Σ̄]
+
+Throughout this script α is the effective rate α_eff = α·Σ̄ of the monograph
+(§18.5, Appendix D.4), not the memory parameter α of eq. 5.1.
 
 Analytical solution (Bernoulli ODE, M(t₀) = 0):
     Let u = M^(1/3), β = k/3.  Then du/dt + β·u = (H/3)·exp(−α·t).
@@ -24,26 +27,24 @@ Analytical solution (Bernoulli ODE, M(t₀) = 0):
 Limiting case α → 0  gives classical von Bertalanffy:
     M(t) = M_∞ · (1 − exp(−β·(t−t₀)))^3                         (VBGF-mass)
 
-Three-phase dynamics (VBLS only):
+Growth, peak and decline of mass (VBLS only):
     t < t*:  dM/dt > 0  (growth)
     t = t*:  dM/dt = 0  (peak mass)  → t* = t₀ + ln(β/α)/(β−α)
-    t > t*:  dM/dt < 0  (senescence / Phase 3)  ← VBLS PREDICTION
+    t > t*:  dM/dt < 0  (mass decline)  ← extrapolation beyond the data
 
 Identification problem (key limitation):
     α cannot be identified from cross-sectional age data alone.
-    With data covering only ages 1–12 (48% of the 25-yr lifespan),
+    With data covering only ages 1–13 (52% of the 25-yr lifespan),
     fitting α jointly with β produces near-singular solutions (β ≈ α).
-    Solution adopted here: α is FIXED at the value obtained from an
-    independent length-based VBLS fit to the same DATRAS data
-    (free-α optimization converged to α = 0.042 yr⁻¹).
+    Solution adopted here: α is FIXED at the value obtained from a
+    length-based VBLS fit to the same DATRAS data, not from an independent
+    source (free-α optimization converged to α = 0.042 ± 0.085 yr⁻¹).
     Only {M_∞, β, t₀} are fitted to mass data.
-    This approach is scientifically conservative and fully transparent.
 
-Four panels:
-    A — Body mass vs age: data, VBGF, VBLS (constrained α), Phase 3 extrapolation
+Three panels:
+    A — Body mass vs age: data, VBGF, VBLS (constrained α), extrapolation of the mass decline
     B — Mass growth rate dM/dt: VBGF vs VBLS, sign change at t*
     C — η_abs(t) degradation: VBLS mechanism vs VBGF assumption
-    D — Mass-length allometry W ~ L^b: supports χ in Barrier I / §11.5
 
 References:
     Clarke & Johnston (1999) J. Anim. Ecol.     — metabolic exponent χ ≈ 0.79 (teleosts)
@@ -80,7 +81,7 @@ OUT_FILE   = os.path.join(SCRIPT_DIR, 'mass_cod_EN.png')
 # same DATRAS data (free-α optimization converged to α = 0.042 yr⁻¹).
 # α is NOT fitted to mass data — see identification-problem note above.
 ALPHA_FIXED = 0.042          # [yr⁻¹]  η_abs degradation rate
-ALPHA_SOURCE = 'independent length-based DATRAS fit'
+ALPHA_SOURCE = 'the length-based VBLS fit to the same DATRAS data'
 
 T_LIFESPAN   = 25            # maximum known lifespan, Atlantic cod [yr]
 MIN_N_FIT    = 30            # minimum sample size for inclusion in fit
@@ -276,7 +277,7 @@ print(f"  RMSE = {rmse(M_fit, pred_v_fit):.3f} kg")
 if np.isfinite(t_star):
     print(f"\n  Predicted peak:  t* = {t_star:.1f} yr,  M* = {M_star:.1f} kg")
 else:
-    print(f"\n  No peak within lifespan (α < β: mass saturates, no Phase 3 visible)")
+    print(f"\n  No peak within lifespan (α < β: mass saturates, no mass decline visible)")
 
 n_fit = len(age_fit)
 dAIC  = delta_aic(M_fit, pred_g_fit, pred_v_fit, sigma, 3, 3)
@@ -401,10 +402,10 @@ if np.isfinite(t_star):
 # Model curves
 ax_A.plot(t_full, M_g_full, color=BLUE,  lw=2.2, ls='--',
           label=(f'VBGF:  M∞ = {popt_g[0]:.0f} kg,  β = {popt_g[1]:.3f} yr⁻¹  '
-                 f'(α ≡ 0  — no senescence)'))
+                 f'(α_eff ≡ 0  — no senescence)'))
 ax_A.plot(t_full, M_v_full, color=GREEN, lw=2.7,
           label=(f'VBLS:  M∞ = {popt_v[0]:.0f} kg,  β = {popt_v[1]:.3f} yr⁻¹,  '
-                 f'α = {ALPHA_FIXED} yr⁻¹  (fixed)'))
+                 f'α_eff = {ALPHA_FIXED} yr⁻¹  (fixed)'))
 
 # Data: clearly distinct from model lines — large orange markers
 first_in, first_ex = True, True
@@ -460,7 +461,7 @@ ax_A.grid(True, alpha=0.5)
 ax_A.set_title(
     f'A — Atlantic cod (Gadus morhua): body mass growth,  VBGF vs. VBLS\n'
     f'ICES DATRAS NS-IBTS 1989–2026  |  {N_TOTAL:,} individual records  |  '
-    f'α = {ALPHA_FIXED} yr⁻¹ fixed from independent metabolic data',
+    f'α_eff = {ALPHA_FIXED} yr⁻¹ fixed from the length model on the same data',
     fontsize=10.5, loc='left', pad=6
 )
 
@@ -472,7 +473,7 @@ ax_A.set_title(
 # on top of the geometric saturation already present in VBGF.
 # The result: growth rate decelerates FASTER in VBLS than in VBGF.
 # This difference grows with age and is visible in the data.
-# Phase 3 (dM/dt < 0) follows as a further extrapolation beyond data.
+# The mass decline (dM/dt < 0) follows as a further extrapolation beyond data.
 # ════════════════════════════════════════════════════════════════════
 ax_B = fig.add_subplot(gs[1, 0])
 
@@ -498,13 +499,13 @@ ax_B.errorbar(obs_age_mid, obs_dM, yerr=obs_dM_se,
               ecolor='#c62828', elinewidth=1.2, capsize=4, zorder=10,
               label='Observed  ΔM / Δage  (adjacent class means ± prop. SE)')
 
-# Shade Phase 3 region (negative dM/dt — extrapolation, not data)
+# Shade the mass-decline region (negative dM/dt — extrapolation, not data)
 neg_mask = dM_v_full < 0
 if neg_mask.any():
     ax_B.fill_between(t_full, dM_v_full, 0, where=neg_mask,
                       color=GREEN, alpha=0.12)
     ax_B.text(0.975, 0.07,
-              'dM/dt < 0\n(VBLS Phase 3\nextrapolation)',
+              'dM/dt < 0\n(extrapolation)',
               transform=ax_B.transAxes, ha='right', fontsize=8,
               color=GREEN, style='italic',
               bbox=dict(boxstyle='round,pad=0.3', fc=BG, ec=GRID_C, alpha=0.9))
@@ -541,10 +542,10 @@ ax_C.axvspan(t_dat_end, T_LIFESPAN,  color=SHADE_PRED, alpha=0.55, zorder=0)
 ax_C.axvline(t_dat_end, color=MUTED, lw=1.0, ls='--', alpha=0.5)
 
 ax_C.axhline(1.0, color=BLUE, lw=2.0, ls='--', alpha=0.65,
-             label='VBGF:  η_abs = 1  (constant — no Barrier III)')
+             label='VBGF:  η_abs = 1  (constant)')
 ax_C.fill_between(t_full, eta_full, alpha=0.18, color=GREEN)
 ax_C.plot(t_full, eta_full, color=GREEN, lw=2.5,
-          label=f'VBLS:  η_abs(t) = exp(−{ALPHA_FIXED}·t)  [fixed from metabolic data]')
+          label=f'VBLS:  η_abs(t) = exp(−{ALPHA_FIXED}·t)  [α_eff from the length model]')
 
 if np.isfinite(t_star):
     eta_star = np.exp(-ALPHA_FIXED * t_star)
@@ -553,12 +554,12 @@ if np.isfinite(t_star):
     ax_C.text(t_star + 0.3, eta_star + 0.04,
               f'η_abs(t*) = {eta_star:.2f}', color=GREEN, fontsize=8.5)
 
-# Phase boundaries and labels
+# Stages of the mass trajectory (not the phases of system (S), which are defined by E)
 for (x_c, lbl, col) in [
-    (t_dat_end * 0.30,  'Phase 1\nGrowth',    GREEN),
+    (t_dat_end * 0.30,  'mass\ngrowth',    GREEN),
     (t_star if np.isfinite(t_star) else t_dat_end + 2,
-                         'Phase 2\nPlateau',   ORANGE),
-    (T_LIFESPAN - 4.5,  'Phase 3\nSenescence', ORANGE),
+                         'mass\npeak',      ORANGE),
+    (T_LIFESPAN - 4.5,  'mass\ndecline',   ORANGE),
 ]:
     if 0.5 < x_c < T_LIFESPAN:
         ax_C.text(x_c, 0.07, lbl, ha='center', fontsize=8.5,
@@ -571,8 +572,8 @@ ax_C.set_ylim(0, 1.22)
 ax_C.grid(True, alpha=0.5)
 ax_C.legend(fontsize=8.5, loc='upper right')
 ax_C.set_title(
-    'C — VBLS Barrier III:  η_abs degradation  (§5, eq. 5.2)\n'
-    f'α = {ALPHA_FIXED} yr⁻¹  fixes t* and the onset of Phase 3',
+    'C — VBLS:  η_abs degradation  (eq. 5.2 at a constant damage level)\n'
+    f'α_eff = {ALPHA_FIXED} yr⁻¹  fixes t*, the peak of mass',
     fontsize=10, loc='left', pad=5
 )
 

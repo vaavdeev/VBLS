@@ -32,9 +32,9 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, linregress, t as student_t
 
-# ── Style (same as mde_fig1_fig2) ──────────────────────────────────────────
+# ── Style ──────────────────────────────────────────
 plt.rcParams.update({
     'font.family':       'DejaVu Serif',
     'font.size':         11,
@@ -115,6 +115,14 @@ print(f"\n=== VARIANT B (supplementary, cluster 1 n=7) ===")
 print(f"R*_univ = {R_univ_B:.3f} ± {R_univ_B_std:.3f}")
 print(f"MAPE = {MAPE_B:.1f}%,  R²_log = {R2_B:.3f}")
 
+# Per-species predictions (tables of Section 17.2.5)
+print(f"\nPer-species t_B, Variant A (R*_univ = {R_univ_A:.3f}):")
+for s, t_obs, t_mod in zip(species, T_max, t_pred_A):
+    print(f"  {s:20s} T_max = {t_obs:6.1f}  t_B = {t_mod:6.1f}  t_B/T_max = {t_mod / t_obs:4.2f}")
+print(f"Per-species t_B, Variant B (cluster 1, R* = {R_univ_B:.3f}):")
+for s, t_obs, t_mod in zip(np.array(species)[mask_R], T_obs_c1, t_pred_B_c1):
+    print(f"  {s:20s} T_max = {t_obs:6.1f}  t_B = {t_mod:6.1f}  t_B/T_max = {t_mod / t_obs:4.2f}")
+
 # ── Whittemore power law fit for comparison (all 9) ─────────────────────────
 log_nu_all = np.log(nu_star)
 log_T_all  = np.log(T_max)
@@ -136,6 +144,10 @@ print(f"  (this R² equals VBLS R²_log by construction; "
 psi_w7, logA_w7 = np.polyfit(np.log(nu_star[mask_R]), np.log(T_max[mask_R]), 1)
 A_w7 = np.exp(logA_w7)
 print(f"Cluster-1 (R-channel, n=7) log-log fit: ψ = {-psi_w7:.3f}")
+fit7 = linregress(np.log(nu_star[mask_R]), np.log(T_max[mask_R]))
+t_q = student_t.ppf(0.975, int(mask_R.sum()) - 2)
+print(f"  standard error {fit7.stderr:.3f}; 95% interval for ψ: "
+      f"[{-fit7.slope - t_q * fit7.stderr:.3f}, {-fit7.slope + t_q * fit7.stderr:.3f}]")
 
 # ── Sensitivity grid (Variant A: all 9) ─────────────────────────────────────
 perturb = np.linspace(-0.25, 0.25, 201)
@@ -195,7 +207,7 @@ ax.set_xlim(-0.55, len(species) - 0.45)
 ax.set_title(
     'Universal Threshold $R^*$: Residual Telomere Fraction at Death (9 Species)\n'
     'Species die not at zero telomeres, but at a conserved non-zero threshold  '
-    '— consistent with VBLS bifurcation at $R(t) = R^*$',
+    '— the R-channel death threshold $R(t) = R^*$',
     fontsize=11, fontweight='bold'
 )
 ax.text(0.99, -0.22,

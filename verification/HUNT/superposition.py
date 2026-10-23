@@ -9,12 +9,15 @@
   LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Section 12.5 — Extended model: superposition of degradation channels
+VBLS — Appendix D.2.11 — Extended model: superposition of degradation channels
 =========================================================================
-Part 1: Three models (M1 VBLS / M2 VBLS+HR / M3 VBLS+HR+PAI)
+Part 1: Three models (M1 VBLS / M2 VBLS+HR / M3 VBLS+HR+activity groups)
 Part 2: Calibration analysis: Tls=75 vs Tls=82 vs T_max=122
 
-Data: HUNT4 (Letnes et al. 2020, Prog.Cardiovasc.Dis. 63(6):730-737)
+Data: HUNT4 male trajectory (Letnes et al. 2020, Prog.Cardiovasc.Dis. 63(6):730-737;
+      decade values from Fig. 3 of Letnes, Nes & Wisloff 2023). The activity-group
+      levels -15/-9/-5 %/decade are assumed inputs whose source in the published
+      HUNT results has not been established (App. D.2.11).
 """
 
 import numpy as np
@@ -172,13 +175,13 @@ AGES_FINE = np.linspace(25, 90, 200)
 # Used so that M1/M2/M3 here match the base mapping in hunt_verification.py.
 S0_BASE = 0.0162
 
-# HUNT4 data by PAI group
+# HUNT4 male trajectory and activity groups (assumed levels per decade)
 H4_MEN   = cumtraj(D_MEN.mean())   # mean
 H4_INACT = cumtraj(15.0)
 H4_MOD   = cumtraj(9.0)
 H4_HI    = cumtraj(5.0)
 
-# PAI scale factors (physical activity intensity modulates sigma0).
+# Activity scale factors (physical activity modulates the effective sigma0).
 # Fitted below, once K2, B2, G2 are known: each group keeps the common
 # mapping and differs only through sigma0_eff = sigma0 * scale.
 
@@ -214,7 +217,7 @@ def model2(ages, dsig, g=None):
     return model2_local(K2, B2, g, ages, dsig)
 
 # ── Pre-compute ΔΣ for continuous curves ─────────────────────────────────────
-# ── PAI scale factors, fitted at fixed K2, B2, G2 ─────────────────────────────
+# ── Activity scale factors, fitted at fixed K2, B2, G2 ────────────────────────
 def fit_scale(target):
     """Fit sigma0 scale so that M2 reproduces the group's trajectory."""
     def loss(s):
@@ -230,7 +233,7 @@ def fit_scale(target):
 SC_INACT = fit_scale(H4_INACT)
 SC_MOD   = fit_scale(H4_MOD)
 SC_HI    = fit_scale(H4_HI)
-print(f"PAI scales: inactive={SC_INACT:.3f}  moderate={SC_MOD:.3f}  "
+print(f"Activity scales: inactive={SC_INACT:.3f}  moderate={SC_MOD:.3f}  "
       f"high={SC_HI:.3f}")
 print(f"  sigma0_eff: {S0_BASE*SC_INACT:.4f}  {S0_BASE*SC_MOD:.4f}  "
       f"{S0_BASE*SC_HI:.4f}   ratio={SC_INACT/SC_HI:.2f}")
@@ -265,7 +268,7 @@ rmse_mod   = float(np.sqrt(np.mean((pred_mod   - H4_MOD)**2)))
 rmse_hi    = float(np.sqrt(np.mean((pred_hi    - H4_HI)**2)))
 
 print(f"RMSE: M1={rmse1:.4f}  M2={rmse2:.4f}")
-print(f"RMSE PAI: inactive={rmse_in:.4f}  moderate={rmse_mod:.4f}  high={rmse_hi:.4f}")
+print(f"RMSE activity groups: inactive={rmse_in:.4f}  moderate={rmse_mod:.4f}  high={rmse_hi:.4f}")
 print(f"Fitted: K1={K1:.4f}, B1={B1:.4f}  |  K2={K2:.4f}, B2={B2:.4f}, G2={G2:.4f}")
 
 # ── FIGURE 1: three models ─────────────────────────────────────────────────────
@@ -275,11 +278,6 @@ fig.subplots_adjust(left=0.06, right=0.98, top=0.88, bottom=0.10, wspace=0.32)
 
 # Panel A: M1 vs M2
 a = axes[0]
-for x0, x1, col in [(25, 45, '#2ecc71'), (45, 65, '#f39c12'), (65, 90, '#e74c3c')]:
-    a.axvspan(x0, x1, alpha=0.04, color=col)
-a.text(33, 0.62, 'I',   ha='center', fontsize=9, color='#27ae60')
-a.text(54, 0.62, 'II',  ha='center', fontsize=9, color='#e67e22')
-a.text(73, 0.62, 'III', ha='center', fontsize=9, color='#c0392b')
 
 ci = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07])
 a.fill_between(AGES, H4_MEN - ci, H4_MEN + ci, alpha=0.18, color=C_M)
@@ -311,35 +309,31 @@ a.set_ylim(0.58, 1.08)
 a.set_xlabel('Age (yr)')
 a.set_ylabel('VO2max / VO2max(25 yr)')
 a.set_title('A.  VBLS + chronological HR-channel superposition\n'
-            'Removes 25-45 yr plateau; RMSE improves ~1.5×', fontweight='bold')
+            f'Removes 25-45 yr plateau; RMSE improves ~{rmse1/rmse2:.1f}×', fontweight='bold')
 a.legend(fontsize=8.8, framealpha=0.95, loc='upper right')
 
-# Panel B: PAI stratification
+# Panel B: activity groups (assumed levels)
 a = axes[1]
-for x0, x1, col in [(25, 45, '#2ecc71'), (45, 65, '#f39c12'), (65, 90, '#e74c3c')]:
-    a.axvspan(x0, x1, alpha=0.04, color=col)
 
 a.plot(AGES, H4_INACT, 'o--', color=C_IN,  lw=1.8, ms=6, alpha=0.7,
-       label='HUNT4 inactive (-15%/dec)')
+       label='assumed: inactive (-15%/dec)')
 a.plot(AGES, H4_MOD,   's--', color=C_SIG, lw=1.8, ms=6, alpha=0.7,
-       label='HUNT4 moderate (-9%/dec)')
+       label='assumed: moderate (-9%/dec)')
 a.plot(AGES, H4_HI,    '^--', color=C_HI,  lw=1.8, ms=6, alpha=0.7,
-       label='HUNT4 high-int. (-5%/dec)')
+       label='assumed: high-int. (-5%/dec)')
 a.plot(AGES_FINE, f_inact_f, '-', color=C_IN,  lw=2.3,
-       label=f'VBLS+PAI inactive  RMSE={rmse_in:.3f}')
+       label=f'VBLS+act. inactive  RMSE={rmse_in:.3f}')
 a.plot(AGES_FINE, f_mod_f,   '-', color=C_SIG, lw=2.3,
-       label=f'VBLS+PAI moderate  RMSE={rmse_mod:.3f}')
+       label=f'VBLS+act. moderate  RMSE={rmse_mod:.3f}')
 a.plot(AGES_FINE, f_hi_f,    '-', color=C_HI,  lw=2.3,
-       label=f'VBLS+PAI high-int  RMSE={rmse_hi:.3f}')
+       label=f'VBLS+act. high-int  RMSE={rmse_hi:.3f}')
 
 a.text(0.97, 0.04,
-       'PAI: sigma0_eff = sigma0 * scale\n'
+       'activity: sigma0_eff = sigma0 * scale\n'
        f'  Inactive:  scale={SC_INACT:.3f}  s0={S0_BASE*SC_INACT:.4f}\n'
        f'  Moderate:  scale={SC_MOD:.3f}  s0={S0_BASE*SC_MOD:.4f}\n'
-       f'  High-int:  scale={SC_HI:.3f}  s0={S0_BASE*SC_HI:.4f}\n\n'
-       f'sigma0 range:\n'
-       f'  {S0_BASE*SC_HI:.4f} – {S0_BASE*SC_INACT:.4f}\n'
-       f'  (diff. {(SC_INACT-SC_HI)/SC_HI*100:.0f}%)',
+       '  High-int:  not identified\n\n'
+       f'ratio inactive/moderate: {SC_INACT/SC_MOD:.2f}',
        transform=a.transAxes, ha='right', va='bottom', fontsize=8.8,
        family='monospace',
        bbox=dict(boxstyle='round,pad=0.4', fc='#f8f8f8', ec='#aaa', lw=1))
@@ -347,8 +341,8 @@ a.text(0.97, 0.04,
 a.set_ylim(0.58, 1.08)
 a.set_xlabel('Age (yr)')
 a.set_ylabel('VO2max / VO2max(25 yr)')
-a.set_title('B.  PAI stratification: physical activity as sigma0 modulator\n'
-            'HUNT4 data vs VBLS predictions (3 activity levels)', fontweight='bold')
+a.set_title('B.  Activity groups: physical activity as sigma0 modulator\n'
+            'assumed group levels vs VBLS (3 activity levels)', fontweight='bold')
 a.legend(fontsize=8.3, framealpha=0.95, loc='upper right')
 
 # Panel C: residuals
@@ -375,25 +369,24 @@ a.text(len(AGES) - 0.3, 0.052, '±5%', fontsize=8, color='#aaa', va='bottom')
 a.set_xticks(x)
 a.set_xticklabels([str(ag) for ag in AGES], fontsize=8.5)
 a.set_xlabel('Age (yr)')
-a.set_ylabel('Residual: model − data')
+a.set_ylabel('Residual: model − reference curve')
 a.set_title('C.  Residuals across three models\n'
-            'Each superposition layer removes a systematic error', fontweight='bold')
+            'vs HUNT4 men (M1, M2) and assumed group curves (M3)', fontweight='bold')
 a.legend(fontsize=8.3, framealpha=0.95, loc='upper left')
 
 a.text(0.97, 0.04,
-       'What each layer removes:\n'
-       '  M1->M2: 25-45 yr plateau\n'
-       f'          RMSE: {rmse1:.3f}->{rmse2:.3f}\n\n'
-       '  M2->M3: stratification by rate\n'
-       f'          sigma0: {S0_BASE*SC_HI:.4f}–{S0_BASE*SC_INACT:.4f}\n'
-       f'          (range {(SC_INACT-SC_HI)/SC_HI*100:.0f}%)',
+       'M1->M2: 25-45 yr plateau\n'
+       f'removed; RMSE {rmse1:.3f}->{rmse2:.3f}\n\n'
+       'M2->M3: assumed levels;\n'
+       f'sigma0 inact./mod.: {SC_INACT/SC_MOD:.2f};\n'
+       'high-int. not identified',
        transform=a.transAxes, ha='right', va='bottom', fontsize=8.5,
        bbox=dict(boxstyle='round,pad=0.4', fc='#f0f7ff', ec=C_VBLS, lw=1.2))
 
 plt.savefig('superposition.pdf', bbox_inches='tight')
 plt.savefig('superposition.png', bbox_inches='tight', dpi=180)
 plt.close()
-print("Saved: mde_superposition.pdf / .png")
+print("Saved: superposition.pdf / .png")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -445,8 +438,6 @@ fig.subplots_adjust(left=0.07, right=0.97, top=0.88, bottom=0.10, wspace=0.34)
 
 # Panel A: trajectories by scenario
 a = axes[0]
-for x0, x1, col in [(25, 45, '#2ecc71'), (45, 65, '#f39c12'), (65, 90, '#e74c3c')]:
-    a.axvspan(x0, x1, alpha=0.04, color=col)
 
 ci = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07])
 a.fill_between(AGES, H4_MEN - ci, H4_MEN + ci, alpha=0.18, color=C_M)
@@ -493,26 +484,26 @@ a.axvline(82, color='#666', lw=1.0, ls=':', alpha=0.7)
 a.text(75.5, 0.05, 'Tls=75', fontsize=8, color='#999', rotation=90, va='bottom')
 a.text(82.5, 0.05, 'Tls=82', fontsize=8, color='#666', rotation=90, va='bottom')
 
+rmse_all = [res['rmse'] for res in calib_results.values()]
 a.text(0.97, 0.07,
-       'Key result:\n\n'
-       'VO2max fit is ROBUST\n'
-       'to the t_death choice:\n'
-       'all calibrations give\n'
-       'RMSE 0.013-0.016.\n\n'
-       'k,b absorb sigma0;\n'
-       'the SHAPE of DeltaSigma\n'
-       'is what is tested.',
+       'The fit hardly depends\n'
+       'on the t_death choice:\n'
+       f'RMSE {min(rmse_all):.3f}-{max(rmse_all):.3f}.\n\n'
+       'k and b are refitted for\n'
+       'each sigma0, so the fit\n'
+       'does not discriminate\n'
+       'between the calibrations.',
        transform=a.transAxes, ha='right', va='bottom', fontsize=8.5,
        bbox=dict(boxstyle='round,pad=0.45', fc='#fff8f0', ec=C_SIG, lw=1.2))
 
 a.set_xlabel('Age (yr)')
 a.set_ylabel('DeltaSigma(t) = Sigma(t) - Sigma(25)')
 a.set_title('B.  DeltaSigma(t) under different sigma0 calibrations\n'
-            'all give nonzero, accelerating DeltaSigma in 25-85 yr',
+            'all give a nonzero, growing DeltaSigma over 25-85 yr',
             fontweight='bold')
 a.legend(fontsize=8.8, framealpha=0.95, loc='upper left')
 
 plt.savefig('calibration_tdeath.pdf', bbox_inches='tight')
 plt.savefig('calibration_tdeath.png', bbox_inches='tight', dpi=180)
 plt.close()
-print("Saved: mde_calibration_tdeath.pdf / .png")
+print("Saved: calibration_tdeath.pdf / .png")

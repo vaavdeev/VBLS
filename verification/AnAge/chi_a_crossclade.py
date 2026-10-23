@@ -1,5 +1,5 @@
 """
-VBLS -- Appendix D.6.8: cross-clade test of the structural law a = 1 - chi
+VBLS -- Appendix D.5.8: cross-clade test of the structural law a = 1 - chi
 =========================================================================
 
 The structural law of VBLS (Section 14.2) states that the scaling exponent of
@@ -102,7 +102,7 @@ def main():
         print("  note: with four classes the slope is not determined; read the sign only.")
 
     print("\nNo phylogenetic correction is applied here: trees were built for "
-          "Mammalia only (Section D.6.7).")
+          "Mammalia only (Section D.5.7).")
 
 
 if __name__ == '__main__':

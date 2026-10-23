@@ -9,10 +9,10 @@
   LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Regime sensitivity to nu_0 (extension of mde_human_sensitivity.py).
+VBLS — Regime sensitivity to nu_0 (extension of human_sensitivity.py).
 
 Goal: numerical demonstration that the zero sensitivity of t_B to (mu, lam, E*)
-documented in Table 8.3.1 is a REGIME property of normal aging
+documented in the table of Section 17.1.2 is a REGIME property of normal aging
 (R-channel domination), not an architectural defect.
 
 For decreasing nu_0:
@@ -24,7 +24,7 @@ This is the falsifiable prediction requested by Reviewer 5
 
 Outputs:
   - Console table with (nu_0, t_B, dominant channel, sens_mu, sens_lam, sens_E*).
-  - Figure mde_regime_sensitivity.png with two panels:
+  - Figure regime_sensitivity.png with two panels:
       (A) t_B vs nu_0 with channel color-coding,
       (B) sensitivities to mu/lam/E* vs nu_0.
 """
@@ -40,7 +40,7 @@ plt.rcParams['axes.spines.right'] = False
 
 
 # ============================================================================
-# 1. BASELINE (Homo sapiens calibration) — identical to mde_human_sensitivity.py
+# 1. BASELINE (Homo sapiens calibration) — identical to human_sensitivity.py
 # ============================================================================
 
 BASE = dict(
@@ -427,7 +427,7 @@ for p in PARAMS_E:
         print(f"    Sensitivity to {p:7s} stays below 5% across this scan.")
 
 print("\n  Interpretation:")
-print("    The zero sensitivity of (mu, lam, E*) at human baseline (Table 8.3.1)")
+print("    The zero sensitivity of (mu, lam, E*) at human baseline (table of Section 17.1.2)")
 print("    is a REGIME property of R-channel domination, not a structural defect.")
 print("    Two biologically distinct mechanisms drive the system into the")
 print("    E-channel and restore identifiability of E-channel parameters:")

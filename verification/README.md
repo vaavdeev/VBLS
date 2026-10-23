@@ -14,7 +14,7 @@ Calibrated VBLS human parameters: σ₀ = 0.0162, α = 0.030 yr⁻¹ (April 2026
 | Folder | What is verified | Data source | Section in monograph |
 |---|---|---|---|
 | [Gompertz/](Gompertz/) | The Gompertz law on the full system (S): populations with a spread of the repair reserve at age 50 (Weibull, log-normal) and of the wear rates, integrated on the full field; life-table mortality rate, Gompertz slope b = k_W·ν_eff, slowing of mortality growth under a spread of ν_eff | Calibrated (S) parameters for *Homo sapiens* (§17.1); no external dataset | §16.2.4, §16.2.7 (Fig. 16.2) |
-| [MAN/](MAN/) | Full system (S) calibration for human lifespan; parameter sensitivity; α sensitivity; E-channel ceiling under R-channel suppression; g(E) functional-form sensitivity | WHO 2023 longevity data | §17.1, Appendix D.7 |
+| [MAN/](MAN/) | Full system (S) calibration for human lifespan; parameter sensitivity; α sensitivity; E-channel ceiling under R-channel suppression; g(E) functional-form sensitivity | WHO 2023 longevity data | §17.1, Appendix D.6 |
 | [Whittemore/](Whittemore/) | Interspecies telomere shortening; universal residual R* at death; T_max prediction across 9 species | Whittemore et al. (2019) PNAS | §17.2 |
 | [Cagan/](Cagan/) | Somatic mutation accumulation as one proxy of Σ(t); rate × T_max invariant across 15 species | Cagan et al. (2022) Nature 604:517 | §17.3 |
 | [Escala/](Escala/) | Four allometric scaling tests (Kleiber, longevity, Rubner invariant) on 94 non-human mammal species; human exceptionalism anomaly | Escala (2022) Sci. Rep. 12:2407 | Appendix D.1 |

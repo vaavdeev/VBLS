@@ -6,7 +6,7 @@ LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd
 SPDX-License-Identifier: CC-BY-NC-ND-4.0
 
 lifetime_near_Mmin.py — numerical check of how lifetime t_B depends on
-repair capacity (rho) near the M_min boundary in the canonical VBLS system (S_can).
+the rate of restoration of the reserve (rho) near the M_min boundary in the canonical VBLS system (S_can).
 
 Context: monograph section 15.2.2.
 
@@ -33,9 +33,17 @@ CONCLUSION (see the printed output below):
     The hypothesis t_B ~ C/D is NOT confirmed. The claimed "tripling of lifetime
     upon loss of 3 repair genes" is refuted in both direction and magnitude:
     integration gives the opposite (loss of repair SHORTENS life).
-  - In part (B), as R_bal -> R* (the true approach to M_min), t_B is FINITE
-    and decreases to a small value (~7.5 at R_bal - R* ~ 0.007). There is no
-    critical slowing down (t_B -> infinity) at the boundary.
+  - In part (B), as R_bal -> R* (the approach to M_min, the boundary of
+    Barrier I), t_B is FINITE and decreases to a small value (~7.5 at
+    R_bal - R* ~ 0.007). Barrier II is violated in this run: the export at
+    the start, R0*Phi_cap = 0.0032, is about 0.11 of the production
+    sigma0*F_diss(E0) ~ 0.029, so damage accumulates from the start. In this
+    regime there is no critical slowing down (t_B -> infinity) at the
+    boundary. Without damage (export covering production, Sigma == 0, the
+    potential kept at or above E0), the time to lose the reserve below the
+    boundary grows logarithmically without bound as R_bal -> R* from below
+    (monograph, Section 11.3, Statement (ii)), and at or above the boundary
+    the reserve is held indefinitely.
   - Death in all runs is via the R-channel; t_B is set primarily by the
     Sigma dynamics (sigma0, Phi_cap, alpha) and by the position of the R_bal
     attractor above the threshold R*, not by the initial balance D = dR/dt|_tA.
@@ -49,7 +57,7 @@ mu, lam   = 1.5, 0.30           # F_diss(E0) = 1.8
 nu        = 0.06
 sigma0    = 0.0162
 alpha     = 0.030
-Phi_in, Phi_cap = 1.9, 0.02     # gamma0 = eta0*Phi_in/F_diss(E0) = 1.056 (starts near M_min)
+Phi_in, Phi_cap = 1.9, 0.02     # gamma0 = eta0*Phi_in/F_diss(E0) = 1.056: a near-stationary start; the distance to M_min is R_bal - R*
 
 def Fdiss(E):
     return mu*E*E + lam*E
@@ -163,12 +171,12 @@ if __name__ == "__main__":
                      fontsize=9, color="0.25")
         axB.set_xlabel(r"Distance to $\mathcal{M}_{\min}$:  $R_{\mathrm{bal}} - R^*$")
         axB.set_ylabel(r"Lifetime  $t_B$  (integrated)")
-        axB.set_title(r"(B)  Lifetime near $\mathcal{M}_{\min}$ — finite, no critical slowing")
+        axB.set_title(r"(B)  Lifetime near $\mathcal{M}_{\min}$, damage from the start — finite")
         axB.set_xlim(left=0)
         axB.legend(loc="upper left", frameon=False, fontsize=9)
         axB.grid(alpha=0.3)
 
-        fig.suptitle("VBLS: lifetime $t_B$ vs repair capacity near $\\mathcal{M}_{\\min}$  "
+        fig.suptitle("VBLS: lifetime $t_B$ vs the rate of restoration of the reserve near $\\mathcal{M}_{min}$  "
                      "(canonical system, R-channel)", y=1.02, fontsize=11)
         fig.tight_layout()
         out_path = "lifetime_near_Mmin.png"

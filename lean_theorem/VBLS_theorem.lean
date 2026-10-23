@@ -26,7 +26,7 @@
       η(t)   — assimilation efficiency (0, 1]
       R(t)   — repair reserve capacity      [0, 1]
 
-  The main theorem says: under axioms A1–A5 and the non-degeneracy condition
+  The main theorem says: under axioms A1–A4, hypotheses on the trajectory (in place of A5) and the non-degeneracy condition
   (N) — Σ(t₁) > 0 at some moment t₁ — the system exits its viability region
   V = {E > E*, R > R*} in finite time t_B.  Equivalently: for every solution,
   either Σ ≡ 0 (damage never left a trace) or t_B < +∞.  Finite lifespan is a
@@ -56,7 +56,7 @@
 
   STATUS
   ──────
-  Main theorem `finite_lifespan_from_axioms` is closed from A1–A5 + the
+  Main theorem `finite_lifespan_from_axioms` is closed from A1–A4 + trajectory hypotheses (in place of A5) + the
   non-degeneracy condition (N): ∃ t₁, Σ(t₁) > 0 — with no remaining sorry.
   Axiom A6 is NOT among its hypotheses: the upper bound Σ ≤ 1 is a scale
   normalization and is never used by the E-channel (monograph App. A.5, R.6).
@@ -194,7 +194,7 @@ def isViable (s : VBLSState) (th : VBLSThresholds) : Prop :=
 -- ══════════════════════════════════════════════════════════════════════════════
 /-
   Axioms A1–A6 are the standing assumptions of the monograph's theorem; the
-  main theorem below uses A1–A5 and condition (N), and A6 follows from A5.
+  main theorem below uses A1–A4, hypotheses on the trajectory in place of A5, and condition (N); A6 follows from A5.
   The class (S) itself is fixed by Definition 2.1 of the monograph.  The
   axioms are NOT universal physical laws.
 
@@ -865,7 +865,7 @@ theorem finite_lifespan
 
   Same conclusion as `finite_lifespan`, but with `hIdiv` derived internally
   from monotonicity of damage (Lemma A.1) + the non-degeneracy condition (N):
-  Σ(t₁) > 0 at SOME moment t₁.  The result follows from A1–A5 + (N) ALONE — no
+  Σ(t₁) > 0 at SOME moment t₁.  The result follows from A1–A4 + trajectory hypotheses (in place of A5) + (N) ALONE — no
   external assumption on the divergence of the memory integral, and no
   condition at the birth moment t_A (a system that starts with Σ₀ = 0 and
   export exceeding production, as Barrier II requires, is covered as soon as
@@ -916,7 +916,7 @@ theorem finite_lifespan_from_axioms
 -- §7.  TYPE CHECKS  (verify that all declarations have the expected signatures)
 -- ══════════════════════════════════════════════════════════════════════════════
 
-#check @finite_lifespan_from_axioms  -- ★ MAIN THEOREM: closed form (A1–A5 + (N))
+#check @finite_lifespan_from_axioms  -- ★ MAIN THEOREM: closed form (A1–A4 + trajectory hyp. + (N))
 #check @finite_lifespan              -- abstract form (with hIdiv as hypothesis)
 #check @finite_death_E               -- Lemma A.3 (E-channel) — no sorry
 #check @finite_death_R               -- Lemma A.4 (R-channel), full eq. (4.1), Σ > Σ_crit
@@ -948,7 +948,7 @@ theorem finite_lifespan_from_axioms
     ✓ I_diverges_of_Sigma_mono_pos_at   — the same from (N): Σ(t₁) > 0 at some t₁
     ✓ finite_death_E                    — Lemma A.3 (E-channel)
     ✓ finite_lifespan                   — main theorem (abstract form)
-    ✓ finite_lifespan_from_axioms       — main theorem (closed form: A1–A5 +
+    ✓ finite_lifespan_from_axioms       — main theorem (closed form: A1–A4 + trajectory hyp. +
                                           (N) → finite lifespan)
     ✓ finite_death_R                    — Lemma A.4 (R-channel), full equation (4.1),
                                           under Σ > Σ_crit

@@ -21,9 +21,9 @@ Two samples:
   Improved N=111: Data quality = 'acceptable', sample_size >= medium
 
 Four tests (0 free parameters):
-  Test 1: T_max ~ M^alpha         VBLS: alpha = +0.250
+  Test 1: T_max ~ M^a             VBLS: a = +0.250
   Test 2: P/M  ~ M^beta           VBLS: beta  = -0.250  (Kleiber)
-  Test 3: T_max ~ (P/M)^gamma    VBLS: gamma = -1.000  (criterion test)
+  Test 3: T_max ~ (P/M)^p_scale  VBLS: p_scale = -1.000  (prediction 1)
   Test 4: T_max x P/M = const     Rubner invariant; primary metric: log-std
 
 Figure 1 (anage_verification.pdf/png):     base sample 2x2
@@ -133,19 +133,19 @@ print(f"Improved sample:      {len(filt)}")
 def log_reg(x, y, label=''):
     sl, ic, r, p, se = stats.linregress(np.log10(x.values), np.log10(y.values))
     if label:
-        print(f"  {label:>26s}: alpha={sl:+.4f}±{se:.4f}  R²={r**2:.4f}  p={p:.2e}  n={len(x)}")
+        print(f"  {label:>26s}: a={sl:+.4f}±{se:.4f}  R²={r**2:.4f}  p={p:.2e}  n={len(x)}")
     return sl, ic, r**2, p, se
 
 
-print('\n=== TEST 1: T_max ~ M^alpha  (VBLS alpha=+0.250) ===')
+print('\n=== TEST 1: T_max ~ M^a  (VBLS a=+0.250) ===')
 a1b, b1b, r1b, _, se1b = log_reg(base['Body mass (g)'], base['Maximum longevity (yrs)'], 'Base')
 a1f, b1f, r1f, _, se1f = log_reg(filt['Body mass (g)'], filt['Maximum longevity (yrs)'], 'Improved')
 
-print('\n=== TEST 2: P/M ~ M^beta  (Kleiber, VBLS beta=-0.250) ===')
+print('\n=== TEST 2: P/M ~ M^beta  (Kleiber input, beta=-0.250) ===')
 a2b, b2b, r2b, _, se2b = log_reg(base['Body mass (g)'], base['PM'], 'Base')
 a2f, b2f, r2f, _, se2f = log_reg(filt['Body mass (g)'], filt['PM'], 'Improved')
 
-print('\n=== TEST 3: T_max ~ (P/M)^gamma  (VBLS gamma=-1.000) ===')
+print('\n=== TEST 3: T_max ~ (P/M)^p_scale  (VBLS p_scale=-1.000) ===')
 a3b, b3b, r3b, _, se3b = log_reg(base['PM'], base['Maximum longevity (yrs)'], 'Base')
 a3f, b3f, r3f, _, se3f = log_reg(filt['PM'], filt['Maximum longevity (yrs)'], 'Improved')
 
@@ -159,11 +159,11 @@ print(f"  Improved: median={filt['Rubner'].median():.2f}  "
 print(f"  Improvement log-std: {(1-lrb_f.std()/lrb_b.std())*100:.1f}%")
 
 print('\n=== SUMMARY ===')
-print(f"  Test 1: alpha_VBLS=+0.250  base={a1b:.3f}±{se1b:.3f}  filt={a1f:.3f}±{se1f:.3f}")
-print(f"  Test 2: beta_VBLS=-0.250   base={a2b:.3f}±{se2b:.3f}  filt={a2f:.3f}±{se2f:.3f}")
-print(f"  Test 3: gamma_VBLS=-1.000  base={a3b:.3f}±{se3b:.3f}  filt={a3f:.3f}±{se3f:.3f}")
-print(f"  alpha+beta: base={a1b+a2b:.4f}  filt={a1f+a2f:.4f}  (VBLS: 0.000)")
-print(f"  Indirect gamma = alpha/|beta|: base={a1b/abs(a2b):.4f}  filt={a1f/abs(a2f):.4f}")
+print(f"  Test 1: a_VBLS=+0.250  base={a1b:.3f}±{se1b:.3f}  filt={a1f:.3f}±{se1f:.3f}")
+print(f"  Test 2: beta_Kleiber=-0.250  base={a2b:.3f}±{se2b:.3f}  filt={a2f:.3f}±{se2f:.3f}")
+print(f"  Test 3: p_VBLS=-1.000  base={a3b:.3f}±{se3b:.3f}  filt={a3f:.3f}±{se3f:.3f}")
+print(f"  a+beta: base={a1b+a2b:.4f}  filt={a1f+a2f:.4f}  (VBLS: 0.000)")
+print(f"  Indirect p_scale = a/|beta|: base={a1b/abs(a2b):.4f}  filt={a1f/abs(a2f):.4f}")
 
 print('\n=== Rubner by order (improved sample) ===')
 for order, grp in sorted(filt.groupby('Order'), key=lambda x: -len(x[1])):
@@ -228,11 +228,11 @@ ax = axes.flatten()
 # Panel A: T_max ~ M
 scatter_orders(ax[0], 'Body mass (g)', 'Maximum longevity (yrs)', base, bats)
 ax[0].plot(m_range, 10**b1b * m_range**a1b, 'k-', lw=2.2, zorder=5,
-           label=f'N={len(base)}: alpha={a1b:.3f}±{se1b:.3f}  R²={r1b:.3f}')
-ax[0].plot(m_range, 10**b1b * m_range**0.25, 'k--', lw=1.5, alpha=0.45, label='VBLS alpha=0.250')
+           label=f'N={len(base)}: a={a1b:.3f}±{se1b:.3f}  R²={r1b:.3f}')
+ax[0].plot(m_range, 10**b1b * m_range**0.25, 'k--', lw=1.5, alpha=0.45, label='VBLS a=0.250')
 ax[0].set_xscale('log'); ax[0].set_yscale('log')
 ax[0].set_xlabel('Body mass (g)'); ax[0].set_ylabel('T_max (yr)')
-ax[0].set_title(f'A.  T_max ~ M^alpha\nalpha_emp={a1b:.3f}  alpha_VBLS=0.250  Delta={a1b-0.25:+.3f}',
+ax[0].set_title(f'A.  T_max ~ M^a\na_emp={a1b:.3f}  a_VBLS=0.250  Delta={a1b-0.25:+.3f}',
                 fontweight='bold')
 order_legend(ax[0])
 
@@ -244,29 +244,29 @@ for _, row in base[base['label'] != ''].iterrows():
 ax[1].plot(m_range, 10**b2b * m_range**a2b, 'k-', lw=2.2, zorder=5,
            label=f'N={len(base)}: beta={a2b:.3f}±{se2b:.3f}  R²={r2b:.3f}')
 ax[1].plot(m_range, 10**b2b * m_range**(-0.25), 'k--', lw=1.5, alpha=0.45,
-           label='Kleiber/VBLS beta=-0.250')
+           label='Kleiber (input): beta=-0.250')
 ax[1].set_xscale('log'); ax[1].set_yscale('log')
 ax[1].set_xlabel('Body mass (g)'); ax[1].set_ylabel('P/M (W/kg)')
-ax[1].set_title(f'B.  P/M ~ M^beta  (Kleiber law)\nbeta_emp={a2b:.3f}  beta_VBLS=-0.250  Delta={a2b+0.25:+.3f}',
+ax[1].set_title(f'B.  P/M ~ M^beta  (Kleiber law)\nbeta_emp={a2b:.3f}  beta_Kleiber=-0.250  Delta={a2b+0.25:+.3f}',
                 fontweight='bold')
 ax[1].legend(fontsize=8.5, framealpha=0.93, loc='upper right')
 
-# Panel C: T_max ~ (P/M)^gamma  — key test
+# Panel C: T_max ~ (P/M)^p_scale  — prediction 1
 scatter_orders(ax[2], 'PM', 'Maximum longevity (yrs)', base, bats)
 ax[2].plot(pm_range, 10**b3b * pm_range**a3b, 'k-', lw=2.5, zorder=5,
-           label=f'N={len(base)}: gamma={a3b:.3f}±{se3b:.3f}  R²={r3b:.3f}')
+           label=f'N={len(base)}: p_scale={a3b:.3f}±{se3b:.3f}  R²={r3b:.3f}')
 ax[2].plot(pm_range, 10**b3b * pm_range**(-1.0), 'k--', lw=1.8, alpha=0.45,
-           label='VBLS gamma=-1.000')
+           label='VBLS p_scale=-1.000')
 ax[2].text(0.04, 0.06,
-           f'Indirect gamma = alpha/|beta| = {a1b/abs(a2b):.3f}\n'
-           f'Direct: gamma = {a3b:.3f}\n\n'
+           f'Indirect p_scale = a/|beta| = {a1b/abs(a2b):.3f}\n'
+           f'Direct: p_scale = {a3b:.3f}\n\n'
            f'P/M explains {r3b*100:.1f}% var(T_max)\n'
-           f'{(1-r3b)*100:.1f}% — neuroprotection, ecology',
+           f'{(1-r3b)*100:.1f}% — other factors',
            transform=ax[2].transAxes, va='bottom', fontsize=8.5,
            bbox=dict(boxstyle='round,pad=0.4', fc='#fff8f0', ec='#e67e22', lw=1.2))
 ax[2].set_xscale('log'); ax[2].set_yscale('log')
 ax[2].set_xlabel('P/M (W/kg)'); ax[2].set_ylabel('T_max (yr)')
-ax[2].set_title(f'C.  T_max ~ (P/M)^gamma  — key VBLS test\ngamma_emp={a3b:.3f}  gamma_VBLS=-1.000  Delta={a3b+1.0:+.3f}',
+ax[2].set_title(f'C.  T_max ~ (P/M)^p_scale  — prediction 1 (with transfer assumptions)\np_emp={a3b:.3f}  p_VBLS=-1.000  Delta={a3b+1.0:+.3f}',
                 fontweight='bold')
 ax[2].legend(fontsize=8.5, framealpha=0.93, loc='upper right')
 
@@ -327,39 +327,39 @@ axes2 = [fig.add_subplot(gs[i // 3, i % 3]) for i in range(6)]
 # Panel A: T_max ~ M base sample
 scatter_orders(axes2[0], 'Body mass (g)', 'Maximum longevity (yrs)', base, bats)
 axes2[0].plot(m_range, 10**b1b * m_range**a1b, '-', color=C_BASE, lw=2.2, zorder=5,
-              label=f'N={len(base)}: alpha={a1b:.3f}±{se1b:.3f}  R²={r1b:.3f}')
-axes2[0].plot(m_range, 10**b1b * m_range**0.25, 'k--', lw=1.5, alpha=0.45, label='VBLS alpha=0.250')
+              label=f'N={len(base)}: a={a1b:.3f}±{se1b:.3f}  R²={r1b:.3f}')
+axes2[0].plot(m_range, 10**b1b * m_range**0.25, 'k--', lw=1.5, alpha=0.45, label='VBLS a=0.250')
 axes2[0].set_xscale('log'); axes2[0].set_yscale('log')
 axes2[0].set_xlabel('Body mass (g)'); axes2[0].set_ylabel('T_max (yr)')
-axes2[0].set_title(f'A.  T_max ~ M^alpha  (base N={len(base)})\n'
-                   f'alpha_emp={a1b:.3f}  Delta={a1b-0.25:+.3f}', fontweight='bold')
+axes2[0].set_title(f'A.  T_max ~ M^a  (base N={len(base)})\n'
+                   f'a_emp={a1b:.3f}  Delta={a1b-0.25:+.3f}', fontweight='bold')
 axes2[0].legend(fontsize=8.5, framealpha=0.93)
 
 # Panel B: T_max ~ M improved sample
 scatter_orders(axes2[1], 'Body mass (g)', 'Maximum longevity (yrs)', filt)
 axes2[1].plot(m_range, 10**b1b * m_range**a1b, '--', color=C_BASE, lw=1.5, alpha=0.5,
-              label=f'Base N={len(base)}: alpha={a1b:.3f}')
+              label=f'Base N={len(base)}: a={a1b:.3f}')
 axes2[1].plot(m_range, 10**b1f * m_range**a1f, '-', color=C_FILT, lw=2.3, zorder=5,
-              label=f'Filter N={len(filt)}: alpha={a1f:.3f}±{se1f:.3f}  R²={r1f:.3f}')
-axes2[1].plot(m_range, 10**b1f * m_range**0.25, 'k--', lw=1.5, alpha=0.45, label='VBLS alpha=0.250')
+              label=f'Filter N={len(filt)}: a={a1f:.3f}±{se1f:.3f}  R²={r1f:.3f}')
+axes2[1].plot(m_range, 10**b1f * m_range**0.25, 'k--', lw=1.5, alpha=0.45, label='VBLS a=0.250')
 axes2[1].set_xscale('log'); axes2[1].set_yscale('log')
 axes2[1].set_xlabel('Body mass (g)'); axes2[1].set_ylabel('T_max (yr)')
-axes2[1].set_title(f'B.  T_max ~ M^alpha  (acceptable + medium+)\n'
-                   f'alpha_emp={a1f:.3f}  Delta={a1f-0.25:+.3f}', fontweight='bold')
+axes2[1].set_title(f'B.  T_max ~ M^a  (acceptable + medium+)\n'
+                   f'a_emp={a1f:.3f}  Delta={a1f-0.25:+.3f}', fontweight='bold')
 axes2[1].legend(fontsize=8.5, framealpha=0.93)
 
-# Panel C: T_max ~ (P/M)^gamma both samples
+# Panel C: T_max ~ (P/M)^p_scale both samples
 scatter_orders(axes2[2], 'PM', 'Maximum longevity (yrs)', base, bats)
 axes2[2].plot(pm_range, 10**b3b * pm_range**a3b, '--', color=C_BASE, lw=2.0, alpha=0.7,
-              label=f'Base: gamma={a3b:.3f}±{se3b:.3f}  R²={r3b:.3f}')
+              label=f'Base: p_scale={a3b:.3f}±{se3b:.3f}  R²={r3b:.3f}')
 axes2[2].plot(pm_range, 10**b3f * pm_range**a3f, '-', color=C_FILT, lw=2.5, zorder=5,
-              label=f'Filter: gamma={a3f:.3f}±{se3f:.3f}  R²={r3f:.3f}')
+              label=f'Filter: p_scale={a3f:.3f}±{se3f:.3f}  R²={r3f:.3f}')
 axes2[2].plot(pm_range, 10**b3b * pm_range**(-1.0), 'k--', lw=1.5, alpha=0.45,
-              label='VBLS gamma=-1.000')
+              label='VBLS p_scale=-1.000')
 axes2[2].set_xscale('log'); axes2[2].set_yscale('log')
 axes2[2].set_xlabel('P/M (W/kg)'); axes2[2].set_ylabel('T_max (yr)')
-axes2[2].set_title(f'C.  T_max ~ (P/M)^gamma  — key test\n'
-                   f'Base gamma={a3b:.3f}  ->  Filter gamma={a3f:.3f}  VBLS=-1.000',
+axes2[2].set_title(f'C.  T_max ~ (P/M)^p_scale  — prediction 1\n'
+                   f'Base p={a3b:.3f}  ->  Filter p={a3f:.3f}  VBLS=-1.000',
                    fontweight='bold')
 axes2[2].legend(fontsize=8.5, framealpha=0.93)
 
@@ -409,13 +409,13 @@ axes2[4].legend(fontsize=8.5, framealpha=0.93)
 axes2[5].axis('off')
 rows = [
     ['', 'VBLS', f'Base\n(N={len(base)})', f'Filter\n(N={len(filt)})', 'Delta'],
-    ['alpha (T_max~M)',    '+0.250',
+    ['a (T_max~M)',        '+0.250',
      f'{a1b:.3f}\n±{se1b:.3f}', f'{a1f:.3f}\n±{se1f:.3f}',
      f'{abs(a1f-0.25):.3f}\nvs {abs(a1b-0.25):.3f}'],
     ['beta (P/M~M)',       '-0.250',
      f'{a2b:.3f}\n±{se2b:.3f}', f'{a2f:.3f}\n±{se2f:.3f}',
      f'{abs(a2f+0.25):.3f}\nvs {abs(a2b+0.25):.3f}'],
-    ['gamma (T_max~P/M)', '-1.000',
+    ['p (T_max~P/M)',      '-1.000',
      f'{a3b:.3f}\n±{se3b:.3f}', f'{a3f:.3f}\n±{se3f:.3f}',
      f'{abs(a3f+1.0):.3f}\nvs {abs(a3b+1.0):.3f}'],
     ['log-std\n(Rubner)', '0',

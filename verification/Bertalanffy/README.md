@@ -11,7 +11,7 @@
 
 | File | What it does |
 |---|---|
-| `mass_cod_EN.py` | Main, currently-cited script. Fits the VBLS mass equation (§18.2, eq. 18.2) and the classical VBGF to individual mass-at-age records; produces the three-panel comparison figure. Memory parameter fixed at α = 0.042 yr⁻¹ (independent length-based fit, see below — not fitted to the mass data itself). |
+| `mass_cod_EN.py` | Main, currently-cited script. Fits the VBLS mass equation (§18.5, eq. 18.2) and the classical VBGF to individual mass-at-age records; produces the three-panel comparison figure. Memory parameter fixed at α = 0.042 yr⁻¹ (independent length-based fit, see below — not fitted to the mass data itself). |
 
 ## Data
 

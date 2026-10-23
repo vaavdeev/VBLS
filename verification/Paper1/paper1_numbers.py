@@ -29,12 +29,21 @@ Outputs (printed and written to paper1_numbers.out.txt):
   4. an example satisfying the conditions (P1)-(P4) of Proposition 3 (start at
      E(t_A) = 0.12): crossings of the production-export kink, finite-difference
      slopes of t_B(alpha) at zero, and the same slope from the variational system;
+  4a. Lemma 2 and Proposition 4: the time T_0 in which the potential falls
+     with no inflow, the bound on t_B^E at every alpha, the explicit
+     threshold alpha_bar beyond which lifetime is below its value at
+     alpha = 0, and the approach of t_B(alpha) to T_0 as alpha grows; for the
+     set started at E(t_A) = 0.12, to which Proposition 4 applies, T_0,
+     alpha_bar and the rate of exit over a scan of [0, alpha_bar];
   5. the setting of 3 with Phi_cap alternating around the same mean: the
      worst-phase margin of Proposition 1(b) and the resulting lifetimes;
   6. the two counterexamples of Section 6 of the paper (also in Appendix G of
      the monograph): unsaturated restoration, where t_B(alpha) decreases from
      alpha = 0, and a maximum of t_B inside the reserve branch, at a kink of
-     the field rather than at the switch of the death channel.
+     the field rather than at the switch of the death channel; for the second,
+     the conditions of Proposition 4 (Supplementary S15);
+  7. the integrator settings of every run, logged from the calls themselves:
+     the paper takes its table of settings (Table 2) from this block.
 Figures: paper1_fig1.png and paper1_fig2.png, written next to this script.
 """
 
@@ -43,8 +52,27 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from scipy.integrate import solve_ivp
+from scipy.integrate import quad, solve_ivp
 from scipy.optimize import minimize_scalar
+
+# Every call of the integrator is logged with its settings under the label of
+# the run it belongs to, and block 7 prints the log; the paper takes its table
+# of integrator settings from there instead of transcribing them by hand.
+_solve_ivp = solve_ivp
+RUN_LOG = {}
+RUN_LABEL = ['']
+
+
+def solve_ivp(fun, t_span, y0, method='RK45', **kw):
+    key = (method, kw.get('rtol', 1e-3), kw.get('atol', 1e-6), kw.get('max_step', np.inf))
+    settings = RUN_LOG.setdefault(RUN_LABEL[0], [])
+    if key not in settings:
+        settings.append(key)
+    return _solve_ivp(fun, t_span, y0, method=method, **kw)
+
+
+def label(name):
+    RUN_LABEL[0] = name
 
 plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['axes.spines.top'] = False
@@ -139,6 +167,7 @@ def main():
     phi_cap_c = lambda t: 0.003
 
     # 1. illustrative trajectory ------------------------------------------------
+    label('Fig. 1a')
     sol, tE, tR = run(P, phi_in_canonical, phi_cap_c, T=400.0)
     tB = min(tE, tR)
     ch = 'R' if tR < tE else 'E'
@@ -160,6 +189,7 @@ def main():
         _, e, r = run(q, phi_in_canonical, phi_cap_c, T=400.0, max_step=0.1, rtol=1e-8, atol=1e-11, n_out=200)
         return e, r
 
+    label('Fig. 1b, with the search for alpha*')
     alphas = np.linspace(0.005, 0.30, 119)
     tEs, tRs = [], []
     for a in alphas:
@@ -189,6 +219,7 @@ def main():
     T_k = 20000.0
     say('')
     say('== 3. Memory kernel: constant Phi_in = 1, Phi_cap = 0.1, horizon %.0f' % T_k)
+    label('Fig. 2')
     kern = {}
     for name, kappa in (('permanent (K = 1)', 0.0), ('decaying (kappa = 0.01)', 0.01)):
         s, e, r = run(P, phi_in_k, phi_cap_k, T=T_k, kappa=kappa, max_step=2.0, rtol=1e-9, atol=1e-12,
@@ -210,6 +241,7 @@ def main():
         'ratio %.3f' % (bound_k, e_perm, bound_k / e_perm))
     # A damage-free state of the canonical system (K = 1) in the same environment:
     # the argument of Proposition 1(b) with Sigma_0 = 0 (viability kernel not empty).
+    label('damage-free start')
     s_nd, e_nd, r_nd = run(P, phi_in_k, phi_cap_k, T=T_k, kappa=0.0, max_step=2.0, rtol=1e-9, atol=1e-12,
                            method='LSODA', n_out=6000, log_grid=True, y0=[IC['E'], 0.0, 0.0, IC['R']])
     R_bal0 = P['rho'] / (P['rho'] + P['nu0'])
@@ -221,6 +253,7 @@ def main():
     # 4. Proposition 3: an example satisfying (P1)-(P4) -------------------------
     # The illustrative set started above E_0, so that restoration is saturated
     # on the whole life (P2); E_0 = 0.10 stays the constant of the field (5).
+    label('Proposition 3: set started at E(t_A) = 0.12, with its variational system')
     y0_p3 = [0.12, IC['S'], 0.0, IC['R']]
     kw = dict(max_step=0.01, rtol=1e-11, atol=1e-13, n_out=200, y0=y0_p3)
     p0 = dict(P, alpha=0.0)
@@ -268,6 +301,74 @@ def main():
     say('variational system: u_R(t_B) / |dR/dt(t_B)| = %.2f; max u_E = %.1e, max u_Sigma = %.1e, min u_R = %.1e'
         % (sv.y[7][-1] / abs(dRT), U[5].max(), U[6].max(), U[7].min()))
 
+    # 4a. Lemma 2 and Proposition 4 of the paper -----------------------------
+    # Psi(E) = int_{E*}^{E} dE'/F(E') has a closed form for F = mu E^2 + lam E:
+    #   Psi(E) = (1/lam) * ln[ (E/(mu E + lam)) / (E*/(mu E* + lam)) ].
+    # T_0 = Psi(E(t_A)) is the time in which the potential falls from E(t_A) to
+    # E* with no inflow at all. Lemma 2 bounds the exit through the potential by
+    #   t_B^E - t_A <= T_0 + eta_0 * Phi_max / (alpha * Sigma_0 * F(E*)),
+    # and Proposition 4 turns this into an explicit threshold alpha_bar beyond
+    # which lifetime is below its value at alpha = 0.
+    def Psi(E, p):
+        num = E / (p['mu'] * E + p['lam'])
+        den = p['E_star'] / (p['mu'] * p['E_star'] + p['lam'])
+        return np.log(num / den) / p['lam']
+
+    say('')
+    say('== 4a. Lemma 2 (large memory) and Proposition 4 (interior maximum), '
+        'canonical environment')
+    phi_max = max(phi_in_canonical(t) for t in np.linspace(0.0, 200.0, 200001))
+    T0_fall = Psi(IC['E'], P)
+    T0_quad = quad(lambda E: 1.0 / F(E, P), P['E_star'], IC['E'], epsabs=1e-13)[0]
+    label('Lemma 2 and Proposition 4: illustrative set')
+    _, e_a0, r_a0 = run(dict(P, alpha=0.0), phi_in_canonical, phi_cap_c, T=400.0,
+                        max_step=0.05, rtol=1e-11, atol=1e-13)
+    tB0 = min(e_a0, r_a0)
+    a_bar = IC['eta'] * phi_max / (IC['S'] * F(P['E_star'], P) * (tB0 - T0_fall))
+    say('Phi_max = %.6f, F(E*) = %.6f, Sigma_0 = %g, eta_0 = %g'
+        % (phi_max, F(P['E_star'], P), IC['S'], IC['eta']))
+    say('T_0 = %.4f (closed form) = %.4f (quadrature); t_B(0) = %.3f via %s'
+        % (T0_fall, T0_quad, tB0, 'R' if r_a0 < e_a0 else 'E'))
+    say('alpha_bar = eta_0 Phi_max / [Sigma_0 F(E*) (t_B(0) - t_A - T_0)] = %.2f' % a_bar)
+    say('alpha      t_B      t_B^E    bound (14)   holds   channel')
+    for a in (0.5, 1.0, 10.0, 95.0, a_bar, 100.0, 300.0, 1000.0, 1e4):
+        _, ea, ra = run(dict(P, alpha=a), phi_in_canonical, phi_cap_c, T=400.0,
+                        max_step=0.05, rtol=1e-11, atol=1e-13)
+        bound = T0_fall + IC['eta'] * phi_max / (a * IC['S'] * F(P['E_star'], P))
+        say('%9.2f %8.3f %8.3f %12.3f   %-6s  %s'
+            % (a, min(ea, ra), ea, bound, 'yes' if ea <= bound + 1e-9 else 'NO',
+               'E' if ea < ra else 'R'))
+    say('t_B(alpha) -> T_0 from above as alpha grows, and t_B(alpha) < t_B(0) for '
+        'alpha > alpha_bar, which is what Proposition 4 needs.')
+
+    # The set started at E(t_A) = 0.12 (block 4) satisfies the conditions of
+    # Proposition 3, and those of Proposition 4 once the exit is transversal at
+    # every alpha in [0, alpha_bar]: its T_0, its alpha_bar, and the rate at which
+    # the decreasing variable crosses its threshold over a scan of [0, alpha_bar].
+    def exit_rate(p, phi_in, phi_cap, y0, a, T, **kw):
+        pa = dict(p, alpha=a)
+        s, e, r = run(pa, phi_in, phi_cap, T=T, y0=y0, **kw)
+        tb = min(e, r)
+        if not np.isfinite(tb):
+            return np.inf, '-', np.nan
+        d = rhs(tb, s.sol(tb), pa, phi_in, phi_cap, 0.0)
+        return tb, ('R' if r <= e else 'E'), (d[3] if r <= e else d[0])
+
+    T0_12 = Psi(y0_p3[0], P)
+    tB0_12 = min(e0, r0)
+    a_bar_12 = IC['eta'] * phi_max / (IC['S'] * F(P['E_star'], P) * (tB0_12 - T0_12))
+    say('set started at E(t_A) = 0.12: T_0 = %.4f, t_B(0) = %.4f, alpha_bar = %.2f'
+        % (T0_12, tB0_12, a_bar_12))
+    label('Proposition 4: set started at E(t_A) = 0.12')
+    grid_12 = np.unique(np.concatenate((np.linspace(0.0, 0.2, 41), np.geomspace(0.25, a_bar_12, 40))))
+    scan_12 = [exit_rate(P, phi_in_canonical, phi_cap_c, y0_p3, a, 150.0,
+                         max_step=0.05, rtol=1e-11, atol=1e-13) for a in grid_12]
+    rates_12 = np.array([abs(x[2]) for x in scan_12])
+    sw_12 = next((a for a, x in zip(grid_12, scan_12) if x[1] == 'E'), np.nan)
+    say('  exit over a scan of %d values of alpha in [0, alpha_bar]: min |rate| = %.2e, '
+        'every exit transversal: %s; first exit through the potential at alpha = %.4f'
+        % (len(grid_12), np.nanmin(rates_12), 'yes' if np.all(rates_12 > 0) else 'NO', sw_12))
+
     # 5. Worst phase of the environment ---------------------------------------
     # Setting of section 3, but Phi_cap alternates between lo and hi with
     # half-period 1 (low phase first); integrated piecewise between its jumps.
@@ -296,6 +397,7 @@ def main():
 
     say('')
     say('== 5. Worst phase: Phi_in = 1, Phi_cap alternating with half-period 1, low phase first')
+    label('alternating Phi_cap (Section 4)')
     for lo, hi in ((0.06, 0.14), (0.08, 0.12)):
         say('Phi_cap %.2f/%.2f: worst phase Phi_cap_min * R_low = %.5f, sigma0 F(E_bar) = %.5f'
             % (lo, hi, lo * R_low, P['sigma0'] * F(E_plus, P)))
@@ -328,6 +430,7 @@ def main():
 
     say('Example 1 (restoration not saturated): nu = 0.02, rho = 0.0055, E* = 0.20, '
         'Phi_in(t) = 0.234 + 0.266 exp(-max(0, t - 20)/20)')
+    label('counterexample of Section 6')
     t0, ch0, s0 = tb_ex(ex1, phi_ex1, 0.0)
     tt = np.linspace(200.0, t0, 2001)
     say('  alpha = 0: potential on [200, t_B] between %.4f and %.4f (E0 = 0.427)'
@@ -336,6 +439,7 @@ def main():
         tb, ch, _ = tb_ex(ex1, phi_ex1, a)
         say('  alpha = %-8g t_B = %.3f via %s' % (a, tb, ch))
     say('Example 2 (maximum inside the reserve branch): rho = 0.004, Phi_in = 0.5')
+    label('example of Supplementary Section S15')
     A = np.arange(0.25, 0.45, 0.0025)
     v = [tb_ex(ex2, phi_ex2, a)[:2] for a in A]
     k = int(np.argmax([x[0] for x in v]))
@@ -349,6 +453,41 @@ def main():
     A2 = np.arange(0.80, 1.20, 0.01)
     sw = next((a for a in A2 if tb_ex(ex2, phi_ex2, a)[1] == 'E'), np.nan)
     say('  first death through the potential channel on [0.80, 1.20] with step 0.01: alpha = %.2f' % sw)
+    # Example 2 satisfies the conditions of Proposition 4 (Supplementary S15): the
+    # conditions (P1)-(P4) of Proposition 3 at alpha = 0, then T_0, alpha_bar and the
+    # rate of exit over a scan of [0, alpha_bar].
+    tb15, ch15, s15 = tb_ex(ex2, phi_ex2, 0.0)
+    tt15 = np.linspace(0.0, tb15, 200001)
+    E15, S15, H15, R15 = s15.sol(tt15)
+    d15 = rhs(tb15, s15.sol(tb15), dict(ex2, alpha=0.0), phi_ex2, cap_ex, 0.0)
+    kink15 = ex2['sigma0'] * (ex2['mu'] * E15 * E15 + ex2['lam'] * E15) - 0.01 * R15
+    zc15 = np.where(np.sign(kink15[1:]) != np.sign(kink15[:-1]))[0]
+    say('  conditions of Proposition 3 at alpha = 0: t_B = %.2f via %s, dR/dt at t_B = %.2e, '
+        'min E on [t_A, t_B] = %.4f (E* = %.2f); min of E - E0 on (t_A, t_B] = %+.1e (P2)'
+        % (tb15, ch15, d15[3], E15.min(), ex2['E_star'], E15[1:].min() - ex2['E0']))
+    say('  production - export changes sign %d time(s), at t = %s with slope %s; '
+        'its maximum over the life = %+.2e (P4); max Sigma on [t_A, t_B] = %.3f'
+        % (len(zc15), ', '.join('%.2f' % tt15[i] for i in zc15),
+           ', '.join('%+.2e' % ((kink15[i + 1] - kink15[i]) / (tt15[i + 1] - tt15[i])) for i in zc15),
+           kink15.max(), S15.max()))
+    T0_15 = Psi(y0_ex[0], ex2)
+    a_bar_15 = IC['eta'] * 0.5 / (y0_ex[1] * F(ex2['E_star'], ex2) * (tb15 - T0_15))
+    say('  T_0 = %.3f, alpha_bar = %.2f' % (T0_15, a_bar_15))
+    grid_15 = np.unique(np.concatenate((np.linspace(0.0, 1.2, 49), np.geomspace(1.25, a_bar_15, 24))))
+    scan_15 = [exit_rate(ex2, phi_ex2, cap_ex, y0_ex, a, 1500.0, max_step=0.5, n_out=3001)
+               for a in grid_15]
+    rates_15 = np.array([abs(x[2]) for x in scan_15])
+    say('  exit over a scan of %d values of alpha in [0, alpha_bar]: min |rate| = %.2e, '
+        'every exit transversal: %s' % (len(grid_15), np.nanmin(rates_15),
+                                       'yes' if np.all(rates_15 > 0) else 'NO'))
+
+    # 7. integrator settings ---------------------------------------------------
+    say('')
+    say('== 7. Integrator settings of every run, logged from the calls themselves')
+    for name, settings in RUN_LOG.items():
+        for method, rtol, atol, max_step in settings:
+            say('  %-72s %-5s rtol = %g, atol = %g, max_step = %s'
+                % (name, method, rtol, atol, ('%g' % max_step) if np.isfinite(max_step) else 'none'))
 
     with open(os.path.join(HERE, 'paper1_numbers.out.txt'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(out) + '\n')
@@ -376,7 +515,7 @@ def main():
 
     ax[1].plot(alphas, tRs, color='C1', ls='--', lw=1.2, label='$t_B^R(\\alpha)$')
     ax[1].plot(alphas, tEs, color='C0', ls='--', lw=1.2, label='$t_B^E(\\alpha)$')
-    ax[1].plot(alphas, tBs, color='k', lw=1.8, label='$t_B=\\min$')
+    ax[1].plot(alphas, tBs, color='k', lw=1.8, label='$t_B=\\min(t_B^R,t_B^E)$')
     ax[1].axvline(a_star, color='0.4', lw=0.8, ls=':')
     ax[1].axvline(P['alpha'], color='0.6', lw=0.8, ls='-.')
     ax[1].text(a_star + 0.004, 8, '$\\alpha^*$', fontsize=10, color='0.3')
@@ -384,7 +523,7 @@ def main():
     ax[1].set_ylim(0, 150)
     ax[1].set_xlabel('$\\alpha$ (per model time unit)')
     ax[1].set_ylabel('$t_B$ (model units)')
-    ax[1].legend(frameon=False, fontsize=9, loc='upper right')
+    ax[1].legend(frameon=False, fontsize=9, loc='lower right')   # the upper right is crossed by t_B^R
     ax[1].set_title('(b) lifetime against memory sensitivity', fontsize=10, loc='left')
     fig.tight_layout()
     save_fig(fig, 'paper1_fig1.png')
@@ -399,7 +538,8 @@ def main():
         t_end = min(e, r)
         tt_k = s.t[1:]
         alive = tt_k <= t_end
-        short = name.split(' ')[0]
+        # short legend labels by kernel, so that the legend of panel (b) clears the curves
+        short = '$K\\equiv1$' if name.startswith('permanent') else '$\\kappa=' + name.split('=')[1].strip(' )') + '$'
         for a, v, ls, lw, lab in ((ax[0], eta_of(s.y[2][1:], P), '-', 1.6, name.replace('kappa', '$\\kappa$')),
                                   (ax[1], s.y[0][1:], '-', 1.6, '$E$, ' + short),
                                   (ax[1], s.y[3][1:], '--', 1.2, '$R$, ' + short)):

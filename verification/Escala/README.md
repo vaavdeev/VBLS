@@ -1,10 +1,10 @@
 # Escala — Allometric scaling laws verification
 
-**Monograph section:** Appendix D.1 (§D.1.1–D.1.8)
-**VBLS predictions tested:** four scaling laws with zero free parameters —
-(1) Kleiber's law P ~ M^0.75;
-(2) longevity allometry T_max ~ M^0.25;
-(3) criterion test T_ls ~ (P/M)^(−1.0);
+**Monograph section:** Appendix D.1 (§D.1.1–D.1.7)
+**Tests:** four scaling relations —
+(1) Kleiber's law P ~ M^0.75 (an input assumption of VBLS, χ = 3/4; here a check of the dataset);
+(2) longevity allometry T_ls ~ M^0.25;
+(3) the main test T_ls ~ (P/M)^(−1.0) (prediction 1, with the transfer assumptions of Appendix D.5.1.5);
 (4) Rubner invariant P/M × T_ls ≈ const.
 Dataset spans 94 non-human mammal species (cross-order). Also documents the human exceptionalism anomaly (§D.1.4): *Homo sapiens* deviates 5–8× above the Rubner product predicted by other mammals.
 

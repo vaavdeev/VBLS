@@ -1,18 +1,18 @@
 ﻿Genus;Species;Common name;Class;Order;M_kg;T_obs;T_allom;ratio;log_ratio;param;mechanism
 Plethodon;cinereus;Eastern red-backed salamander;Amphibia;Caudata;0.001;25.0;2.61;9.577;0.981;—;—
-Sphenodon;punctatus;Tuatara;Reptilia;Rhynchocephalia;0.43;90.0;10.397;8.656;0.937;nu0 down;"Tuatara: relict reptilian metabolism, body temperature ~12-18C; New Zealand isolation"
-Myotis;lucifugus;Little brown bat;Mammalia;Chiroptera;0.006;34.0;4.066;8.362;0.922;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
+Sphenodon;punctatus;Tuatara;Reptilia;Rhynchocephalia;0.43;90.0;10.397;8.656;0.937;nu0 down (temperature, interpretation);"Poikilotherm; scored against the Reptilia baseline"
+Myotis;lucifugus;Little brown bat;Mammalia;Chiroptera;0.006;34.0;4.066;8.362;0.922;sigma0_eff down (interpretation);"Long life at high metabolism needs a small fraction of dissipation fixed as damage; M. lucifugus mitochondria release 2-3x less H2O2 per O2 than shrew and mouse (Brunet-Rossinni 2004)"
 Ambystoma;tigrinum;Tiger salamander;Amphibia;Caudata;0.003;25.0;3.574;6.995;0.845;—;—
 Anaxyrus;americanus;American toad;Amphibia;Anura;0.022;36.0;5.416;6.647;0.823;—;—
 Ambystoma;maculatum;Spotted salamander;Amphibia;Caudata;0.013;32.0;4.832;6.623;0.821;—;—
-Plecotus;auritus;Brown big-eared bat;Mammalia;Chiroptera;0.01;30.0;4.598;6.524;0.815;nu0 down;"Long hibernation: nu0_eff ~ nu0 * (1 - f_hibern), f_hibern ~ 0.6; effective lifespan extended"
+Plecotus;auritus;Brown big-eared bat;Mammalia;Chiroptera;0.01;30.0;4.598;6.524;0.815;nu0_eff down (interpretation);"Hibernation reduces the effective nu0; the fraction of the year in torpor is not estimated here"
 Alligator;mississippiensis;American alligator;Reptilia;Crocodilia;1.079;77.0;12.707;6.06;0.782;—;—
 Chrysemys;picta;Painted turtle;Reptilia;Testudines;0.4;61.0;10.234;5.96;0.775;—;—
 Fringilla;coelebs;Chaffinch;Aves;Passeriformes;0.021;29.0;5.383;5.388;0.731;—;—
 Plethodon;glutinosus;Northern slimy salamander;Amphibia;Caudata;0.004;20.1;3.79;5.304;0.725;—;—
 Corvus;corax;Common raven;Aves;Passeriformes;1.203;69.0;13.012;5.303;0.725;—;—
-Heterocephalus;glaber;Naked mole-rat;Mammalia;Rodentia;0.035;31.0;6.028;5.143;0.711;rho up + sigma0 down;"Naked mole-rat: highly efficient DNA repair (PARP1 x3), conformationally stable ribosomes, no accumulation of oxidized proteins; low ROS from hypoxic adaptation"
-Desmodus;rotundus;Vampire bat;Mammalia;Chiroptera;0.029;29.2;5.792;5.041;0.703;sigma0_eff down;Vampire bat: flight + specific immune regulation
+Heterocephalus;glaber;Naked mole-rat;Mammalia;Rodentia;0.035;31.0;6.028;5.143;0.711;nu_eff down + sigma0*F_diss down (interpretation);"Low specific metabolism (3.6 W/kg, AnAge); DNA repair genes more expressed than in mouse (MacRae et al. 2015); higher translational fidelity (Azpurua et al. 2013)"
+Desmodus;rotundus;Vampire bat;Mammalia;Chiroptera;0.029;29.2;5.792;5.041;0.703;sigma0_eff down (interpretation);"As for Chiroptera; mechanism not measured"
 Serinus;canaria;House canary;Aves;Passeriformes;0.013;24.0;4.872;4.926;0.692;—;—
 Cacatua;galerita;Sulphur-crested cockatoo;Aves;Psittaciformes;0.776;57.0;11.826;4.82;0.683;—;—
 Gygis;alba;White tern;Aves;Charadriiformes;0.098;35.9;7.533;4.766;0.678;—;—
@@ -26,15 +26,15 @@ Sylvia;borin;Garden warbler;Aves;Passeriformes;0.025;24.0;5.581;4.3;0.633;—;�
 Eolophus;roseicapilla;Galah;Aves;Psittaciformes;0.269;40.0;9.384;4.263;0.63;—;—
 Haematopus;ostralegus;Eurasian oystercatcher;Aves;Charadriiformes;0.449;43.3;10.496;4.126;0.615;—;—
 Prunella;modularis;Hedge sparrow;Aves;Passeriformes;0.017;20.8;5.127;4.057;0.608;—;—
-Pteropus;giganteus;Indian flying fox;Mammalia;Chiroptera;0.562;44.0;11.023;3.992;0.601;sigma0_eff down;"Same flight mechanism; large fruit bats. Additionally: IFN-alpha constitutively active — reduced inflammatory response lowers sigma0"
+Pteropus;giganteus;Indian flying fox;Mammalia;Chiroptera;0.562;44.0;11.023;3.992;0.601;sigma0_eff down (interpretation);"As for Chiroptera; mechanism not measured"
 Zenaida;macroura;Mourning dove;Aves;Columbiformes;0.123;31.3;7.914;3.955;0.597;—;—
 Larus;argentatus;Herring gull;Aves;Charadriiformes;1.0;49.0;12.498;3.921;0.593;—;—
-Eptesicus;fuscus;Big brown bat;Mammalia;Chiroptera;0.013;19.0;4.872;3.899;0.591;sigma0_eff down + nu0 down;"Annual hibernation (~5 months) reduces effective nu0; antioxidant protection during flight"
-Homo;sapiens;Human;Mammalia;Primates;70.0;122.5;31.561;3.881;0.589;rho up (social);"Human: medicine, social protection, neural repair; effective rho significantly exceeds biological minimum. Anomaly ~4x matches the role of cultural rho accumulation"
+Eptesicus;fuscus;Big brown bat;Mammalia;Chiroptera;0.013;19.0;4.872;3.899;0.591;sigma0_eff down + nu0_eff down (interpretation);"Hibernation: nu0_eff = nu0 (1 - f_hib); f_hib ~ 0.45 assumed (not measured for this species), a factor ~1.8 of 3.9"
+Homo;sapiens;Human;Mammalia;Primates;70.0;122.5;31.561;3.881;0.589;sigma0 down + Phi_cap up (cultural);Medicine prevents damage (sigma0 down) and repairs from outside (Phi_cap up), not the own restoration rho
 Melopsittacus;undulatus;Budgerigar;Aves;Psittaciformes;0.025;21.0;5.601;3.749;0.574;—;—
 Erithacus;rubecula;European robin;Aves;Passeriformes;0.018;19.3;5.179;3.726;0.571;—;—
 Macrotus;californicus;California leaf-nosed bat;Mammalia;Chiroptera;0.012;17.0;4.738;3.588;0.555;—;—
-Myotis;yumanensis;Yuma myotis;Mammalia;Chiroptera;0.005;14.0;3.936;3.557;0.551;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
+Myotis;yumanensis;Yuma myotis;Mammalia;Chiroptera;0.005;14.0;3.936;3.557;0.551;sigma0_eff down (interpretation);"Long life at high metabolism needs a small fraction of dissipation fixed as damage; M. lucifugus mitochondria release 2-3x less H2O2 per O2 than shrew and mouse (Brunet-Rossinni 2004)"
 Passerculus;sandwichensis;Savannah sparrow;Aves;Passeriformes;0.016;18.0;5.066;3.553;0.551;—;—
 Alcedo;atthis;Common kingfisher;Aves;Coraciiformes;0.034;21.0;5.99;3.506;0.545;—;—
 Uria;aalge;Common murre;Aves;Charadriiformes;0.956;42.8;12.376;3.458;0.539;—;—
@@ -45,7 +45,7 @@ Larus;canus;Mew gull;Aves;Charadriiformes;0.431;33.7;10.402;3.24;0.51;—;—
 Anous;stolidus;Brown noddy, or Noddy tern;Aves;Charadriiformes;0.139;26.2;8.124;3.225;0.509;—;—
 Sturnus;vulgaris;European starling;Aves;Passeriformes;0.075;22.9;7.105;3.223;0.508;—;—
 Ficedula;hypoleuca;European pied flycatcher;Aves;Passeriformes;0.012;15.0;4.738;3.166;0.5;—;—
-Tachyglossus;aculeatus;Short-beaked echidna;Mammalia;Monotremata;2.909;49.5;15.774;3.138;0.497;nu0 down + T down;"Monotremes: low body temperature (30C vs 37C), torpor; van t Hoff rule: x2-3 per 10C"
+Tachyglossus;aculeatus;Short-beaked echidna;Mammalia;Monotremata;2.909;49.5;15.774;3.138;0.497;nu0 down + sigma0*F_diss down (interpretation);"Body temperature ~32 C, down to 4.5 C in hibernation; BMR 25-40% of eutherian (Nicol 2017)"
 Bulweria;bulwerii;Bulwer's petrel;Aves;Procellariiformes;0.087;22.9;7.338;3.121;0.494;—;—
 Hirundo;rustica;Barn swallow;Aves;Passeriformes;0.018;16.0;5.205;3.074;0.488;—;—
 Amphiuma;means;Two-toed amphiuma;Amphibia;Caudata;0.199;27.0;8.789;3.072;0.487;—;—
@@ -54,7 +54,7 @@ Larus;delawarensis;Ring-billed gull;Aves;Charadriiformes;0.439;31.8;10.444;3.045
 Desmognathus;quadramaculatus;Black-bellied salamander;Amphibia;Caudata;0.014;15.0;4.935;3.04;0.483;—;—
 Anas;penelope;Eurasian wigeon;Aves;Anseriformes;0.723;35.2;11.644;3.023;0.48;—;—
 Aquila;chrysaetos;Golden eagle;Aves;Accipitriformes;3.0;48.0;15.881;3.023;0.48;—;—
-Pteropus;rodricensis;Rodriguez flying fox;Mammalia;Chiroptera;0.254;28.0;9.274;3.019;0.48;sigma0_eff down;"Same flight mechanism; large fruit bats. Additionally: IFN-alpha constitutively active — reduced inflammatory response lowers sigma0"
+Pteropus;rodricensis;Rodriguez flying fox;Mammalia;Chiroptera;0.254;28.0;9.274;3.019;0.48;sigma0_eff down (interpretation);"As for Chiroptera; mechanism not measured"
 Cheirogaleus;medius;Fat-tailed dwarf lemur;Mammalia;Primates;0.3;29.0;9.612;3.017;0.48;—;—
 Arenaria;interpres;Ruddy turnstone;Aves;Charadriiformes;0.09;22.3;7.393;3.016;0.479;—;—
 Artibeus;jamaicensis;Jamaican fruit-eating bat;Mammalia;Chiroptera;0.046;19.2;6.389;3.005;0.478;—;—
@@ -118,7 +118,7 @@ Selasphorus;rufus;Rufous hummingbird;Aves;Apodiformes;0.004;8.9;3.708;2.4;0.38;�
 Platyrrhinus;lineatus;White-lined broad-nosed bat;Mammalia;Chiroptera;0.022;13.0;5.432;2.393;0.379;—;—
 Pica;hudsonia;Black-billed magpie;Aves;Passeriformes;0.159;20.0;8.368;2.39;0.378;—;—
 Muscicapa;striata;Spotted flycatcher;Aves;Passeriformes;0.014;11.8;4.958;2.38;0.377;—;—
-Myotis;velifer;Cave myotis;Mammalia;Chiroptera;0.012;11.3;4.756;2.376;0.376;sigma0_eff down;"Flight activates antioxidant pathways (AMPK, FOXO3); high mitochondrial respiration rate during flight paradoxically reduces ROS leakage through training"
+Myotis;velifer;Cave myotis;Mammalia;Chiroptera;0.012;11.3;4.756;2.376;0.376;sigma0_eff down (interpretation);"Long life at high metabolism needs a small fraction of dissipation fixed as damage; M. lucifugus mitochondria release 2-3x less H2O2 per O2 than shrew and mouse (Brunet-Rossinni 2004)"
 Zonotrichia;leucophrys;White-crowned sparrow;Aves;Passeriformes;0.026;13.3;5.644;2.356;0.372;—;—
 Emberiza;schoeniclus;Reed bunting;Aves;Passeriformes;0.018;12.2;5.179;2.356;0.372;—;—
 Eulemur;fulvus;Brown lemur;Mammalia;Primates;2.374;35.5;15.091;2.352;0.372;—;—
@@ -155,7 +155,7 @@ Melospiza;melodia;Song sparrow;Aves;Passeriformes;0.019;11.3;5.273;2.143;0.331;�
 Setophaga;pinus;Pine warbler;Aves;Passeriformes;0.012;10.2;4.764;2.141;0.331;—;—
 Bubo;virginianus;Great horned owl;Aves;Strigiformes;1.45;29.0;13.553;2.14;0.33;—;—
 Setophaga;coronata;Yellow-rumped (myrtle) warbler;Aves;Passeriformes;0.012;10.0;4.72;2.118;0.326;—;—
-Pteropus;poliocephalus;Gray-headed flying fox;Mammalia;Chiroptera;0.598;23.6;11.172;2.112;0.325;sigma0_eff down;"Same flight mechanism; large fruit bats. Additionally: IFN-alpha constitutively active — reduced inflammatory response lowers sigma0"
+Pteropus;poliocephalus;Gray-headed flying fox;Mammalia;Chiroptera;0.598;23.6;11.172;2.112;0.325;sigma0_eff down (interpretation);"As for Chiroptera; mechanism not measured"
 Acrocephalus;palustris;Marsh warbler;Aves;Passeriformes;0.011;9.8;4.656;2.105;0.323;—;—
 Dipsosaurus;dorsalis;Desert iguana;Reptilia;Squamata;0.07;14.6;6.988;2.089;0.32;—;—
 Seiurus;aurocapilla;Ovenbird;Aves;Passeriformes;0.019;11.0;5.266;2.089;0.32;—;—
@@ -178,17 +178,17 @@ Lemmus;lemmus;Norway lemming;Mammalia;Rodentia;0.08;3.3;7.205;0.458;-0.339;—;�
 Raphicerus;campestris;Steenbok;Mammalia;Artiodactyla;9.6;9.3;20.465;0.454;-0.343;—;—
 Bos;taurus;Domestic cattle;Mammalia;Artiodactyla;347.0;20.0;44.745;0.447;-0.35;—;—
 Rattus;norvegicus;Norway rat;Mammalia;Rodentia;0.207;3.8;8.864;0.429;-0.368;—;—
-Didelphis;virginiana;Virginia opossum;Mammalia;Didelphimorphia;2.847;6.6;15.7;0.42;-0.376;rho down + sigma0 up;"Opossums: rapid sexual maturity, high reproductive rate; classic r-strategist — evolutionarily low rho"
+Didelphis;virginiana;Virginia opossum;Mammalia;Didelphimorphia;2.847;6.6;15.7;0.42;-0.376;rho down (interpretation);"r-strategist: maturity ~6 months, 2 litters per year (AnAge); disposable soma (Kirkwood 1977)"
 Blarina;brevicauda;Northern short-tailed shrew;Mammalia;Soricomorpha;0.021;2.2;5.377;0.409;-0.388;—;—
 Condylura;cristata;Star-nosed mole;Mammalia;Soricomorpha;0.049;2.5;6.475;0.386;-0.413;—;—
 Philander;opossum;Gray four-eyed opossum;Mammalia;Didelphimorphia;0.751;4.4;11.741;0.375;-0.426;—;—
-Crocidura;flavescens;Greater red musk shrew;Mammalia;Soricomorpha;0.033;2.2;5.948;0.37;-0.432;sigma0 up;"Shrews: record metabolism (~35 W/kg), heart 1200 bpm; sigma0 maximal among Mammalia"
+Crocidura;flavescens;Greater red musk shrew;Mammalia;Soricomorpha;0.033;2.2;5.948;0.37;-0.432;not established;"Specific metabolism of C. flavescens 7.5 W/kg (AnAge), as in long-lived bats; record shrew values (30-46 W/kg) belong to Sorex. Captive record, small sample"
 Cricetus;cricetus;Black-bellied hamster;Mammalia;Rodentia;0.365;3.6;10.034;0.359;-0.445;—;—
 Galea;musteloides;Common yellow-toothed cavy;Mammalia;Rodentia;0.322;3.5;9.762;0.359;-0.445;—;—
 Hemicentetes;semispinosus;Streaked tenrec;Mammalia;Afrosoricida;0.116;2.7;7.819;0.345;-0.462;—;—
 Arvicola;amphibius;European water vole;Mammalia;Rodentia;0.095;2.5;7.475;0.334;-0.476;—;—
-Didelphis;marsupialis;Southern opossum;Mammalia;Didelphimorphia;1.244;4.2;13.108;0.32;-0.494;rho down + sigma0 up;"Opossums: rapid sexual maturity, high reproductive rate; classic r-strategist — evolutionarily low rho"
+Didelphis;marsupialis;Southern opossum;Mammalia;Didelphimorphia;1.244;4.2;13.108;0.32;-0.494;rho down (interpretation);"r-strategist: maturity ~6 months, 2 litters per year (AnAge); disposable soma (Kirkwood 1977)"
 Metachirus;nudicaudatus;Brown four-eyed opossum;Mammalia;Didelphimorphia;0.336;3.0;9.853;0.304;-0.516;—;—
 Echymipera;rufescens;Long-nosed echymipera;Mammalia;Peramelemorphia;0.887;3.1;12.174;0.255;-0.594;—;—
 Chironectes;minimus;Water opossum (yapok);Mammalia;Didelphimorphia;0.94;3.1;12.332;0.251;-0.6;—;—
-Lutreolina;crassicaudata;Lutrine opossum;Mammalia;Didelphimorphia;0.812;2.9;11.943;0.243;-0.615;rho down;Opossums: r-strategist life history, evolutionarily low investment in repair
+Lutreolina;crassicaudata;Lutrine opossum;Mammalia;Didelphimorphia;0.812;2.9;11.943;0.243;-0.615;rho down (interpretation);"r-strategist: maturity ~6 months, 2 litters per year (AnAge); disposable soma (Kirkwood 1977)"

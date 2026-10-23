@@ -867,8 +867,8 @@ body {
   <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>γ ≫ 1 · large inflow margin</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>γ > 1 · small inflow margin</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div>γ ≈ 1 · stationary start</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c4)"></div>γ ~ 0.1–0.3 · host-dependent, type I</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div>γ ~ 0 · host-dependent, type II</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c4)"></div>γ ~ 0.1–0.3 · host-dependent, type 2</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div>γ ~ 0 · host-dependent, type 3</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c6)"></div>γ = 0 · organelle</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--c7)"></div>outside (𝒮)</div>
   <span class="legend-sep">·</span>
@@ -903,8 +903,8 @@ body {
     <div class="col-header ch1"><span class="col-num">I</span><span class="col-gamma">γ ≫ 1</span><span class="col-desc">Large inflow margin</span></div>
     <div class="col-header ch2"><span class="col-num">II</span><span class="col-gamma">γ > 1</span><span class="col-desc">Small inflow margin</span></div>
     <div class="col-header ch3"><span class="col-num">III</span><span class="col-gamma">γ ≈ 1</span><span class="col-desc">★ Stationary start</span></div>
-    <div class="col-header ch4"><span class="col-num">IV</span><span class="col-gamma">γ ~ 0.1–0.3</span><span class="col-desc">Host-dependent · type I</span></div>
-    <div class="col-header ch5"><span class="col-num">V</span><span class="col-gamma">γ ~ 0–0.05</span><span class="col-desc">Host-dependent · type II</span></div>
+    <div class="col-header ch4"><span class="col-num">IV</span><span class="col-gamma">γ ~ 0.1–0.3</span><span class="col-desc">Host-dependent · type 2</span></div>
+    <div class="col-header ch5"><span class="col-num">V</span><span class="col-gamma">γ ~ 0–0.05</span><span class="col-desc">Host-dependent · type 3</span></div>
     <div class="col-header ch6"><span class="col-num">VI</span><span class="col-gamma">γ = 0</span><span class="col-desc">Organelle</span></div>
     <div class="col-header ch7"><span class="col-num">VII</span><span class="col-gamma">—</span><span class="col-desc">Outside (𝒮)</span></div>
   </div>
@@ -963,7 +963,7 @@ const GROUPS = {
   "2-2": { name: "Minimal genomes near 𝓜min (estimates)", desc: "SAR11 (free-living oligotroph) · M. genitalium (natural minimum among organisms grown in pure culture)" },
   "2-3": { name: "𝓜min — reference point",              desc: "τ_div ≈ τ_regen · taken at the boundary (§11.10)" },
   "3-4": { name: "Parasites with borrowed memory",          desc: "α(own) > 0, memory provisioned by the host · R_bal(own) < R* · R_bal(eff) > R*" },
-  "3-5": { name: "Hyper-reduced endosymbionts",           desc: "Genome < 200 genes · ρ ≈ 0 · type II" },
+  "3-5": { name: "Hyper-reduced endosymbionts",           desc: "Genome < 200 genes · ρ ≈ 0 · type 3" },
   "4-6": { name: "Organelles",                            desc: "γ(own) = 0 · cell subsystems" },
   "4-7": { name: "Pre-biological models",    desc: "Compartment present, own repair absent (Barrier I not satisfied) · inside the coordinates, below 𝓜min (§15.4) · γ not determined" },
   "5-1": { name: "Retrospective anabiants",               desc: "Were (𝒮) · entered dormancy · Φ_in → 0 · only ν₀" },
@@ -989,7 +989,7 @@ const CELLS = {
   {name:"Naked mole rat", italic:true, order:"Rodentia", mass_g:35.0, log_B:-4.13,
    genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻⁴·¹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
-   note:"Heterocephalus glaber. Lives >30 years at 35 g — rodent record. Anomalously low terminal Σ* (727 mutations vs median ~2,271): interpreted in VBLS as death via the E-channel with an intact reserve (§17.3.5.3); awaits data (criterion F9)."},
+   note:"Heterocephalus glaber. Lives >30 years at 35 g — rodent record. Lowest mutation burden at the end of observation in the Cagan data (727), but also the shortest sampling window: the oldest animal sampled was 7.3 years, 23% of T_max; its rate × T_max (3,182) is close to the median, so these data show no anomaly (§17.3.5.3, §17.3.6). Slow wear of the repair reserve awaits data (criterion F9)."},
   {name:"Bulldog bat", italic:true, order:"Chiroptera", mass_g:50.0, log_B:-3.93,
    genes:"~20 000", gamma:"≫ 1", D:"≫ R*", B_hbar:"not determined (multicellular) · ℬ/ℬ_human ≈ 10⁻³·⁹", tau:"≫ 1", phi:"not determined (multicellular)",
    memory:"Full", status:"Above 𝓜min",
@@ -1102,7 +1102,7 @@ const CELLS = {
     name:"Deinococcus radiodurans", italic:true,
     genes:"~3 200", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~2×10⁻¹³ W",
     memory:"Frozen", status:"Above 𝓜min",
-    note:"Repair record: 1.5×10⁶ rad. Resistance through record-high ρ, not insensitivity to damage. Presumably a large Barrier I margin (no measured repair parameters)."
+    note:"Repair record: 1.5×10⁶ rad. Resistance through record export of damage, not insensitivity to it; restoration of the reserve stays within (C4), ρ ≲ ν₀. Presumably a large Barrier I margin (no measured repair parameters)."
   },{
     name:"Escherichia coli", italic:true,
     genes:"4 377", gamma:"≫ 1", D:"≫ R*", B_hbar:"~10²¹", tau:"≫ 1†", phi:"~10⁻¹² W",
@@ -1112,7 +1112,7 @@ const CELLS = {
     name:"E. coli ΔmutS (mutator)", italic:true,
     genes:"~4 300", gamma:"≫ 1", D:"> R*", B_hbar:"~10²¹", tau:"≫ 1", phi:"~10⁻¹² W",
     memory:"Frozen (Mech. B)", status:"Above 𝓜min",
-    note:"Mismatch-repair mutator. Loss of error correction raises σ₀ and lowers ρ (§11.7), not α: the mutator stays in the frozen-memory row. Row R4 (α ≈ 0) has no known organisms (App. C.4.4)."
+    note:"Mismatch-repair mutator. Loss of error correction raises σ₀ (§11.7), not α: the mutator stays in the frozen-memory row. Row R4 (α ≈ 0) has no known organisms (App. C.4.4)."
   }],
   "2-2": [{
     name:"SAR11 / Pelagibacter ubique", italic:true,
@@ -1129,7 +1129,7 @@ const CELLS = {
     name:"JCVI-syn3.0", italic:false, star:true,
     genes:"473", gamma:"≈ 1.0", D:"≈ R*", B_hbar:"~2×10²¹ (architecture scale, §14.4; living starts 6×10¹⁷–2×10²⁰)", tau:"1.00 ★", phi:"~10⁻¹⁵ W",
     memory:"Frozen", status:"AT 𝓜min",
-    note:"τ_div = τ_regen (§13.3, eq. 13.7). The equality is exact by construction: ν_info for syn3.0 is computed as I/τ_div, so τ_regen = I/ν_info = τ_div — it fixes the boundary condition, it does not independently test it. Removal of 8 repair genes shifts to mutator mode; syn3.0 is the reference point taken to lie at 𝓜min (§11.10); its position is not checked by measured parameters (§11.7)."
+    note:"τ_div = τ_regen (§13.3, eq. 13.7). The equality is exact by construction: ν_info for syn3.0 is computed as I/τ_div, so τ_regen = I/ν_info = τ_div — it fixes the boundary condition, it does not independently test it. syn3.0 is the reference point taken to lie at 𝓜min (§11.10); its position is not checked by measured parameters (§11.7)."
   }],
   "2-4":null,
   "2-5":"F","2-6":"F","2-7":"F",
@@ -1155,43 +1155,43 @@ const CELLS = {
   },{
     name:"Rickettsia prowazekii", italic:true,
     genes:"~834", gamma:"~0.3", D:"< R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
-    memory:"Borrowed", status:"Below · type I",
+    memory:"Borrowed", status:"Below · type 2",
     note:"Evolutionary ancestor of mitochondria. ATP via ADP/ATP translocase from host. Own memory mechanism (α(own) > 0) provisioned by the host. Outside the cell it dies within hours; VBLS gives no numerical estimate, since γ_in is not calibrated (App. B.6.1)."
   },{
     name:"Chlamydia trachomatis", italic:true,
     genes:"~895", gamma:"≈ 0", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0 (own)",
-    memory:"Borrowed", status:"Below · type I",
+    memory:"Borrowed", status:"Below · type 2",
     note:"Complete loss of ATP synthesis. Two-stage cycle: EB (dormant form) → RB (active only inside cell). 'Parasitic launch' through barrier III. Own memory mechanism (α(own) > 0) provisioned by the host (App. B.6.2)."
   },{
     name:"Nanoarchaeum equitans", italic:true,
     genes:"536", gamma:"0.10", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁸ W",
-    memory:"Borrowed", status:"Below · type I",
+    memory:"Borrowed", status:"Below · type 2",
     note:"Obligate archaeal parasite of Ignicoccus hospitalis; cannot be cultured outside the host. Own memory mechanism (α(own) > 0) provisioned by the host. Lifetime alone is not estimated (App. B.6.4)."
   },{
     name:"Mycoplasma pneumoniae", italic:true,
     genes:"~689", gamma:"~0.2–0.4", D:"< R*", B_hbar:"—", tau:"—", phi:"~5×10⁻¹⁷ W (est.)",
-    memory:"Borrowed", status:"Below · type I",
+    memory:"Borrowed", status:"Below · type 2",
     note:"Obligate lung parasite. No amino acid synthesis, no TCA cycle. R_bal(own) < R*; labelled 'Borrowed' like the other obligate parasites of the catalog. Intermediate niche between M. genitalium and N. equitans."
   }],
   "3-5": [{
     name:"Tremblaya princeps", italic:true,
     genes:"~120", gamma:"≈ 0.05", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"Borrowed", status:"Below · type II",
+    memory:"Borrowed", status:"Below · type 3",
     note:"Contains Moranella endobia inside (~400 genes). Three-level hierarchy: own restoration plus the subsidies of the two other levels keep R_bal(eff) > R* (App. B.7.1, eq. B.10.8). Viability as a collective property."
   },{
     name:"Carsonella ruddii", italic:true,
     genes:"182", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"Borrowed", status:"Below · type II",
+    memory:"Borrowed", status:"Below · type 3",
     note:"Almost all DNA-repair genes lost (ρ ≈ 0). Genome degrades at record rate. Only the host's subsidy keeps R_bal(eff) > R* (eq. 15.10)."
   },{
     name:"Hodgkinia cicadicola", italic:true,
     genes:"169", gamma:"≈ 0.03", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"Borrowed", status:"Below · type II",
+    memory:"Borrowed", status:"Below · type 3",
     note:"Genome fragmented across multiple lineages: collective viability without a single complete genome; R_bal(eff) > R* holds for the ensemble with the host's subsidy (App. B.7.3)."
   },{
     name:"Nasuia deltocephalinicola", italic:true,
     genes:"~137", gamma:"≈ 0.02", D:"≪ R*", B_hbar:"—", tau:"—", phi:"≈ 0",
-    memory:"Borrowed", status:"Below · type II",
+    memory:"Borrowed", status:"Below · type 3",
     note:"Record: smallest genome among cellular organisms by base pairs (by protein-coding genes — Tremblaya). Empirical lower limit of cellular organization on the VBLS scale."
   }],
   "3-6":null,"3-7":null,
@@ -1259,7 +1259,7 @@ const CELLS = {
     name:"Viruses (DNA/RNA)", italic:false,
     subclass:"Class A · operators on foreign 𝓜min",
     genes:"2–1000", gamma:"—", D:"—", B_hbar:"—", tau:"—", phi:"0",
-    memory:"—", status:"Type III · outside (𝒮)",
+    memory:"—", status:"Type 5 · outside (𝒮)",
     note:"E(t), R(t), η_abs(t) undefined. Virus acts as an operator reducing host ρ: the virus carries the cell below 𝓜min, after which the reserve crosses its threshold in finite time (§11.3, item (ii)). Moved here from R4 (No memory): R4 presupposes system (𝒮) exists with α≈0, but for viruses E,R,η_abs are not merely absent — they are undefined, exactly as for viroids and prions below."
   },{
     name:"Viroids", italic:false,

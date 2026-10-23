@@ -1,55 +1,81 @@
 """
-VBLS -- robustness of the a-posteriori sample restriction in Section 17.3.5.3
-============================================================================
+=================================================================
+  VBLS — Viability Boundaries of Living Systems
+  Author:     Vasiliy Avdeev (independent researcher)
+  Monograph:  VBLS_THEORY
+=================================================================
 
-Section 17.3 reports two regressions of the somatic-mutation rate on maximum
-longevity, rate ~ T_max^phi (VBLS predicts phi = -1):
+  Copyright (c) 2026 Vasiliy Avdeev. Licensed under CC BY-NC-ND 4.0 -- see
+  LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
+  SPDX-License-Identifier: CC-BY-NC-ND-4.0
+=================================================================
+VBLS — Robustness of the Cagan estimate in Section 17.3
+=================================================================
 
-    all 15 species          phi = -0.697, R^2 = 0.586   (primary result)
-    11 species w/o anomalies phi = -0.814, R^2 = 0.800   (secondary)
+Section 17.3 reports the regression of the somatic-mutation rate on maximum
+longevity, rate ~ T_max^phi (VBLS predicts phi = -1), over all 15 species, with
+T_max from AnAge for every species and no species excluded after looking at the
+data. This script checks how far that estimate depends on single species and on
+the reference T_max of the cat:
 
-Three of the four excluded species (horse, tiger, rabbit) are excluded a
-posteriori; only the naked mole-rat is excluded on theoretical grounds
-(E-channel). This script asks whether the reported improvement survives
-scrutiny:
+  1. leave-one-out over the 15 species;
+  2. bootstrap confidence interval of phi;
+  3. sensitivity to the cat's T_max: 30 yr (AnAge, a captive record) against
+     19 yr (the median of the literature maxima compiled by Cagan et al. 2022,
+     Supplementary Table 6) and 17 yr.
 
-  1. leave-one-out on the restricted set -- does phi depend on one species?
-  2. THE DECISIVE TEST: compare the achieved (phi, R^2) against the full
-     distribution over all C(15,4) = 1365 ways of dropping four species.
-     If the actual choice sits in the middle of that distribution, the
-     restriction carries no information beyond "drop any four".
-  3. sensitivity to the cat's T_max (17 yr as used vs 30 yr in AnAge).
-  4. bootstrap confidence intervals, to judge the improvement against
-     sampling error.
+Rates (mutations/genome/yr) are the per-species slopes used in
+cagan_rateXtmax.py: OLS of the individual-mean burden on age (Cagan et al. 2022,
+Supplementary Table 4); species represented by a single individual keep their
+externally estimated slopes.
 
 Run: python cagan_robustness.py
 """
-import itertools
+import csv
+import os
 
 import numpy as np
 from scipy import stats
 
-# (species, mutation rate per year, T_max yr, flag: N normal / A anomalous)
-# Cat T_max = 17 (AnAge reference value 30 is a captive record; see Section 17.4.2)
-RECORDS = [
-    ('Rat',                     607,   3.8, 'N'),
-    ('Mouse',                   761,   4.0, 'N'),
-    ('Ferret',                  485,  10.0, 'N'),
-    ('Rabbit',                   98,  13.0, 'A'),
-    ('Dog',                     222,  20.0, 'N'),
-    ('Tiger',                   367,  26.0, 'A'),
-    ('Ring-tailed lemur',       102,  27.0, 'N'),
-    ('Lion',                    160,  29.0, 'N'),
-    ('Cat',                     547,  17.0, 'N'),
-    ('Cow',                     220,  30.0, 'N'),
-    ('Black-and-white colobus',  79,  30.0, 'N'),
-    ('Naked mole-rat',          103,  37.0, 'A'),
-    ('Giraffe',                 100,  39.5, 'N'),
-    ('Horse',                   201,  57.0, 'A'),
-    ('Human',                    53, 122.5, 'N'),
-]
-EXCLUDED = {'Rabbit', 'Tiger', 'Naked mole-rat', 'Horse'}
+ANAGE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'AnAge', 'anage_data.csv')
+
+# species -> (mutation rate per year, AnAge genus, AnAge species)
+SPECIES = {
+    'Rat':                     (607.12, 'Rattus', 'norvegicus'),
+    'Mouse':                   (761.50, 'Mus', 'musculus'),
+    'Ferret':                  (485.10, 'Mustela', 'putorius'),
+    'Rabbit':                  ( 97.54, 'Oryctolagus', 'cuniculus'),
+    'Cow':                     (220.40, 'Bos', 'taurus'),
+    'Tiger':                   (366.76, 'Panthera', 'tigris'),
+    'Dog':                     (221.77, 'Canis', 'familiaris'),
+    'Lion':                    (160.17, 'Panthera', 'leo'),
+    'Cat':                     (546.63, 'Felis', 'catus'),
+    'Naked mole-rat':          (102.64, 'Heterocephalus', 'glaber'),
+    'Black-and-white colobus': ( 78.97, 'Colobus', 'guereza'),
+    'Ring-tailed lemur':       (101.96, 'Lemur', 'catta'),
+    'Giraffe':                 (100.25, 'Giraffa', 'camelopardalis'),
+    'Horse':                   (200.92, 'Equus', 'caballus'),
+    'Human':                   ( 53.24, 'Homo', 'sapiens'),
+}
 RNG = np.random.default_rng(20260730)
+
+
+def anage_tmax(path=ANAGE_FILE):
+    with open(path, encoding='utf-8-sig') as f:
+        rows = list(csv.reader(f, delimiter=';'))
+    h = rows[0]
+    ig, isp, iml = h.index('Genus'), h.index('Species'), h.index('Maximum longevity (yrs)')
+    out = {}
+    for name, (_, genus, species) in SPECIES.items():
+        hit = [r for r in rows[1:] if r[ig] == genus and r[isp] == species]
+        if len(hit) != 1:
+            raise SystemExit(f'AnAge: {genus} {species} found {len(hit)} times')
+        out[name] = float(hit[0][iml])
+    return out
+
+
+TMAX = anage_tmax()
+RECORDS = [(name, SPECIES[name][0], TMAX[name]) for name in SPECIES]
 
 
 def fit(rows):
@@ -66,88 +92,49 @@ def show(tag, rows):
 
 
 print("=" * 76)
-print("0. REPRODUCTION OF THE PUBLISHED VALUES")
+print("0. THE ESTIMATE OVER ALL 15 SPECIES (T_max from AnAge)")
 print("=" * 76)
-all15 = RECORDS
-keep11 = [r for r in RECORDS if r[0] not in EXCLUDED]
-phi15, r215 = show("all species (Section 17.3.4)", all15)
-phi11, r211 = show("without the four anomalies", keep11)
-print(f"  published: -0.697 / 0.586  and  -0.814 / 0.800")
+for name, rate, tm in RECORDS:
+    print(f"  {name:26s} rate={rate:8.2f}  T_max={tm:6.1f}")
+phi15, r215 = show("all 15 species", RECORDS)
 
 print()
 print("=" * 76)
-print("1. LEAVE-ONE-OUT ON THE RESTRICTED SET (n=11)")
+print("1. LEAVE-ONE-OUT (n=15)")
 print("=" * 76)
 print(f"  {'excluded':26s} {'phi':>9} {'R^2':>8} {'d(phi)':>9}")
 print("  " + "-" * 56)
 loo = []
-for i, r in enumerate(keep11):
-    sub = keep11[:i] + keep11[i + 1:]
+for i, r in enumerate(RECORDS):
+    sub = RECORDS[:i] + RECORDS[i + 1:]
     p, q = fit(sub)
     loo.append(p)
-    print(f"  {r[0]:26s} {p:+9.4f} {q:8.4f} {p - phi11:+9.4f}")
+    print(f"  {r[0]:26s} {p:+9.4f} {q:8.4f} {p - phi15:+9.4f}")
 loo = np.array(loo)
 print(f"\n  range [{loo.min():+.4f}; {loo.max():+.4f}], sd={loo.std():.4f}")
-worst = keep11[int(np.argmax(np.abs(loo - phi11)))][0]
+worst = RECORDS[int(np.argmax(np.abs(loo - phi15)))][0]
 print(f"  most influential species: {worst}")
 
 print()
 print("=" * 76)
-print("2. DECISIVE TEST: is dropping THESE four species informative?")
-print("   comparison against all C(15,4) = 1365 possible drops of four")
+print("2. BOOTSTRAP (10 000 resamples with replacement)")
 print("=" * 76)
-combos = list(itertools.combinations(range(15), 4))
-phis, r2s = [], []
-for c in combos:
-    sub = [RECORDS[i] for i in range(15) if i not in c]
-    p, q = fit(sub)
-    phis.append(p)
-    r2s.append(q)
-phis, r2s = np.array(phis), np.array(r2s)
-
-pct_phi = 100.0 * np.mean(phis <= phi11)      # phi closer to -1 = smaller = better
-pct_r2 = 100.0 * np.mean(r2s <= r211)
-print(f"  actual choice:            phi={phi11:+.4f}   R^2={r211:.4f}")
-print(f"  distribution over 1365:   phi median {np.median(phis):+.4f} "
-      f"[{phis.min():+.4f}; {phis.max():+.4f}]")
-print(f"                            R^2 median {np.median(r2s):.4f} "
-      f"[{r2s.min():.4f}; {r2s.max():.4f}]")
-print(f"\n  percentile of the actual choice:  phi {pct_phi:5.1f}%   R^2 {pct_r2:5.1f}%")
-print(f"  i.e. only {pct_phi:.1f}% of arbitrary 4-drops give phi as close to -1 or closer,")
-print(f"       only {100 - pct_r2:.1f}% give R^2 as high or higher.")
-print("  The actual choice is therefore near-OPTIMAL among the 1365 available.")
-print("  Read correctly, this is evidence of selection, not of validity: a subset")
-print("  chosen by inspecting which species deviate is expected to land near the")
-print("  optimum of the space it was chosen from. The percentile quantifies the")
-print("  multiple-comparison exposure (1365 subsets searched), it does not")
-print("  distinguish 'these are genuine outliers' from 'this was optimised'.")
+b = []
+for _ in range(10000):
+    idx = RNG.integers(0, len(RECORDS), len(RECORDS))
+    sub = [RECORDS[i] for i in idx]
+    if len({r[2] for r in sub}) < 3:
+        continue
+    b.append(fit(sub)[0])
+b = np.array(b)
+lo, hi = np.percentile(b, [2.5, 97.5])
+print(f"  phi={phi15:+.4f}  95% CI [{lo:+.4f}; {hi:+.4f}]"
+      f"   contains -1: {'yes' if lo <= -1 <= hi else 'NO'}")
 
 print()
 print("=" * 76)
 print("3. SENSITIVITY TO THE CAT'S T_max")
 print("=" * 76)
-for tm in (17.0, 30.0):
-    rows = [(n, rt, tm if n == 'Cat' else t, f) for n, rt, t, f in RECORDS]
+for tm in (30.0, 19.0, 17.0):
+    rows = [(n, rt, tm if n == 'Cat' else t) for n, rt, t in RECORDS]
     show(f"T_max(Cat) = {tm:4.1f}, all 15", rows)
-    show(f"T_max(Cat) = {tm:4.1f}, n=11",
-         [r for r in rows if r[0] not in EXCLUDED])
-
-print()
-print("=" * 76)
-print("4. BOOTSTRAP (10 000 resamples with replacement)")
-print("=" * 76)
-for tag, rows, point in (("all 15", all15, phi15), ("n=11", keep11, phi11)):
-    b = []
-    for _ in range(10000):
-        idx = RNG.integers(0, len(rows), len(rows))
-        sub = [rows[i] for i in idx]
-        if len({r[2] for r in sub}) < 3:
-            continue
-        b.append(fit(sub)[0])
-    b = np.array(b)
-    lo, hi = np.percentile(b, [2.5, 97.5])
-    print(f"  {tag:8s} phi={point:+.4f}  95% CI [{lo:+.4f}; {hi:+.4f}]"
-          f"   contains -1: {'yes' if lo <= -1 <= hi else 'NO'}")
-    if tag == "all 15":
-        print(f"           does the CI of the full sample contain the restricted "
-              f"phi ({phi11:+.4f})? {'yes' if lo <= phi11 <= hi else 'no'}")

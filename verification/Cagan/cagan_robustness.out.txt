@@ -1,59 +1,55 @@
 ============================================================================
-0. REPRODUCTION OF THE PUBLISHED VALUES
+0. THE ESTIMATE OVER ALL 15 SPECIES (T_max from AnAge)
 ============================================================================
-  all species (Section 17.3.4)       n= 15  phi=-0.6970  R^2=0.5857
-  without the four anomalies         n= 11  phi=-0.8136  R^2=0.8002
-  published: -0.697 / 0.586  and  -0.814 / 0.800
+  Rat                        rate=  607.12  T_max=   3.8
+  Mouse                      rate=  761.50  T_max=   4.0
+  Ferret                     rate=  485.10  T_max=  11.1
+  Rabbit                     rate=   97.54  T_max=  13.0
+  Cow                        rate=  220.40  T_max=  20.0
+  Tiger                      rate=  366.76  T_max=  26.3
+  Dog                        rate=  221.77  T_max=  27.0
+  Lion                       rate=  160.17  T_max=  28.0
+  Cat                        rate=  546.63  T_max=  30.0
+  Naked mole-rat             rate=  102.64  T_max=  31.0
+  Black-and-white colobus    rate=   78.97  T_max=  35.0
+  Ring-tailed lemur          rate=  101.96  T_max=  37.3
+  Giraffe                    rate=  100.25  T_max=  39.5
+  Horse                      rate=  200.92  T_max=  57.0
+  Human                      rate=   53.24  T_max= 122.5
+  all 15 species                     n= 15  phi=-0.6611  R^2=0.5259
 
 ============================================================================
-1. LEAVE-ONE-OUT ON THE RESTRICTED SET (n=11)
+1. LEAVE-ONE-OUT (n=15)
 ============================================================================
   excluded                         phi      R^2    d(phi)
   --------------------------------------------------------
-  Rat                          -0.8875   0.7853   -0.0739
-  Mouse                        -0.8195   0.7465   -0.0059
-  Ferret                       -0.7926   0.7918   +0.0209
-  Dog                          -0.8136   0.8005   -0.0001
-  Ring-tailed lemur            -0.7970   0.8179   +0.0165
-  Lion                         -0.8147   0.7982   -0.0012
-  Cat                          -0.8003   0.8743   +0.0133
-  Cow                          -0.8308   0.8188   -0.0173
-  Black-and-white colobus      -0.7835   0.8356   +0.0301
-  Giraffe                      -0.7984   0.7895   +0.0152
-  Human                        -0.8429   0.7349   -0.0293
+  Rat                          -0.6797   0.4521   -0.0186
+  Mouse                        -0.6207   0.4154   +0.0404
+  Ferret                       -0.6326   0.5014   +0.0286
+  Rabbit                       -0.7205   0.6415   -0.0594
+  Cow                          -0.6611   0.5254   +0.0001
+  Tiger                        -0.6693   0.5612   -0.0081
+  Dog                          -0.6641   0.5302   -0.0030
+  Lion                         -0.6596   0.5244   +0.0016
+  Cat                          -0.6893   0.6399   -0.0282
+  Naked mole-rat               -0.6485   0.5275   +0.0126
+  Black-and-white colobus      -0.6362   0.5290   +0.0250
+  Ring-tailed lemur            -0.6454   0.5161   +0.0157
+  Giraffe                      -0.6445   0.5132   +0.0166
+  Horse                        -0.7149   0.5694   -0.0538
+  Human                        -0.6170   0.4226   +0.0441
 
-  range [-0.8875; -0.7835], sd=0.0279
-  most influential species: Rat
+  range [-0.7205; -0.6170], sd=0.0298
+  most influential species: Rabbit
 
 ============================================================================
-2. DECISIVE TEST: is dropping THESE four species informative?
-   comparison against all C(15,4) = 1365 possible drops of four
+2. BOOTSTRAP (10 000 resamples with replacement)
 ============================================================================
-  actual choice:            phi=-0.8136   R^2=0.8002
-  distribution over 1365:   phi median -0.6918 [-1.0167; -0.3209]
-                            R^2 median 0.5886 [0.0451; 0.8779]
-
-  percentile of the actual choice:  phi   4.5%   R^2  98.7%
-  i.e. only 4.5% of arbitrary 4-drops give phi as close to -1 or closer,
-       only 1.3% give R^2 as high or higher.
-  The actual choice is therefore near-OPTIMAL among the 1365 available.
-  Read correctly, this is evidence of selection, not of validity: a subset
-  chosen by inspecting which species deviate is expected to land near the
-  optimum of the space it was chosen from. The percentile quantifies the
-  multiple-comparison exposure (1365 subsets searched), it does not
-  distinguish 'these are genuine outliers' from 'this was optimised'.
+  phi=-0.6611  95% CI [-0.8896; -0.3199]   contains -1: NO
 
 ============================================================================
 3. SENSITIVITY TO THE CAT'S T_max
 ============================================================================
-  T_max(Cat) = 17.0, all 15          n= 15  phi=-0.6970  R^2=0.5857
-  T_max(Cat) = 17.0, n=11            n= 11  phi=-0.8136  R^2=0.8002
-  T_max(Cat) = 30.0, all 15          n= 15  phi=-0.6474  R^2=0.5059
-  T_max(Cat) = 30.0, n=11            n= 11  phi=-0.7516  R^2=0.6914
-
-============================================================================
-4. BOOTSTRAP (10 000 resamples with replacement)
-============================================================================
-  all 15   phi=-0.6970  95% CI [-0.9323; -0.4091]   contains -1: NO
-           does the CI of the full sample contain the restricted phi (-0.8136)? yes
-  n=11     phi=-0.8136  95% CI [-1.1900; -0.6756]   contains -1: yes
+  T_max(Cat) = 30.0, all 15          n= 15  phi=-0.6611  R^2=0.5259
+  T_max(Cat) = 19.0, all 15          n= 15  phi=-0.7030  R^2=0.5924
+  T_max(Cat) = 17.0, all 15          n= 15  phi=-0.7096  R^2=0.6062

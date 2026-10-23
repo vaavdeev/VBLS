@@ -11,14 +11,19 @@
 =================================================================
 hunt_aic.py
 VBLS — Appendix D.2.9 — AIC comparison
-eta_abs ~ exp(-alpha*int(Sigma)) vs simple exponential and alternatives
+The mapping 1 - k*DeltaSigma(t)^beta through Sigma(t) vs a simple exponential and alternatives.
+The memory mechanism eta_abs ~ exp(-alpha*int(Sigma)) itself is not tested by this comparison:
+a direct identification of eta_abs with VO2max (M0, no fitted parameters) gives RMSE 0.058, as the
+exponential does, yet by AICc it is on a par with M1, so these data do not separate the shares of
+the memory and damage-level components of the VO2max decline (App. D.2.4, D.2.9).
 
 Models:
+  M0  Direct        eta_abs(t) / eta_abs(25)           0 params (eta_abs from the same ODE and calibration)
   M1  VBLS          1 - k * DeltaSigma(t)^beta        2 params (k, beta)
                     DeltaSigma(t) from ODE, pre-calibrated — NOT fit to HUNT
   M2  Exp-time      exp(-lambda*(t-25))                1 param  (lambda)
   M3  Exp-mapped    1 - k * (exp(lambda*(t-25))-1)^beta 3 params (k, beta, lambda)
-  M4  Power-law     (25/t)^gamma                       1 param  (gamma)
+  M4  Power-law     (25/t)^s                           1 param  (s)
 
 Selection criterion: AICc (Akaike corrected for small samples)
 Data: HUNT4 men — 7 age groups (25, 35, 45, 55, 65, 75, 85 yr)
@@ -185,12 +190,20 @@ rss4  = float(np.sum((pred4 - VO2_OBS)**2))
 rmse4 = float(np.sqrt(rss4 / N_DATA))
 aic4  = aicc(rss4, N_DATA, 1)
 
+# ── M0: direct identification VO2max/VO2max(25) = eta_abs(t)/eta_abs(25) ──────
+# No fitted parameters: eta_abs(t) comes from the same ODE and calibration as M1.
+pred0 = np.array([float(np.interp(a, t_, eta_)) / eta25 for a in AGES])
+rss0  = float(np.sum((pred0 - VO2_OBS)**2))
+rmse0 = float(np.sqrt(rss0 / N_DATA))
+aic0  = aicc(rss0, N_DATA, 0)
+
 # ── Summary table ─────────────────────────────────────────────────────────────
 models = [
+    ("M0 Direct eta_abs (no params)", 0, rss0, rmse0, aic0, pred0),
     ("M1 VBLS (k, beta)",         2, rss1, rmse1, aic1, pred1),
     ("M2 Exp-time (lambda)",       1, rss2, rmse2, aic2, pred2),
     ("M3 Exp-mapped (k, beta, l)", 3, rss3, rmse3, aic3, pred3),
-    ("M4 Power-law (gamma)",       1, rss4, rmse4, aic4, pred4),
+    ("M4 Power-law (s)",       1, rss4, rmse4, aic4, pred4),
 ]
 best_aic = min(m[4] for m in models)
 
@@ -206,10 +219,11 @@ print(f"\n  Best model by AICc: {models[np.argmin([m[4] for m in models])][0]}")
 print(f"\n  Key comparisons (relative to M1 VBLS):")
 print(f"  M2 vs M1: ΔAICc = {aic2-aic1:.1f}  {'→ no support for M2' if aic2-aic1 > 10 else '→ weak evidence' if aic2-aic1 > 4 else ''}")
 print(f"  M3 vs M1: ΔAICc = {aic3-aic1:.1f}  (M3 has 1 extra param vs M1; check for degeneracy)")
+print(f"  M0 vs M1: ΔAICc = {aic0-aic1:.1f}  (M0 has no fitted parameters)")
 print(f"\n  M1 params: k={k1:.4f}, beta={b1:.4f}")
 print(f"  M2 params: lambda={lam2:.8f} yr-1")
 print(f"  M3 params: k={k3:.4f}, beta={b3:.4f}, lambda={l3:.10f} yr-1  [A=k*lam^b={k3*l3**b3:.6f}]")
-print(f"  M4 params: gamma={gam4:.4f}")
+print(f"  M4 params: s={gam4:.4f}")
 
 # ── M3b: explicit power-law in (t-25) — what M3 degenerates to ────────────────
 # M3b: 1 - A*(t-25)^beta  (2 params)
@@ -328,15 +342,11 @@ ax.plot(t_plot, eta_mem,   '--', color='#2980b9', lw=2.0,
 ax.plot(t_plot, eta_simp,  ':',  color='#e74c3c', lw=2.0,
         label=f'Simple exp: $e^{{-\\lambda t}}$, $\\lambda$={lam2:.4f} yr⁻¹')
 
-ax.axvline(45, color='#95a5a6', lw=1.0, ls='--', alpha=0.6)
-ax.axvline(65, color='#95a5a6', lw=1.0, ls='--', alpha=0.6)
-ax.text(33, 0.60, 'Phase I\n(Σ≈0)', ha='center', fontsize=8.5, color='#27ae60')
-ax.text(54, 0.60, 'Phase II',       ha='center', fontsize=8.5, color='#e67e22')
-ax.text(73, 0.60, 'Phase III',      ha='center', fontsize=8.5, color='#c0392b')
 ax.set_xlabel('Age (yr)')
 ax.set_ylabel('Normalized amplitude')
-ax.set_title(r'B.  $\eta_{abs}$ memory mechanism vs simple exponential'
-             '\nKey distinction: delay in Phase I', fontweight='bold')
+ax.set_title(r'B.  Shape of the $\eta_{abs}$ profile vs simple exponential (form only)'
+             '\nSlower decline while Sigma is still small; not tested by the AICc comparison in A',
+             fontweight='bold')
 ax.legend(fontsize=8.5, framealpha=0.95)
 ax.set_ylim(0.50, 1.05)
 

@@ -46,7 +46,7 @@ Four panels:
   (C) Σ(t) trajectories showing slower accumulation at higher α (α-active regime)
   (D) R(t) trajectories showing slower depletion at higher α (→ later R-channel death)
 
-Output: mde_alpha_sensitivity.png / .pdf
+Output: alpha_sensitivity.png / .pdf
 """
 
 import numpy as np

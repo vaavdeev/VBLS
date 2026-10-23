@@ -13,30 +13,29 @@ VBLS — Allometric anomalies in T_max and their interpretation
 =================================================================
 Version: 1.0 (2026)
 
-Goal:
-  For each mammalian species in the AnAge database, compute the predicted
-  lifespan from the VBLS allometric law and identify the dominant system (S)
-  parameter that explains the deviation.
+Goal (Section D.5.6):
+  Check that departures from the allometric norm, in either direction, do not
+  contradict system (S). For each mammalian species in the AnAge database the
+  observed T_max is compared with the empirical allometric fit. The direction
+  in which a shift of each parameter changes T_max follows from the equations
+  of (S); for the species examined, the parameter assigned to the deviation is
+  an interpretation, checked only for compatibility with known features of the
+  species. The script does not diagnose species parameters.
 
-Theoretical basis (VBLS, section 13):
-  T_max ~ B* * M^(5/4) / (sigma0 * c_Kl * M^(3/4))
-        ~ (B* / sigma0 / c_Kl) * M^(1/4)
+Allometric baseline:
+  Fitted on class Mammalia (AnAge): T_max ~ A * M^a, a = 0.218 (empirical);
+  the VBLS value a = 0.250 is shown for comparison only.
 
-  From Kleiber law: P ~ c_Kl * M^(3/4), c_Kl ~ 3.5 W/kg^(3/4)
+  Anomaly = deviation of T_obs from T_allom. Typology (direction from (S)):
 
-  Calibrated on class Mammalia, the empirical law is:
-  T_max ~ A * M^alpha,  alpha_VBLS = 0.218 (empirical), 0.250 (theoretical)
-
-  Anomaly = deviation of T_obs from T_allom.
-  Each anomaly type corresponds to one parameter of (S):
-
-  Type | Ratio > 1 | Mechanism            | VBLS parameter
-  ----+-----------+---------------------+----------------
-  1   | high      | low metabolism      | sigma0_eff down
-  2   | high      | strong repair       | rho up or nu0 down
-  3   | high      | hibernation/torpor  | nu0 down (seasonal)
-  4   | low       | high stress         | sigma0 up
-  5   | low       | weak repair         | rho down
+  Type                         | Ratio     | VBLS parameter
+  -----------------------------+-----------+--------------------------------
+  damage protection            | > 2       | sigma0_eff down
+  slow wear of the reserve     | > 2       | nu_eff down
+  hibernation / torpor         | > 2       | nu0_eff down
+  lowered body temperature     | > 2       | nu0 down (temperature)
+  metabolism above/below norm  | <0.5 / >2 | sigma0*F_diss up / down (rate)
+  r-strategy                   | < 0.5     | rho down
 
 Scope — one class per baseline:
   The regression is fitted on Mammalia, so only Mammalia are scored against
@@ -47,7 +46,10 @@ Scope — one class per baseline:
 
 Sources:
   AnAge Build 14: Tacutu et al. (2018), Nucleic Acids Research
-  Bats: Wilkinson & South (2002), Aging Cell
+  Bats: Wilkinson & South (2002), Aging Cell; Brunet-Rossinni (2004),
+    Mech. Ageing Dev.
+  Naked mole-rat: MacRae et al. (2015), Aging
+  Echidna: Nicol (2017), Front. Neurosci.
 
 Usage:
   python anomalies.py
@@ -56,7 +58,6 @@ Usage:
 
 For reviewers:
   All computations are reproducible. Input data: anage_data.csv (public database).
-  Parameter B* = 0.32 J·s·kg^(-5/4) — from section 13 of VBLS.
 """
 
 import numpy as np
@@ -73,10 +74,7 @@ warnings.filterwarnings('ignore')
 # VBLS CONSTANTS
 # ══════════════════════════════════════════════════════════════════════
 
-BSTAR       = 0.32      # J·s·kg^(-5/4) — viability quantum
-C_KL        = 3.5       # W/kg^(3/4)    — Kleiber coefficient
-ALPHA_VBLS  = 0.218     # empirical exponent (AnAge 318 species)
-ALPHA_THEOR = 0.250     # theoretical exponent VBLS
+A_THEOR     = 0.250     # VBLS allometric exponent a, shown for comparison only
 
 # ══════════════════════════════════════════════════════════════════════
 # ADDITIONAL SPECIES (not in AnAge or requiring clarification)
@@ -97,71 +95,71 @@ EXTRA_SPECIES = [
 # ══════════════════════════════════════════════════════════════════════
 
 ANOMALY_INTERP = {
+    # The parameter assigned to a deviation is an interpretation (Section D.5.6):
+    # the direction of each shift follows from (S); the species texts only name
+    # known features compatible with it.
     'Myotis': (
-        'sigma0_eff down',
-        'Flight activates antioxidant pathways (AMPK, FOXO3); '
-        'high mitochondrial respiration rate during flight '
-        'paradoxically reduces ROS leakage through training'
+        'sigma0_eff down (interpretation)',
+        'Long life at high metabolism needs a small fraction of dissipation '
+        'fixed as damage; M. lucifugus mitochondria release 2-3x less H2O2 per '
+        'O2 than shrew and mouse (Brunet-Rossinni 2004)'
     ),
     'Pteropus': (
-        'sigma0_eff down',
-        'Same flight mechanism; large fruit bats. '
-        'Additionally: IFN-alpha constitutively active — '
-        'reduced inflammatory response lowers sigma0'
+        'sigma0_eff down (interpretation)',
+        'As for Chiroptera; mechanism not measured'
     ),
     'Eptesicus': (
-        'sigma0_eff down + nu0 down',
-        'Annual hibernation (~5 months) reduces effective nu0; '
-        'antioxidant protection during flight'
+        'sigma0_eff down + nu0_eff down (interpretation)',
+        'Hibernation: nu0_eff = nu0 (1 - f_hib); f_hib ~ 0.45 assumed '
+        '(not measured for this species), a factor ~1.8 of 3.9'
     ),
     'Desmodus': (
-        'sigma0_eff down',
-        'Vampire bat: flight + specific immune regulation'
+        'sigma0_eff down (interpretation)',
+        'As for Chiroptera; mechanism not measured'
     ),
     'Plecotus': (
-        'nu0 down',
-        'Long hibernation: nu0_eff ~ nu0 * (1 - f_hibern), '
-        'f_hibern ~ 0.6; effective lifespan extended'
+        'nu0_eff down (interpretation)',
+        'Hibernation reduces the effective nu0; the fraction of the year '
+        'in torpor is not estimated here'
     ),
     'Heterocephalus': (
-        'rho up + sigma0 down',
-        'Naked mole-rat: highly efficient DNA repair (PARP1 x3), '
-        'conformationally stable ribosomes, no accumulation of '
-        'oxidized proteins; low ROS from hypoxic adaptation'
+        'nu_eff down + sigma0*F_diss down (interpretation)',
+        'Low specific metabolism (3.6 W/kg, AnAge); DNA repair genes more '
+        'expressed than in mouse (MacRae et al. 2015); higher translational '
+        'fidelity (Azpurua et al. 2013)'
     ),
     'Homo': (
-        'rho up (social)',
-        'Human: medicine, social protection, neural repair; '
-        'effective rho significantly exceeds biological minimum. '
-        'Anomaly ~4x matches the role of cultural rho accumulation'
+        'sigma0 down + Phi_cap up (cultural)',
+        'Medicine prevents damage (sigma0 down) and repairs from outside '
+        '(Phi_cap up), not the own restoration rho'
     ),
     'Tachyglossus': (
-        'nu0 down + T down',
-        'Monotremes: low body temperature (30C vs 37C), '
-        'torpor; van t Hoff rule: x2-3 per 10C'
+        'nu0 down + sigma0*F_diss down (interpretation)',
+        'Body temperature ~32 C, down to 4.5 C in hibernation; BMR 25-40% '
+        'of eutherian (Nicol 2017)'
     ),
     'Lutreolina': (
-        'rho down',
-        'Opossums: r-strategist life history, evolutionarily low '
-        'investment in repair'
+        'rho down (interpretation)',
+        'r-strategist: maturity ~6 months, 2 litters per year (AnAge); '
+        'disposable soma (Kirkwood 1977)'
     ),
     # Scored against the Reptilia baseline, not the mammalian one — see the
     # cross-class block.
     'Sphenodon': (
-        'nu0 down',
-        'Tuatara: relict reptilian metabolism, '
-        'body temperature ~12-18C; New Zealand isolation'
+        'nu0 down (temperature, interpretation)',
+        'Poikilotherm; scored against the Reptilia baseline'
     ),
     # Anomalously short-lived
     'Didelphis': (
-        'rho down + sigma0 up',
-        'Opossums: rapid sexual maturity, high reproductive rate; '
-        'classic r-strategist — evolutionarily low rho'
+        'rho down (interpretation)',
+        'r-strategist: maturity ~6 months, 2 litters per year (AnAge); '
+        'disposable soma (Kirkwood 1977)'
     ),
     'Crocidura': (
-        'sigma0 up',
-        'Shrews: record metabolism (~35 W/kg), '
-        'heart 1200 bpm; sigma0 maximal among Mammalia'
+        'not established',
+        'Specific metabolism of C. flavescens 7.5 W/kg (AnAge), as in '
+        'long-lived bats; record shrew values (30-46 W/kg) belong to Sorex. '
+        'Captive record, small sample'
     ),
 }
 
@@ -228,12 +226,9 @@ print(f"\nAllometric fit (N={mask.sum()}):")
 print(f"  T_max ~ M^{slope:.4f}  (VBLS theory: 0.250, empirical: 0.218)")
 print(f"  R² = {r_val**2:.4f},  p = {p_val:.2e}")
 
-def T_allom(M_g, use_empirical=True):
-    """Allometric prediction of T_max in years."""
-    alpha = slope if use_empirical else ALPHA_VBLS
-    ic = intercept if use_empirical else (
-        np.log10(BSTAR / (C_KL * 365.25 * 86400)) + ALPHA_VBLS * np.log10(1000))
-    return 10**(ic + alpha * np.log10(M_g))
+def T_allom(M_g):
+    """Allometric prediction of T_max in years: the empirical fit on Mammalia."""
+    return 10**(intercept + slope * np.log10(M_g))
 
 # ══════════════════════════════════════════════════════════════════════
 # 3. COMPUTE ANOMALIES
@@ -440,10 +435,10 @@ for cls, grp in mam_valid.groupby('Class'):
 M_range = np.logspace(-3, 6, 200)
 ax.plot(M_range / 1000, 10**(intercept + slope * np.log10(M_range)),
         '-', color='#2980b9', lw=2.0, zorder=5,
-        label=f'Empirical alpha={slope:.3f}')
-ax.plot(M_range / 1000, 10**(intercept + ALPHA_THEOR * np.log10(M_range)),
+        label=f'Empirical a={slope:.3f}')
+ax.plot(M_range / 1000, 10**(intercept + A_THEOR * np.log10(M_range)),
         'k--', lw=1.5, alpha=0.5, zorder=5,
-        label=f'VBLS theory α={ALPHA_THEOR}')
+        label=f'VBLS theory a={A_THEOR}')
 
 LABELS_A = {
     'Myotis':        ('Myotis spp.',        'up'),
@@ -545,21 +540,21 @@ ax = axes[3]
 ax.axis('off')
 
 type_data = [
-    ['Type', 'Ratio', 'Parameter\n(S)', 'Biological mechanism (examples)'],
-    ['High metabolism (-)', '<1',   'sigma0 up',        'High ROS, fast DNA wear\n(shrews, opossums)'],
-    ['Strong repair (+)',   '>2',   'rho up',           'Highly efficient DNA repair\n(naked mole-rat, Homo)'],
-    ['Low metabolism (+)',  '>2',   'sigma0_eff down',  'Antioxidants, slow turnover\n(tortoises, ectotherms)'],
-    ['Hibernation (+)',     '>2',   'nu0 down (seas.)', 'Effective < chronological lifespan\n(bats: Myotis, Plecotus)'],
-    ['Lowered body T (+)',  '>2',   'nu0 down (T)',     'van t Hoff: x2-3 per 10C\n(echidna, 30-32C)'],
-    ['r-strategist (-)',    '<0.5', 'rho down',         'Evolutionarily low repair invest.\n(opossums, mice)'],
+    ['Type', 'Ratio', 'Parameter of (S)', 'Mechanism (examples)'],
+    ['Damage protection',  '>2',        'sigma0_eff down',       'Fewer damage events per unit\nof dissipation (bats: Myotis)'],
+    ['Slow reserve wear',  '>2',        'nu_eff down',           'Damage kept low, reserve wears\nslowly (naked mole-rat)'],
+    ['Hibernation',        '>2',        'nu0_eff down',          'Effective < chronological\nlifespan (Plecotus, Eptesicus)'],
+    ['Lowered body T',     '>2',        'nu0 down (T)',          'Slower degradation reactions\n(echidna, ~32 C)'],
+    ['Metabolism vs norm', '<0.5 / >2', 'sigma0*F_diss up/down', 'More / fewer damage events per\nunit time (no example here)'],
+    ['r-strategist',       '<0.5',      'rho down',              'Lowered restoration of the\nreserve (opossums)'],
 ]
 
 table = ax.table(cellText=type_data[1:],
                  colLabels=type_data[0],
-                 loc='center', cellLoc='left')
+                 colWidths=[0.25, 0.12, 0.31, 0.42],
+                 bbox=[-0.06, 0.08, 1.16, 0.82], cellLoc='left')
 table.auto_set_font_size(False)
-table.set_fontsize(8)
-table.scale(1.0, 2.8)
+table.set_fontsize(7)
 
 for j in range(4):
     table[0, j].set_facecolor('#2c3e50')
@@ -570,7 +565,7 @@ for i in range(1, 7):
         table[i, j].set_facecolor(fc)
 
 ax.set_title('D.  Anomaly typology in terms of VBLS\n'
-             'Each type corresponds to one parameter of system (S)',
+             'Direction of each shift follows from (S); species are examples',
              fontweight='bold', pad=10)
 
 # --- PANEL E: bat mechanisms in detail ---
@@ -627,40 +622,40 @@ def focal_ratio(genus):
     return float(sub.iloc[0]['ratio']) if len(sub) else float('nan')
 
 
-summary = """VBLS interpretation of anomalies: key conclusions
+summary = """Parameters assigned to the deviations
+(interpretation; checked for compatibility only)
 
 ^ ANOMALOUSLY LONG-LIVED:
 
 Chiroptera (Myotis, x{myotis:.1f}):
-  sigma0_eff down from flight — AMPK/FOXO3 activation
-  of antioxidants reduces ROS production despite
-  high metabolism. The flight paradox.
+  sigma0_eff down: long life at high metabolism;
+  Myotis mitochondria release 2-3x less H2O2
+  per O2 than shrew and mouse (Brunet-Rossinni 2004)
 
 Heterocephalus glaber (x{nmr:.1f}):
-  rho up — PARP1 x3, ribosomal fidelity up,
-  hypoxic adaptation -> low ROS
+  nu_eff down + sigma0*F_diss down: low metabolism,
+  DNA repair genes up vs mouse (MacRae 2015)
 
 Homo sapiens (x{homo:.1f}):
-  rho_eff up via medicine and social protection;
-  biological rho not unique, but cultural
-  'additional rho' is species-specific
+  sigma0 down + Phi_cap up: medicine prevents
+  damage and repairs from outside (cultural)
 
 Tachyglossus aculeatus (x{echidna:.1f}):
-  nu0 down — body temperature 30-32C against 37C
-  in placentals; van't Hoff slows degradation
+  nu0 down + sigma0*F_diss down: body T ~32 C,
+  BMR 25-40% of eutherian (Nicol 2017)
 
 v ANOMALOUSLY SHORT-LIVED:
 
-Crocidura (x{shrew:.2f}):
-  sigma0 up — metabolism 35 W/kg, heart
-  1200 bpm -> maximal ROS
+Crocidura flavescens (x{shrew:.2f}):
+  not established: metabolism 7.5 W/kg (AnAge),
+  as in long-lived bats
 
 Didelphis (x{opossum:.2f}):
-  rho down — r-strategist, evolutionarily optimized
-  for reproduction, not longevity
+  rho down: r-strategist (disposable soma)
 
 ------------------------------------------
-All anomalies -> one parameter of system (S).
+No contradiction with (S) among the ten.
+Short-lived records: mostly small captive samples.
 Mammalia only: one class, one baseline.
 """.format(
     myotis=focal_ratio('Myotis'),
@@ -681,7 +676,7 @@ ax.text(0.03, 0.97, summary,
                   edgecolor='#2c3e50',
                   linewidth=1.2))
 
-ax.set_title('F.  Summary: each anomaly -> one VBLS parameter',
+ax.set_title('F.  Summary: assigned VBLS parameters',
              fontweight='bold')
 
 plt.savefig('anomalies_fig.pdf', bbox_inches='tight')

@@ -12,9 +12,9 @@
 VBLS — Scaling law verification (Escala 2022)
 Four tests of theoretical predictions:
 
-  Test 1 — Kleiber's law:         P ~ M^0.75  (VBLS: 0.75)
-  Test 2 — Longevity allometry:   T_ls ~ M^0.25 (VBLS: 0.25)
-  Test 3 — T_ls ~ (P/M)^gamma:   gamma = -1.0 (VBLS: -1.0)
+  Test 1 — Kleiber's law:         P ~ M^chi   (input assumption chi = 3/4; dataset check)
+  Test 2 — Longevity allometry:   T_ls ~ M^a    (VBLS: a = 0.25)
+  Test 3 — T_ls ~ (P/M)^p_scale: p_scale = -1.0 (VBLS: -1.0)
   Test 4 — Rubner invariant:      P/M × T_ls ≈ const
 
 Additional:
@@ -89,13 +89,13 @@ def regress_powerlaw(x, y):
     ci = 1.96 * se
     return slope, ic, r**2, p, ci
 
-# Test 1: P ~ M^alpha (Kleiber)
+# Test 1: P ~ M^chi (Kleiber)
 a1, ic1, r2_1, p1, ci1 = regress_powerlaw(m_nh['M[kg]'],       m_nh['P[kJ/day]'])
 
-# Test 2: T_ls ~ M^beta (longevity allometry)
+# Test 2: T_ls ~ M^a (longevity allometry)
 a2, ic2, r2_2, p2, ci2 = regress_powerlaw(m_nh['M[kg]'],       m_nh['Tls_calc[yr]'])
 
-# Test 3: T_ls ~ (P/M)^gamma
+# Test 3: T_ls ~ (P/M)^p_scale
 a3, ic3, r2_3, p3, ci3 = regress_powerlaw(m_nh['P_per_M'],     m_nh['Tls_calc[yr]'])
 
 # Test 4: regression prediction for humans (Test 1 basis)
@@ -112,37 +112,37 @@ rub1    = PM_human * TLS1
 rub2    = PM_human * TLS2
 
 # Full dataset
-a_all, ic_all, r2_all, p_all, _ = regress_powerlaw(df['Tls_calc[yr]'], df['P_per_M'])
+a_all, ic_all, r2_all, p_all, ci_all = regress_powerlaw(df['P_per_M'], df['Tls_calc[yr]'])
 
 # Print results
 print("=" * 65)
 print("  VBLS — Scaling law verification (Escala 2022)")
 print("=" * 65)
 
-print(f"\nTEST 1 — Kleiber's law P ~ M^alpha  (n={len(m_nh)} species)")
-print(f"  alpha_obs  = {a1:.3f} ± {ci1:.3f}  |  VBLS: 0.750")
+print(f"\nTEST 1 — Kleiber's law P ~ M^chi  (n={len(m_nh)} species)")
+print(f"  chi_obs    = {a1:.3f} ± {ci1:.3f}  |  Kleiber (input): 0.750")
 print(f"  R²         = {r2_1:.3f}  |  p = {p1:.2e}")
-print(f"  Deviation from prediction = {abs(a1-0.75)/0.75*100:.1f}%")
+print(f"  Deviation from 0.75 = {abs(a1-0.75)/0.75*100:.1f}%")
 
-print(f"\nTEST 2 — Longevity allometry T_ls ~ M^beta  (n={len(m_nh)} species)")
-print(f"  beta_obs  = {a2:.3f} ± {ci2:.3f}  |  VBLS: 0.250")
+print(f"\nTEST 2 — Longevity allometry T_ls ~ M^a  (n={len(m_nh)} species)")
+print(f"  a_obs     = {a2:.3f} ± {ci2:.3f}  |  VBLS: 0.250")
 print(f"  R²        = {r2_2:.3f}  |  p = {p2:.2e}")
 print(f"  Deviation from prediction = {abs(a2-0.25)/0.25*100:.1f}%")
 
-print(f"\nTEST 3 — T_ls ~ (P/M)^gamma  (n={len(m_nh)} species)")
-print(f"  gamma_obs  = {a3:.3f} ± {ci3:.3f}  |  VBLS: -1.000")
+print(f"\nTEST 3 — T_ls ~ (P/M)^p_scale  (n={len(m_nh)} species)")
+print(f"  p_obs      = {a3:.3f} ± {ci3:.3f}  |  VBLS: -1.000")
 print(f"  R²         = {r2_3:.3f}  |  p = {p3:.2e}")
 print(f"  Deviation from prediction = {abs(a3-(-1.0))/1.0*100:.1f}%")
 
 print(f"\nTEST 4 — Rubner invariant P/M × T_ls  (n={len(m_nh)} species)")
 print(f"  Median = {rub_med:.0f} kJ/kg·yr")
-print(f"  CV     = {rub_cv:.0f}%  |  log-std = {np.log(m_nh['rubner']).std():.4f}")
+print(f"  CV     = {rub_cv:.0f}%  |  log10-std = {np.log10(m_nh['rubner']).std():.4f}")
 print(f"  Range  = {m_nh['rubner'].max()/m_nh['rubner'].min():.1f}×")
 print(f"  Human_1 ({TLS1:.0f} yr): {rub1:.0f} = {rub1/rub_med:.1f}× median")
 print(f"  Human_2 ({TLS2:.0f} yr): {rub2:.0f} = {rub2/rub_med:.1f}× median")
 
 print(f"\nADD. — Full dataset  (n={len(df)} species, all classes)")
-print(f"  gamma_obs  = {a_all:.3f}  |  R² = {r2_all:.3f}  |  p = {p_all:.2e}")
+print(f"  p_all      = {a_all:.3f} ± {ci_all:.3f}  |  R² = {r2_all:.3f}  |  p = {p_all:.2e}")
 print(f"  Mass range: {df['M[kg]'].min():.1e} – {df['M[kg]'].max():.0f} kg")
 
 # ── Figure: 4 panels ──────────────────────────────────────────────────────────
@@ -155,7 +155,7 @@ M_line   = np.logspace(np.log10(0.01), np.log10(3000), 300)
 T_line   = np.logspace(np.log10(0.3),  np.log10(200),  300)
 PM_line  = np.logspace(np.log10(0.5),  np.log10(3000), 300)
 
-# ─── PANEL A: Kleiber's law P ~ M^alpha ───────────────────────────────────────
+# ─── PANEL A: Kleiber's law P ~ M^chi ───────────────────────────────────────
 a = ax[0]
 
 # All classes (grey background)
@@ -173,27 +173,27 @@ a.scatter(m_nh['M[kg]'], m_nh['P[kJ/day]'],
 # Regression (from data)
 a.plot(M_line, np.exp(ic1) * M_line**a1,
        color=C_REG, lw=2, ls='--', zorder=4,
-       label=f'Regression: alpha = {a1:.3f} ± {ci1:.3f}')
+       label=f'Regression: chi = {a1:.3f} ± {ci1:.3f}')
 
-# VBLS prediction
+# Kleiber 3/4 (input assumption)
 a.plot(M_line, np.exp(ic1) * M_line**0.75,
        color=C_VB, lw=1.8, ls=':', zorder=4, alpha=0.85,
-       label='VBLS: alpha = 0.750')
+       label='Kleiber (input): chi = 0.750')
 
 a.set_xscale('log'); a.set_yscale('log')
 a.set_xlabel('Body mass M (kg)')
 a.set_ylabel('Energy intake P (kJ/day)')
-a.set_title(f'A.  Kleiber\'s law  $P \\sim M^{{\\alpha}}$\n'
-            f'$\\alpha_{{obs}}$ = {a1:.3f} ± {ci1:.3f}  |  '
-            f'VBLS: 0.750  |  $R^2$ = {r2_1:.3f}',
+a.set_title(f'A.  Kleiber\'s law  $P \\sim M^{{\\chi}}$\n'
+            f'$\\chi_{{obs}}$ = {a1:.3f} ± {ci1:.3f}  |  '
+            f'input: 0.750  |  $R^2$ = {r2_1:.3f}',
             fontweight='bold')
 a.legend(fontsize=8, framealpha=0.93, loc='upper left')
 a.text(0.97, 0.05,
-       f'Deviation from VBLS:\n{abs(a1-0.75)/0.75*100:.1f}%',
+       f'Deviation from 0.75:\n{abs(a1-0.75)/0.75*100:.1f}%',
        transform=a.transAxes, ha='right', va='bottom', fontsize=9,
        bbox=dict(boxstyle='round,pad=0.35', fc='#f0f0ff', ec=C_VB, lw=1))
 
-# ─── PANEL B: Longevity allometry T_ls ~ M^beta ───────────────────────────────
+# ─── PANEL B: Longevity allometry T_ls ~ M^a ───────────────────────────────
 a = ax[1]
 
 a.scatter(m_nh['M[kg]'], m_nh['Tls_calc[yr]'],
@@ -202,11 +202,11 @@ a.scatter(m_nh['M[kg]'], m_nh['Tls_calc[yr]'],
 
 a.plot(M_line, np.exp(ic2) * M_line**a2,
        color=C_REG, lw=2, ls='--', zorder=4,
-       label=f'Regression: beta = {a2:.3f} ± {ci2:.3f}')
+       label=f'Regression: a = {a2:.3f} ± {ci2:.3f}')
 
 a.plot(M_line, np.exp(ic2) * M_line**0.25,
        color=C_VB, lw=1.8, ls=':', zorder=4, alpha=0.85,
-       label='VBLS: beta = 0.250')
+       label='VBLS: a = 0.250')
 
 # Human
 a.scatter(65, TLS1, s=200, color=C_H1, marker='*',
@@ -217,8 +217,8 @@ a.scatter(65, TLS2, s=200, color=C_H2, marker='*',
 a.set_xscale('log'); a.set_yscale('log')
 a.set_xlabel('Body mass M (kg)')
 a.set_ylabel('Lifespan $T_{ls}$ (yr)')
-a.set_title(f'B.  Longevity allometry  $T_{{ls}} \\sim M^{{\\beta}}$\n'
-            f'$\\beta_{{obs}}$ = {a2:.3f} ± {ci2:.3f}  |  '
+a.set_title(f'B.  Longevity allometry  $T_{{ls}} \\sim M^{{a}}$\n'
+            f'$a_{{obs}}$ = {a2:.3f} ± {ci2:.3f}  |  '
             f'VBLS: 0.250  |  $R^2$ = {r2_2:.3f}',
             fontweight='bold')
 a.legend(fontsize=8, framealpha=0.93, loc='upper left')
@@ -227,7 +227,7 @@ a.text(0.97, 0.05,
        transform=a.transAxes, ha='right', va='bottom', fontsize=9,
        bbox=dict(boxstyle='round,pad=0.35', fc='#f0f0ff', ec=C_VB, lw=1))
 
-# ─── PANEL C: T_ls ~ (P/M)^gamma ──────────────────────────────────────────────
+# ─── PANEL C: T_ls ~ (P/M)^p_scale ──────────────────────────────────────────────
 a = ax[2]
 
 a.scatter(m_nh['P_per_M'], m_nh['Tls_calc[yr]'],
@@ -236,11 +236,11 @@ a.scatter(m_nh['P_per_M'], m_nh['Tls_calc[yr]'],
 
 a.plot(PM_line, np.exp(ic3) * PM_line**a3,
        color=C_REG, lw=2, ls='--', zorder=4,
-       label=f'Regression: gamma = {a3:.3f} ± {ci3:.3f}')
+       label=f'Regression: p_scale = {a3:.3f} ± {ci3:.3f}')
 
 a.plot(PM_line, np.exp(ic3) * PM_line**(-1.0),
        color=C_VB, lw=1.8, ls=':', zorder=4, alpha=0.85,
-       label='VBLS: gamma = −1.000')
+       label='VBLS: p_scale = −1.000')
 
 # Human
 a.scatter(PM_human, TLS1, s=200, color=C_H1, marker='*',
@@ -251,8 +251,8 @@ a.scatter(PM_human, TLS2, s=200, color=C_H2, marker='*',
 a.set_xscale('log'); a.set_yscale('log')
 a.set_xlabel('Specific metabolic rate P/M (kJ/day/kg)')
 a.set_ylabel('Lifespan $T_{ls}$ (yr)')
-a.set_title(f'C.  $T_{{ls}} \\sim (P/M)^{{\\gamma}}$\n'
-            f'$\\gamma_{{obs}}$ = {a3:.3f} ± {ci3:.3f}  |  '
+a.set_title(f'C.  $T_{{ls}} \\sim (P/M)^{{p_{{\\mathrm{{scale}}}}}}$\n'
+            f'$p_{{obs}}$ = {a3:.3f} ± {ci3:.3f}  |  '
             f'VBLS: −1.000  |  $R^2$ = {r2_3:.3f}',
             fontweight='bold')
 a.legend(fontsize=8, framealpha=0.93, loc='upper right')
@@ -294,8 +294,7 @@ a.set_title(f'D.  Rubner invariant  $P/M \\times T_{{ls}}$\n'
             fontweight='bold')
 a.legend(fontsize=8, framealpha=0.93, loc='upper right')
 a.text(0.03, 0.05,
-       f'log-std = {np.log(m_nh["rubner"]).std():.3f}\n'
-       f'(Kleiber law: 0.26)',
+       f'log10-std = {np.log10(m_nh["rubner"]).std():.3f}',
        transform=a.transAxes, ha='left', va='bottom', fontsize=8.5,
        bbox=dict(boxstyle='round,pad=0.3', fc='#f8f8f8', ec='#ccc'))
 

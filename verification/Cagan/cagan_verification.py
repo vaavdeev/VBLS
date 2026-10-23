@@ -10,25 +10,36 @@
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
 VBLS — Verification against Cagan et al. (2022) Nature
-Somatic mutations as direct measurement of Sigma(t)
+Somatic mutations as one observable proxy of Sigma(t)
 =================================================================
 
 3 Figures:
   Fig 1 — Sigma(t) trajectories: Cagan data (scatter) + linear regression + VBLS curve
-          for species with sufficient age coverage (3-column grid)
-  Fig 2 — Universal Sigma*: mutation burden at end of observed life (bar chart)
-          analogue of R*_univ from the Whittemore verification
+          for species with sufficient age coverage (3-column grid). The curve has the
+          model shape Sigma(t)/Sigma(t_B); its amplitude is fitted per species by least
+          squares over the individual means, so the figure compares shape, not level.
+  Fig 2 — Mutation burden at the end of observation (bar chart); a common damage
+          level at death is a transfer assumption (App. D.5.1.5, item 3)
   Fig 4 — Human detail: VBLS Sigma(t) over all 28 crypts
           + life phases + dSigma/dt on right axis
 
   Note: the rate x T_max power-law is owned exclusively by cagan_rateXtmax.py
   (15-species slope fit) and is intentionally not reproduced here.
 
+  T_max: maximum longevity from AnAge (../AnAge/anage_data.csv) for all species,
+  without corrections (Section 17.3). The script also prints the model (S) sampled
+  at the individual ages of Table 4: the zero crossings of the per-species
+  regressions and the model exponent phi over the sampled windows
+  (Sections 17.3.5.1, 17.3.5.2).
+
 Data: Cagan et al. (2022) Nature 604:517-524, Supplementary Table 4
-Input file: Table_4.csv
+Input files: Table_4.csv; ../AnAge/anage_data.csv
 
 Out: cagan_fig1 / fig2 / fig4 .pdf / .png
 """
+
+import csv
+import os
 
 import numpy as np
 import pandas as pd
@@ -73,25 +84,45 @@ df['Substitution_burden'] = pd.to_numeric(df['Substitution_burden'], errors='coe
 df['Substitution_rate_per_year'] = pd.to_numeric(df['Substitution_rate_per_year'], errors='coerce')
 df = df.dropna(subset=['Age_years', 'Substitution_burden'])
 
-# ── Species metadata (max lifespan from AnAge / literature) ──────────────────
-TMAX = {
-    'Human':                  122.5,
-    'Mouse':                    4.0,
-    'Rat':                      3.8,
-    'Naked mole-rat':          37.0,
-    'Dog':                     20.0,
-    'Cat':                     17.0,
-    'Horse':                   57.0,
-    'Tiger':                   26.0,
-    'Cow':                     30.0,
-    'Rabbit':                  13.0,
-    'Giraffe':                 39.5,
-    'Lion':                    29.0,
-    'Ferret':                  10.0,
-    'Ring-tailed lemur':       27.0,
-    'Black-and-white colobus': 30.0,
-    'Harbour porpoise':        21.5,
+# ── Species metadata: maximum longevity from AnAge, all species, no corrections ──
+ANAGE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'AnAge', 'anage_data.csv')
+# Cagan species -> AnAge genus and species (the domestic ferret is listed under Mustela putorius);
+# the harbour porpoise has no age data in Table 4 and is not used
+ANAGE_NAME = {
+    'Human':                   ('Homo', 'sapiens'),
+    'Mouse':                   ('Mus', 'musculus'),
+    'Rat':                     ('Rattus', 'norvegicus'),
+    'Naked mole-rat':          ('Heterocephalus', 'glaber'),
+    'Dog':                     ('Canis', 'familiaris'),
+    'Cat':                     ('Felis', 'catus'),
+    'Horse':                   ('Equus', 'caballus'),
+    'Tiger':                   ('Panthera', 'tigris'),
+    'Cow':                     ('Bos', 'taurus'),
+    'Rabbit':                  ('Oryctolagus', 'cuniculus'),
+    'Giraffe':                 ('Giraffa', 'camelopardalis'),
+    'Lion':                    ('Panthera', 'leo'),
+    'Ferret':                  ('Mustela', 'putorius'),
+    'Ring-tailed lemur':       ('Lemur', 'catta'),
+    'Black-and-white colobus': ('Colobus', 'guereza'),
 }
+
+
+def anage_tmax(path=ANAGE_FILE):
+    """Maximum longevity (yr) from AnAge for the species of ANAGE_NAME."""
+    with open(path, encoding='utf-8-sig') as f:
+        rows = list(csv.reader(f, delimiter=';'))
+    h = rows[0]
+    ig, isp, iml = h.index('Genus'), h.index('Species'), h.index('Maximum longevity (yrs)')
+    out = {}
+    for name, (genus, species) in ANAGE_NAME.items():
+        hit = [r for r in rows[1:] if r[ig] == genus and r[isp] == species]
+        if len(hit) != 1:
+            raise SystemExit(f'AnAge: {genus} {species} found {len(hit)} times')
+        out[name] = float(hit[0][iml])
+    return out
+
+
+TMAX = anage_tmax()
 
 # Species colours for Fig 1
 SP_COLORS = {
@@ -159,15 +190,16 @@ def run_vbls(T_max, n=800):
                     rtol=1e-8, atol=1e-10, max_step=T_max/600)
     return sol
 
-def vbls_sigma_scaled(T_max, burden_at_end):
-    """Return t, Sigma scaled to match observed mutation burden at t_B."""
+def vbls_sigma_fitted(T_max, ages, burdens):
+    """Return t, the curve A * Sigma(t)/Sigma(t_B), t_B, A and the model shape at the given
+    ages. The shape is the model's; the amplitude A is fitted by least squares through the
+    origin over the individual means (ages, burdens)."""
     sol = run_vbls(T_max)
-    t   = sol.t
-    S   = sol.y[1]
-    tB  = float(t[-1])
-    S_end = max(S[-1], 1e-9)
-    S_scaled = S / S_end * burden_at_end
-    return t, S_scaled, tB
+    tB  = sol.t_events[0][0] if len(sol.t_events[0]) else sol.t[-1]
+    S_B = max(sol.sol(tB)[1], 1e-9)
+    m_i = sol.sol(np.minimum(ages, tB))[1] / S_B
+    A   = float(np.sum(burdens * m_i) / np.sum(m_i**2))
+    return sol.t, A * sol.y[1] / S_B, float(tB), A, m_i
 
 def vbls_dsigma(T_max):
     """Compute dSigma/dt directly from RHS."""
@@ -180,7 +212,7 @@ def vbls_dsigma(T_max):
     dSdt = np.maximum(0, diss - R * BASE_ABS['Phi_cap'] * sc)
     return t_s, dSdt
 
-# ── Per-species mean burden at oldest age (Sigma* equivalent) ─────────────────
+# ── Per-species mean burden at oldest age (mutation proxy) ─────────────────
 last_age  = df.groupby('Species')['Age_years'].max().rename('max_age')
 df2       = df.merge(last_age, on='Species')
 sigma_end = (df2[df2['Age_years'] == df2['max_age']]
@@ -205,6 +237,7 @@ fig1, axes1 = plt.subplots(nrows, ncols, figsize=(15, 4.5*nrows))
 fig1.subplots_adjust(hspace=0.50, wspace=0.38,
                      left=0.07, right=0.97, top=0.91, bottom=0.07)
 axes1_flat = axes1.flatten()
+fit_rel_rmse = {}
 
 for i, sp in enumerate(sp_use):
     ax = axes1_flat[i]
@@ -234,14 +267,21 @@ for i, sp in enumerate(sp_use):
                 color=COL_REG, lw=1.4, ls='--', zorder=3,
                 label=f'Linear regression ($R^2={r**2:.2f}$)')
 
-    # ── VBLS Sigma(t) scaled to observed end-burden ────────────────────
-    end_b = sigma_end.get(sp, g['Substitution_burden'].max())
-    t_vbls, S_vbls, tB = vbls_sigma_scaled(T_max, end_b)
+    # ── VBLS Sigma(t): model shape, amplitude fitted to the individual means ──
+    y_ind = ind_mean['Substitution_burden'].to_numpy()
+    t_vbls, S_vbls, tB, amp, m_ind = vbls_sigma_fitted(
+        T_max, ind_mean['Age_years'].to_numpy(), y_ind)
+    fit_rel_rmse[sp] = np.sqrt(np.mean((y_ind - amp * m_ind)**2)) / np.mean(y_ind)
+    if sp == 'Human':
+        # Numbers of Section 17.3.6 (late and early age): model at the sampled ages
+        print(f"  Human: amplitude A = {amp:.0f}; ages {ind_mean['Age_years'].round(1).tolist()}")
+        print(f"    model {np.round(amp * m_ind).astype(int).tolist()}")
+        print(f"    data  {np.round(y_ind).astype(int).tolist()}")
     t_obs_max = g['Age_years'].max()
     mask = t_vbls <= t_obs_max * 1.15
     ax.plot(t_vbls[mask], S_vbls[mask],
             color=COL_VBLS, lw=2.2, zorder=5,
-            label='VBLS $\\Sigma(t)$')
+            label='VBLS $\\Sigma(t)$, amplitude fitted')
     # Dashed continuation to t_B
     mask2 = t_vbls >= t_obs_max * 1.10
     ax.plot(t_vbls[mask2], S_vbls[mask2],
@@ -253,7 +293,7 @@ for i, sp in enumerate(sp_use):
 
     # ── Axes ──────────────────────────────────────────────────────────
     ax.set_xlim(-T_max*0.02, max(tB*1.05, t_obs_max*1.3))
-    ax.set_ylim(-50, max(g['Substitution_burden'].max()*1.25, end_b*1.15))
+    ax.set_ylim(-50, max(g['Substitution_burden'].max()*1.25, amp*1.05))
     ax.set_xlabel('Age (years)', fontsize=9)
     if i % ncols == 0:
         ax.set_ylabel('Mutations per genome', fontsize=9)
@@ -270,8 +310,10 @@ for j in range(i+1, len(axes1_flat)):
 fig1.suptitle(
     'Somatic mutation accumulation: Cagan et al. (2022) data + VBLS $\\Sigma(t)$\n'
     'Dots = individual crypts;  ◆ = individual mean;  '
-    '-- grey = linear regression;  — purple = VBLS;  : = extrapolation to $t_B$',
-    fontsize=11, fontweight='bold', y=0.98)
+    '-- grey = linear regression;  : = extrapolation to $t_B$\n'
+    '— purple = VBLS shape (human calibration in the time scale of each species), '
+    'amplitude fitted per species to the individual means',
+    fontsize=11, fontweight='bold', y=0.985)
 
 plt.savefig('cagan_fig1_trajectories.pdf', bbox_inches='tight')
 plt.savefig('cagan_fig1_trajectories.png', bbox_inches='tight', dpi=180)
@@ -279,7 +321,7 @@ plt.close()
 print("  Saved: cagan_fig1_trajectories")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# FIGURE 2 — Universal Sigma*: mutation burden at end of observed life
+# FIGURE 2 — Mutation burden at the end of observation
 # ══════════════════════════════════════════════════════════════════════════════
 print("Building Figure 2...")
 
@@ -296,7 +338,7 @@ bars = ax2.bar(range(len(sp_ord)), vals, color=cols2, alpha=0.78,
                edgecolor='white', lw=0.8, zorder=3)
 
 ax2.axhline(sigma_univ, color=COL_UNIV, lw=1.8, ls='--', zorder=4,
-            label=f'$\\Sigma^*_{{univ}}={sigma_univ:.0f}$ mut. (mean)')
+            label=f'Mean over species = {sigma_univ:.0f} mut.')
 ax2.axhspan(sigma_univ - sigma_std, sigma_univ + sigma_std,
             alpha=0.10, color=COL_UNIV, zorder=2,
             label=f'±1σ = [{sigma_univ-sigma_std:.0f}–{sigma_univ+sigma_std:.0f}]')
@@ -304,9 +346,11 @@ ax2.axhspan(sigma_univ - sigma_std, sigma_univ + sigma_std,
 # Naked mole-rat annotation
 nmr_idx = sp_ord.index('Naked mole-rat') if 'Naked mole-rat' in sp_ord else None
 if nmr_idx is not None:
-    ax2.annotate('Naked mole-rat\n(exception?)',
+    nmr_age = df.loc[df['Species'] == 'Naked mole-rat', 'Age_years'].max()
+    ax2.annotate(f'Naked mole-rat: oldest sampled\nanimal {nmr_age:.1f} yr '
+                 f'({100 * nmr_age / TMAX["Naked mole-rat"]:.0f}% of $T_{{max}}$)',
                  xy=(nmr_idx, vals[nmr_idx]),
-                 xytext=(nmr_idx+0.8, vals[nmr_idx]+300),
+                 xytext=(nmr_idx+0.6, vals[nmr_idx]+1150), va='bottom',
                  fontsize=8, color='#4CAF50',
                  arrowprops=dict(arrowstyle='->', color='#4CAF50', lw=0.9))
 
@@ -315,8 +359,9 @@ ax2.set_xticklabels(sp_ord, rotation=35, ha='right', fontsize=9)
 ax2.set_ylabel('Mutations per genome at end of observation', fontsize=10)
 ax2.legend(fontsize=9, loc='upper left', framealpha=0.93)
 ax2.set_title(
-    'Universal mutation accumulation threshold $\\Sigma^*$: 15 species (Cagan 2022)\n'
-    'VBLS predicts: all species reach similar burden at end of life',
+    'Mutation burden at the end of observation: 15 species (Cagan 2022)\n'
+    'A common damage level at death is a transfer assumption (App. D.5.1.5, item 3),\n'
+    'not a prediction of $(\\mathcal{S})$; somatic mutations are one proxy of $\\Sigma$',
     fontsize=11, fontweight='bold')
 ax2.text(0.99, -0.22, 'Data: Cagan et al. (2022) Nature, Supplementary Table 4',
          transform=ax2.transAxes, ha='right', fontsize=8, color='#666', style='italic')
@@ -446,13 +491,47 @@ plt.savefig('cagan_fig4_human.png', bbox_inches='tight', dpi=180)
 plt.close()
 print("  Saved: cagan_fig4_human")
 
+# ══════════════════════════════════════════════════════════════════════════════
+# MODEL AT THE SAMPLED AGES (Sections 17.3.5.1, 17.3.5.2)
+# Model burden ~ Sigma(t)/Sigma(t_B) (a common damage level at death, App. D.5.1.5,
+# item 3), taken at the individual ages of Table 4. Species with several ages: OLS
+# over the individuals, as for the data -> zero crossing L0; species with a single
+# age: rate = burden/age. The model exponent phi is the slope of log rate on log T_max.
+# ══════════════════════════════════════════════════════════════════════════════
+print("Model at the sampled ages...")
+model_rate, model_L0, data_L0 = {}, {}, {}
+for sp in sorted(TMAX, key=TMAX.get):
+    g = df[df['Species'] == sp]
+    ind = g.groupby(['Individual', 'Age_years'])['Substitution_burden'].mean().reset_index()
+    ages = ind['Age_years'].to_numpy()
+    sol = run_vbls(TMAX[sp])
+    tB = sol.t_events[0][0] if len(sol.t_events[0]) else sol.t[-1]
+    M = sol.sol(ages)[1] / sol.sol(tB)[1]
+    if len(np.unique(ages)) >= 2:
+        fm = linregress(ages, M)
+        fd = linregress(ages, ind['Substitution_burden'])
+        model_rate[sp] = fm.slope
+        model_L0[sp] = -fm.intercept / fm.slope
+        data_L0[sp] = -fd.intercept / fd.slope
+    else:
+        model_rate[sp] = M[0] / ages[0]
+sp_m = sorted(model_rate)
+phi_model = linregress(np.log([TMAX[s] for s in sp_m]),
+                       np.log([model_rate[s] for s in sp_m])).slope
+
 # ── Summary stats ─────────────────────────────────────────────────────────────
 print("\n" + "="*60)
 print("VERIFICATION SUMMARY — CAGAN 2022")
 print("="*60)
 print(f"Species with age span > 1yr:  {len(sp_use)}")
 print(f"Total crypts (clean):         {len(df)}")
-print(f"Universal Sigma*_univ:        {sigma_univ:.0f} ± {sigma_std:.0f} mutations")
+print(f"Mean end burden (proxy):      {sigma_univ:.0f} ± {sigma_std:.0f} mutations")
 print(f"Human regression slope:       {slope_h:.1f} mut/yr  R²={r_h**2:.3f}")
+print(f"Fig 1 VBLS amplitude:         least squares over individual means; relative RMSE "
+      f"median {np.median(list(fit_rel_rmse.values())):.2f} ({len(fit_rel_rmse)} species)")
+print(f"Model phi, sampled windows:   {phi_model:+.2f} ({len(sp_m)} species, T_max from AnAge)")
+print("Zero crossing of the regressions, yr (data / model):")
+for sp in sorted(model_L0, key=TMAX.get):
+    print(f"  {sp:24s} T_max={TMAX[sp]:6.1f}  data {data_L0[sp]:5.1f}  model {model_L0[sp]:5.1f}")
 print("="*60)
 print("\nAll figures saved.")

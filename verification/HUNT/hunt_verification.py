@@ -9,7 +9,7 @@
   LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Section 12.5 — Verification of eta_abs(t) against HUNT3/HUNT4 data
+VBLS — Appendix D.2 — Within-species trajectory of Sigma(t): HUNT3/HUNT4 data
 ========================================================================
 Data:
   - HUNT3: Loe et al. (2013) PLoS ONE 8(5):e64319
@@ -257,14 +257,6 @@ a.text(0.97, 0.92, 'N=3816 (HUNT3)\nN=1431 (HUNT4)',
 # ── Panel B: normalized + VBLS ────────────────────────────────────────────────
 a = ax[1]
 
-# Phase zones
-a.axvspan(25, 45, alpha=0.04, color='#2ecc71')
-a.axvspan(45, 65, alpha=0.04, color='#f39c12')
-a.axvspan(65, 90, alpha=0.06, color='#e74c3c')
-a.text(33, 0.62, 'Phase I\n(Σ≈0)',  ha='center', fontsize=8, color='#27ae60')
-a.text(54, 0.62, 'Phase II',         ha='center', fontsize=8, color='#e67e22')
-a.text(73, 0.62, 'Phase III',        ha='center', fontsize=8, color='#c0392b')
-
 # CI bands for HUNT4
 a.fill_between(AGES_LONG, HUNT4_MEN - CI_MEN, HUNT4_MEN + CI_MEN,
                alpha=0.15, color=C_M)
@@ -356,29 +348,10 @@ ax_r.set_ylabel('Cumulative VO₂max decline (%)', color=C_M)
 ax_r.tick_params(axis='y', labelcolor=C_M)
 ax_r.spines['right'].set_edgecolor(C_M)
 
-# Phase zones
-a.axvspan(25, 45, alpha=0.04, color='#2ecc71')
-a.axvspan(45, 65, alpha=0.04, color='#f39c12')
-a.axvspan(65, 90, alpha=0.07, color='#e74c3c')
-
-# Key event annotations
-sig_at_45 = float(np.interp(45, t_, Sig_))
-sig_at_55 = float(np.interp(55, t_, eta_))
-a.annotate('Sigma begins\nrising (~45 yr)',
-           xy=(45, sig_at_45),
-           xytext=(33, 0.5),
-           fontsize=8.5, color=C_SIG,
-           arrowprops=dict(arrowstyle='->', color=C_SIG, lw=0.9))
-a.annotate('eta_abs begins\ndeclining (~55 yr)',
-           xy=(55, sig_at_55),
-           xytext=(40, 0.65),
-           fontsize=8.5, color=C_VBLS,
-           arrowprops=dict(arrowstyle='->', color=C_VBLS, lw=0.9))
-
 a.set_xlabel('Age (yr)')
 a.set_ylabel('Sigma(t) and eta_abs(t) [dimensionless]')
 a.set_title('D.  VBLS dynamics and VO₂max decline\n'
-            'Delay between "Sigma rises" and "eta_abs falls" = memory effect',
+            'eta_abs follows the accumulated integral of Sigma (Eq. 5.2)',
             fontweight='bold')
 lines = [
     l1,
@@ -391,5 +364,5 @@ a.legend(handles=lines, fontsize=8.5, framealpha=0.93, loc='upper left')
 plt.savefig('hunt_verification.pdf', bbox_inches='tight')
 plt.savefig('hunt_verification.png', bbox_inches='tight', dpi=180)
 plt.close()
-print("Saved: mde_hunt_verification.pdf / .png")
+print("Saved: hunt_verification.pdf / .png")
 print(f"Mapping parameters: k={K_OPT:.4f}, beta={B_OPT:.4f}, RMSE={RMSE:.4f}")

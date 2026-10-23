@@ -28,6 +28,24 @@ alpha = 0.0001: t_B = 72.290222, (t_B - t_B(0))/alpha = 151.0
 alpha = 0.001: t_B = 72.426306, (t_B - t_B(0))/alpha = 151.2
 variational system: u_R(t_B) / |dR/dt(t_B)| = 150.99; max u_E = 0.0e+00, max u_Sigma = 0.0e+00, min u_R = 0.0e+00
 
+== 4a. Lemma 2 (large memory) and Proposition 4 (interior maximum), canonical environment
+Phi_max = 0.997521, F(E*) = 0.014400, Sigma_0 = 0.01, eta_0 = 0.96
+T_0 = 2.3105 (closed form) = 2.3105 (quadrature); t_B(0) = 72.278 via R
+alpha_bar = eta_0 Phi_max / [Sigma_0 F(E*) (t_B(0) - t_A - T_0)] = 95.05
+alpha      t_B      t_B^E    bound (14)   holds   channel
+     0.50   67.713   67.713    13302.594   yes     E
+     1.00   55.045   55.045     6652.452   yes     E
+    10.00   32.512   32.512      667.325   yes     E
+    95.00    5.197    5.197       72.312   yes     E
+    95.05    5.194    5.194       72.278   yes     E
+   100.00    4.960    4.960       68.812   yes     E
+   300.00    2.620    2.620       24.478   yes     E
+  1000.00    2.334    2.334        8.961   yes     E
+ 10000.00    2.311    2.311        2.976   yes     E
+t_B(alpha) -> T_0 from above as alpha grows, and t_B(alpha) < t_B(0) for alpha > alpha_bar, which is what Proposition 4 needs.
+set started at E(t_A) = 0.12: T_0 = 2.7031, t_B(0) = 72.2751, alpha_bar = 95.59
+  exit over a scan of 81 values of alpha in [0, alpha_bar]: min |rate| = 2.74e-03, every exit transversal: yes; first exit through the potential at alpha = 0.1350
+
 == 5. Worst phase: Phi_in = 1, Phi_cap alternating with half-period 1, low phase first
 Phi_cap 0.06/0.14: worst phase Phi_cap_min * R_low = 0.01385, sigma0 F(E_bar) = 0.01555
   decaying (kappa = 0.01)  t_B = 636.6 via R, Sigma(t_B) = 0.1628, Sigma(t_B) - Sigma0 = 1.5e-01
@@ -51,3 +69,19 @@ Example 2 (maximum inside the reserve branch): rho = 0.004, Phi_in = 0.5
   alpha = 0.3100: t_B = 710.68 via R, max over the life of production - export = -4.40e-06
   alpha = 0.3125: t_B = 706.25 via R, max over the life of production - export = -2.11e-05
   first death through the potential channel on [0.80, 1.20] with step 0.01: alpha = 1.00
+  conditions of Proposition 3 at alpha = 0: t_B = 190.27 via R, dR/dt at t_B = -3.37e-03, min E on [t_A, t_B] = 0.4270 (E* = 0.04); min of E - E0 on (t_A, t_B] = +7.5e-05 (P2)
+  production - export changes sign 1 time(s), at t = 40.12 with slope +4.25e-05; its maximum over the life = +6.28e-03 (P4); max Sigma on [t_A, t_B] = 0.474
+  T_0 = 4.692, alpha_bar = 17.96
+  exit over a scan of 73 values of alpha in [0, alpha_bar]: min |rate| = 3.41e-04, every exit transversal: yes
+
+== 7. Integrator settings of every run, logged from the calls themselves
+  Fig. 1a                                                                  RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.05
+  Fig. 1b, with the search for alpha*                                      RK45  rtol = 1e-08, atol = 1e-11, max_step = 0.1
+  Fig. 2                                                                   LSODA rtol = 1e-09, atol = 1e-12, max_step = 2
+  damage-free start                                                        LSODA rtol = 1e-09, atol = 1e-12, max_step = 2
+  Proposition 3: set started at E(t_A) = 0.12, with its variational system RK45  rtol = 1e-11, atol = 1e-13, max_step = 0.01
+  Lemma 2 and Proposition 4: illustrative set                              RK45  rtol = 1e-11, atol = 1e-13, max_step = 0.05
+  Proposition 4: set started at E(t_A) = 0.12                              RK45  rtol = 1e-11, atol = 1e-13, max_step = 0.05
+  alternating Phi_cap (Section 4)                                          RK45  rtol = 1e-09, atol = 1e-12, max_step = none
+  counterexample of Section 6                                              RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.5
+  example of Supplementary Section S15                                     RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.5

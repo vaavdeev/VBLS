@@ -9,13 +9,14 @@
   LICENSE in the repository root, or https://creativecommons.org/licenses/by-nc-nd/4.0/
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
-VBLS — Verification of eta_abs via metabolic data from Escala (2022)
+VBLS — Humans against the mammalian scaling of metabolic rate and lifespan (Escala 2022)
 Comparison: Human_1 (Tls=75 yr, population) vs Human_2 (Tls=122 yr, biological maximum)
 
 Three panels:
 A — P/M vs Tls: power law + positions of Human_1 / Human_2
-B — Rubner product P/M × Tls: distribution across 95 species + both humans
-C — Comparison of Tls from Escala vs T_max from Cagan: cat anomaly
+B — Rubner product P/M × Tls: distribution across 94 non-human species + both humans
+C — Typical lifespan Tls (Escala) vs maximum longevity T_max (AnAge, as in Section 17.3)
+    for the six species shared with the Cagan sample
 
 Run: python3 escala_human_fig.py
 Out: escala_fig_human.pdf / .png
@@ -69,10 +70,10 @@ TLS1      = 75.0                 # population standard
 TLS2      = 122.0                # biological maximum
 M_human   = 65.0
 
-# Regression P/M ~ Tls^alpha (non-human mammals)
+# Regression of ln(P/M) on ln(Tls) (non-human mammals); its slope is not p_scale
 log_T  = np.log(m_no_human['Tls_calc[yr]'])
 log_PM = np.log(m_no_human['P_per_M'])
-alpha, intercept, r, _, _ = linregress(log_T, log_PM)
+b_pm, intercept, r, _, _ = linregress(log_T, log_PM)
 
 # Rubner product
 m_no_human = m_no_human.copy()
@@ -82,15 +83,15 @@ rub1 = PM_human * TLS1
 rub2 = PM_human * TLS2
 
 # Regression predictions for both humans
-pred1 = np.exp(intercept) * TLS1**alpha
-pred2 = np.exp(intercept) * TLS2**alpha
+pred1 = np.exp(intercept) * TLS1**b_pm
+pred2 = np.exp(intercept) * TLS2**b_pm
 
-# Escala–Cagan overlap species (Panel C)
+# Species shared by Escala and the Cagan sample (Panel C): (Tls Escala, T_max AnAge)
 overlap = {
     'Mouse':   (1.5,  4.0),
     'Rat':     (3.5,  3.8),
     'Rabbit':  (8.0, 13.0),
-    'Dog':     (18.0, 20.0),
+    'Dog':     (18.0, 27.0),
     'Cat':     (11.0, 30.0),
     'Horse':   (40.0, 57.0),
 }
@@ -100,7 +101,7 @@ fig, axes = plt.subplots(1, 3, figsize=(18, 6.5))
 fig.subplots_adjust(left=0.06, right=0.97, top=0.90, bottom=0.11, wspace=0.38)
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PANEL A — power law P/M ~ Tls^alpha
+# PANEL A — P/M against Tls: regression of P/M on Tls and the line p_scale = -1
 # ═══════════════════════════════════════════════════════════════════════════
 ax = axes[0]
 
@@ -108,7 +109,7 @@ ax = axes[0]
 sizes = 30 + 25 * (np.log10(m_no_human['M[kg]'] + 0.001) - np.log10(0.001)) / \
         (np.log10(3001) - np.log10(0.001))
 ax.scatter(m_no_human['Tls_calc[yr]'], m_no_human['P_per_M'],
-           s=sizes, color=C_MAMMALS, alpha=0.55, zorder=3, label='95 mammalian species')
+           s=sizes, color=C_MAMMALS, alpha=0.55, zorder=3, label=f'{len(m_no_human)} non-human mammalian species')
 
 # Cat — highlighted to show Tls_Escala=11 anomaly
 cat = m_no_human[m_no_human['Species'].str.contains('silvestris|Felis', na=False)]
@@ -121,28 +122,28 @@ if len(cat):
 
 # Regression line
 T_line = np.logspace(np.log10(0.5), np.log10(150), 200)
-ax.plot(T_line, np.exp(intercept) * T_line**alpha,
+ax.plot(T_line, np.exp(intercept) * T_line**b_pm,
         color=C_REG, lw=1.8, ls='--', zorder=4,
-        label=f'Regression: alpha={alpha:.2f}, R²={r**2:.2f}')
+        label=f'Regression of P/M on Tls: slope {b_pm:.2f}, R²={r**2:.2f}')
 
-# VBLS line (alpha = −1) through Human_1
+# VBLS line (p_scale = −1) through Human_1
 A_VBLS = PM_human * TLS1
 ax.plot(T_line, A_VBLS / T_line,
         color=C_VBLS, lw=1.5, ls=':', zorder=4, alpha=0.75,
-        label='VBLS: alpha = −1')
+        label='VBLS: p_scale = −1 (through Human_1)')
 
 # Human_1 and Human_2 at the same horizontal P/M=116.3
 for Tls, color, label, mk in [(TLS1, C_H1, f'Human_1\n(75 yr, population)', '*'),
                                (TLS2, C_H2, f'Human_2\n(122 yr, maximum)', '*')]:
     ax.scatter(Tls, PM_human, s=220, color=color, marker=mk,
                edgecolors='white', lw=0.8, zorder=6)
-    pred = np.exp(intercept) * Tls**alpha
+    pred = np.exp(intercept) * Tls**b_pm
     ax.vlines(Tls, pred, PM_human, color=color, lw=1.2, ls='-', alpha=0.6, zorder=5)
 
 # Horizontal bracket between two humans
 ax.annotate('', xy=(TLS2, PM_human), xytext=(TLS1, PM_human),
             arrowprops=dict(arrowstyle='<->', color='#555', lw=1.2))
-ax.text((TLS1+TLS2)/2, PM_human*1.25, 'Δ = 47 yr\n(Phase III?)',
+ax.text((TLS1+TLS2)/2, PM_human*1.25, 'Δ = 47 yr',
         ha='center', fontsize=8.5, color='#333',
         bbox=dict(boxstyle='round,pad=0.25', fc='#f8f8f8', ec='#ccc'))
 
@@ -161,13 +162,13 @@ ax.text(0.97, 0.27,
 ax.set_xscale('log'); ax.set_yscale('log')
 ax.set_xlabel('Lifespan Tls (yr)', fontsize=10)
 ax.set_ylabel('Specific metabolic rate P/M (kJ/day/kg)', fontsize=10)
-ax.set_title('A.  Power law P/M ~ Tls^alpha\n95 mammalian species (Escala 2022)',
+ax.set_title(f'A.  P/M against Tls: regression of P/M on Tls\n{len(m_no_human)} non-human mammalian species (Escala 2022)',
              fontsize=10.5, fontweight='bold')
 
 handles = [
-    mpatches.Patch(color=C_MAMMALS, alpha=0.6, label='95 mammalian species'),
-    Line2D([0],[0], color=C_REG, lw=1.8, ls='--', label=f'Regression alpha={alpha:.2f}, R²={r**2:.2f}'),
-    Line2D([0],[0], color=C_VBLS, lw=1.5, ls=':', alpha=0.8, label='VBLS: alpha = −1'),
+    mpatches.Patch(color=C_MAMMALS, alpha=0.6, label=f'{len(m_no_human)} non-human mammalian species'),
+    Line2D([0],[0], color=C_REG, lw=1.8, ls='--', label=f'Regression of P/M on Tls: slope {b_pm:.2f}, R²={r**2:.2f}'),
+    Line2D([0],[0], color=C_VBLS, lw=1.5, ls=':', alpha=0.8, label='VBLS: p_scale = −1 (through Human_1)'),
     Line2D([0],[0], marker='*', color=C_H1, ms=10, ls='none', label='Human_1 (75 yr)'),
     Line2D([0],[0], marker='*', color=C_H2, ms=10, ls='none', label='Human_2 (122 yr)'),
     Line2D([0],[0], marker='D', color=C_CAT, ms=7, ls='none', label='Cat (11 yr in Escala)'),
@@ -203,7 +204,7 @@ ax.set_ylim(top=rub2*1.35)
 # Arrow between two humans
 ax.annotate('', xy=(TLS2, rub2), xytext=(TLS1, rub1),
             arrowprops=dict(arrowstyle='->', color='#555', lw=1.2))
-ax.text(96, (rub1+rub2)/2 * 1.05, 'Δ = 5467\n(Phase III)', ha='center',
+ax.text(96, (rub1+rub2)/2 * 1.05, 'Δ = 5467', ha='center',
         fontsize=8, color='#333',
         bbox=dict(boxstyle='round,pad=0.25', fc='#f8f8f8', ec='#ccc'))
 
@@ -216,13 +217,13 @@ ax.legend(fontsize=9, framealpha=0.92)
 
 # Range without humans
 ax.text(0.97, 0.05,
-        f'95 species: {m_no_human["rubner"].min():.0f}–{m_no_human["rubner"].max():.0f}\n'
+        f'{len(m_no_human)} species: {m_no_human["rubner"].min():.0f}–{m_no_human["rubner"].max():.0f}\n'
         f'(range {m_no_human["rubner"].max()/m_no_human["rubner"].min():.1f}×)',
         transform=ax.transAxes, ha='right', va='bottom', fontsize=8.5,
         bbox=dict(boxstyle='round,pad=0.3', fc='#f8f8f8', ec='#ccc'))
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PANEL C — Tls Escala vs T_max Cagan for overlapping species
+# PANEL C — Tls Escala vs T_max AnAge for the species shared with the Cagan sample
 # ═══════════════════════════════════════════════════════════════════════════
 ax = axes[2]
 
@@ -253,23 +254,23 @@ ax.annotate('', xy=(TLS1, TLS2), xytext=(TLS1, TLS1),
 # Equality diagonal
 lim_max = 130
 ax.plot([0, lim_max], [0, lim_max], color=C_REG, lw=1.2, ls='--', alpha=0.6,
-        label='Tls_Escala = T_max_Cagan')
+        label='Tls (Escala) = T_max (AnAge)')
 ax.set_xlim(0, lim_max); ax.set_ylim(0, lim_max)
 
 # Cat annotation
-ax.annotate('Cat: Escala 11 yr\n   Cagan 30 yr (!)',
+ax.annotate('Cat: Escala 11 yr\n   AnAge 30 yr',
             xy=(11, 30), xytext=(30, 22),
             fontsize=8.5, color=C_CAT,
             arrowprops=dict(arrowstyle='->', color=C_CAT, lw=0.9))
 
 ax.set_xlabel('Tls from Escala (2022), yr', fontsize=10)
-ax.set_ylabel('T_max from Cagan (2022), yr', fontsize=10)
-ax.set_title('C.  Comparison of lifespan standards\nBetween Escala and Cagan datasets',
+ax.set_ylabel('T_max from AnAge, yr', fontsize=10)
+ax.set_title('C.  Comparison of lifespan standards\nTls (Escala) and T_max (AnAge)',
              fontsize=10.5, fontweight='bold')
 ax.legend(fontsize=9, framealpha=0.92, loc='upper left')
 
 ax.text(0.97, 0.05,
-        'Above diagonal: Cagan overestimates T_max\n(cat is an extreme case)',
+        'Above diagonal: record T_max exceeds\ntypical Tls (the cat is an extreme case)',
         transform=ax.transAxes, ha='right', va='bottom', fontsize=8.5,
         bbox=dict(boxstyle='round,pad=0.3', fc='#fff8f0', ec=C_CAT, lw=1))
 
