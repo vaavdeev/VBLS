@@ -10,7 +10,7 @@
   SPDX-License-Identifier: CC-BY-NC-ND-4.0
 =================================================================
 VBLS — Verification against Cagan et al. (2022) Nature
-Somatic mutations as one observable proxy of Sigma(t)
+Somatic mutations as one component of the observable index of Sigma(t)
 =================================================================
 
 3 Figures:
@@ -212,7 +212,7 @@ def vbls_dsigma(T_max):
     dSdt = np.maximum(0, diss - R * BASE_ABS['Phi_cap'] * sc)
     return t_s, dSdt
 
-# ── Per-species mean burden at oldest age (mutation proxy) ─────────────────
+# ── Per-species mean burden at oldest age (a component of the Sigma index) ──
 last_age  = df.groupby('Species')['Age_years'].max().rename('max_age')
 df2       = df.merge(last_age, on='Species')
 sigma_end = (df2[df2['Age_years'] == df2['max_age']]
@@ -361,7 +361,7 @@ ax2.legend(fontsize=9, loc='upper left', framealpha=0.93)
 ax2.set_title(
     'Mutation burden at the end of observation: 15 species (Cagan 2022)\n'
     'A common damage level at death is a transfer assumption (App. D.5.1.5, item 3),\n'
-    'not a prediction of $(\\mathcal{S})$; somatic mutations are one proxy of $\\Sigma$',
+    'not a prediction of $(\\mathcal{S})$; somatic mutations are one component of the $\\Sigma$ index',
     fontsize=11, fontweight='bold')
 ax2.text(0.99, -0.22, 'Data: Cagan et al. (2022) Nature, Supplementary Table 4',
          transform=ax2.transAxes, ha='right', fontsize=8, color='#666', style='italic')
@@ -525,7 +525,7 @@ print("VERIFICATION SUMMARY — CAGAN 2022")
 print("="*60)
 print(f"Species with age span > 1yr:  {len(sp_use)}")
 print(f"Total crypts (clean):         {len(df)}")
-print(f"Mean end burden (proxy):      {sigma_univ:.0f} ± {sigma_std:.0f} mutations")
+print(f"Mean end burden (component of the Sigma index): {sigma_univ:.0f} ± {sigma_std:.0f} mutations")
 print(f"Human regression slope:       {slope_h:.1f} mut/yr  R²={r_h**2:.3f}")
 print(f"Fig 1 VBLS amplitude:         least squares over individual means; relative RMSE "
       f"median {np.median(list(fit_rel_rmse.values())):.2f} ({len(fit_rel_rmse)} species)")

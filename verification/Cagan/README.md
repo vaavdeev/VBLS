@@ -1,7 +1,7 @@
 # Cagan — Somatic mutation accumulation verification
 
 **Monograph section:** §17.3
-**Tested:** somatic mutation burden as one observable proxy of structural entropy Σ(t) (§17.3.1); a common damage level at death across 15 species — a transfer assumption (Appendix D.5.1.5, item 3), not a prediction of (S) alone; the invariant rate × T_max ≈ const under the consistent scaling of rates with the species (Appendix D.3.1).
+**Tested:** the mapping of structural entropy Σ(t) onto the somatic mutation burden, one component of the observable index of Σ (§17.3.1); a common damage level at death across 15 species — a transfer assumption (Appendix D.5.1.5, item 3), not a prediction of (S) alone; the invariant rate × T_max ≈ const under the consistent scaling of rates with the species (Appendix D.3.1).
 
 **Data source:** Cagan et al. (2022) Nature 604:517–524
 15 species including human, mouse, dog, cat, horse, naked mole-rat and others.
