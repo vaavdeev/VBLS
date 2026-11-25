@@ -238,6 +238,8 @@ def main():
     R_low = P['rho'] * (1 - IC['S']) / (P['rho'] * (1 - IC['S']) + P['nu0'] + P['nu'] * IC['S'])
     say('proof check: E_plus = %.5f, sigma0 F(E_plus) = %.5f, R_low = R_bal(Sigma0) = %.5f, '
         'required Phi_cap > %.5f' % (E_plus, P['sigma0'] * F(E_plus, P), R_low, P['sigma0'] * F(E_plus, P) / R_low))
+    say('inflow condition of Proposition 1(b): F(E_0) = %.5f (E_0 = %g), to be exceeded by eta_inf * Phi_in = eta_inf'
+        % (F(P['E0'], P), P['E0']))
     bound_k, _, _ = explicit_bound(P, 1.0)
     e_perm = kern['permanent (K = 1)'][1]
     say('bound (9) in this environment (Phi_max = 1, t_1 = t_A) = %.1f; t_B^E of the permanent trace = %.1f; '
@@ -456,6 +458,10 @@ def main():
     A2 = np.arange(0.80, 1.20, 0.01)
     sw = next((a for a in A2 if tb_ex(ex2, phi_ex2, a)[1] == 'E'), np.nan)
     say('  first death through the potential channel on [0.80, 1.20] with step 0.01: alpha = %.2f' % sw)
+    A3 = np.arange(0.45, 0.80, 0.01)
+    all_R = all(x[1] == 'R' for x in v) and all(tb_ex(ex2, phi_ex2, a)[1] == 'R' for a in A3)
+    say('  reserve channel at every grid point below that alpha (step 0.0025 on [0.25, 0.45], 0.01 on [0.45, %.2f)): %s'
+        % (sw, 'yes' if all_R else 'no'))
     # Example 2 satisfies the conditions of Proposition 4 (Supplementary S15): the
     # conditions (P1)-(P4) of Proposition 3 at alpha = 0, then T_0, alpha_bar and the
     # rate of exit over a scan of [0, alpha_bar].
