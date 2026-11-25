@@ -1,0 +1,12 @@
+Check of Section 12.2: cooling 20 -> 10 C
+  Ea = 1.00 eV: nu0 drops 4.05 times
+  Ea = 1.35 eV: nu0 drops 6.60 times
+
+Table E.1
+  B. subtilis spores, 20 C           t_pred =     243 yr | t_obs ~250
+  H. vulgare, seed bank, 4 C         t_pred =      26 yr | t_obs ~50
+  Artemia salina cysts, 20 C         t_pred =      51 yr | t_obs ~4-10
+  Nelumbo nucifera seeds (base nu0)  t_pred =    6963 yr | t_obs ~1300
+  Silene stenophylla (base nu0)      t_pred =    4352 yr | at -7 C: nu0/55..226, t = 2.4e+05..9.8e+05 yr | t_obs ~32000 (age of the permafrost)
+
+B. subtilis spores at -20 C (text): nu0/521..4648, t = 1.3e+05..1.1e+06 yr; no observation

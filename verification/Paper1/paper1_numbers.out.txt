@@ -53,7 +53,7 @@ Phi_cap 0.06/0.14: worst phase Phi_cap_min * R_low = 0.01385, sigma0 F(E_bar) = 
 Phi_cap 0.08/0.12: worst phase Phi_cap_min * R_low = 0.01846, sigma0 F(E_bar) = 0.01555
   decaying (kappa = 0.01)  no exit up to 20000, Sigma - Sigma0 = 0.0e+00, eta = 0.9316, E = 0.6944, R = 0.2308
 
-== 6. Counterexamples of Section 6 (exact field, RK45, rtol 1e-9, atol 1e-12, max_step 0.5)
+== 6. Counterexamples of Supplementary Sections S27 and S15 (exact field, RK45, rtol 1e-9, atol 1e-12, max_step 0.5)
 Example 1 (restoration not saturated): nu = 0.02, rho = 0.0055, E* = 0.20, Phi_in(t) = 0.234 + 0.266 exp(-max(0, t - 20)/20)
   alpha = 0: potential on [200, t_B] between 0.2997 and 0.2997 (E0 = 0.427)
   alpha = 0        t_B = 609.671 via R
@@ -75,13 +75,13 @@ Example 2 (maximum inside the reserve branch): rho = 0.004, Phi_in = 0.5
   exit over a scan of 73 values of alpha in [0, alpha_bar]: min |rate| = 3.41e-04, every exit transversal: yes
 
 == 7. Integrator settings of every run, logged from the calls themselves
-  Fig. 1a                                                                  RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.05
-  Fig. 1b, with the search for alpha*                                      RK45  rtol = 1e-08, atol = 1e-11, max_step = 0.1
-  Fig. 2                                                                   LSODA rtol = 1e-09, atol = 1e-12, max_step = 2
+  Fig. 2a                                                                  RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.05
+  Fig. 2b, with the search for alpha*                                      RK45  rtol = 1e-08, atol = 1e-11, max_step = 0.1
+  Fig. 3                                                                   LSODA rtol = 1e-09, atol = 1e-12, max_step = 2
   damage-free start                                                        LSODA rtol = 1e-09, atol = 1e-12, max_step = 2
   Proposition 3: set started at E(t_A) = 0.12, with its variational system RK45  rtol = 1e-11, atol = 1e-13, max_step = 0.01
   Lemma 2 and Proposition 4: illustrative set                              RK45  rtol = 1e-11, atol = 1e-13, max_step = 0.05
   Proposition 4: set started at E(t_A) = 0.12                              RK45  rtol = 1e-11, atol = 1e-13, max_step = 0.05
-  alternating Phi_cap (Section 4)                                          RK45  rtol = 1e-09, atol = 1e-12, max_step = none
-  counterexample of Section 6                                              RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.5
+  alternating Phi_cap (Supplementary Section S10)                          RK45  rtol = 1e-09, atol = 1e-12, max_step = none
+  counterexample of Supplementary Section S27                              RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.5
   example of Supplementary Section S15                                     RK45  rtol = 1e-09, atol = 1e-12, max_step = 0.5

@@ -127,7 +127,7 @@ const ROWS = [
 
 const GROUPS = {
   "1-1": { name: "Eukaryotes with full memory",           desc: "Multicellular · α > 0 · α·Σ̄·τ_div ≳ 1 (τ_div — the life of an individual, §15.1.1.2)", hint: "ℬ scale (relative) →" },
-  "1-2": { name: "Radiation-conditional boundary",       desc: "Cladosporium on the ISS: the living-start boundary depends on the radiation field (App. B.4.3)" },
+  "1-2": { name: "Radiation-conditional boundary",       desc: "Cladosporium on the ISS: the living-start boundary depends on the radiation field (App. B.4.4)" },
   "2-1": { name: "Prokaryotes with frozen memory",        desc: "γ ≫ 1 · frozen via Mechanism B (α_bact ≪ α_euk)" },
   "2-2": { name: "Minimal genomes near 𝓜min (estimates)", desc: "SAR11 (free-living oligotroph) · M. genitalium (natural minimum among organisms grown in pure culture)" },
   "2-3": { name: "𝓜min — reference point",              desc: "τ_div ≈ τ_regen · taken at the boundary (§11.10)" },
@@ -257,7 +257,7 @@ const CELLS = {
     name:"Cladosporium sp. (ISS)", italic:true,
     genes:"—", gamma:"≳ 1 (rad.)", D:"not determined", B_hbar:"—", tau:"—", phi:"~10⁻¹⁴ W (chemical)",
     memory:"Full", status:"Conditional boundary",
-    note:"Radiation adds no energy: its direct contribution is five orders below the chemical Φ_in (App. B.4.3). The only organism whose living-start boundary depends on the ISS radiation field: via melanin, radiation lowers σ₀^eff (Barrier II) and raises η_abs (the inflow condition). Full eukaryotic memory (α>0, not frozen) — moved here from R2 (frozen), where it had been grouped with SAR11 despite its own data already reading 'Active'."
+    note:"Radiation adds no energy: its direct contribution is five orders below the chemical Φ_in (App. B.4.4). The only organism whose living-start boundary depends on the ISS radiation field: via melanin, radiation lowers σ₀^eff (Barrier II) and raises η_abs (the inflow condition). Full eukaryotic memory (α>0, not frozen) — moved here from R2 (frozen), where it had been grouped with SAR11 despite its own data already reading 'Active'."
   }],
   "1-3":{ predicted:true, col:3,
     name:"Organism with full memory at 𝓜min",
@@ -292,7 +292,7 @@ const CELLS = {
     name:"Mycoplasma genitalium", italic:true,
     genes:"525", gamma:"1.1–1.3", D:"> R*, small", B_hbar:"~10²¹", tau:"~1.2 (est.)", phi:"~10⁻¹⁶ W",
     memory:"Frozen (Mech. B)", status:"Near 𝓜min",
-    note:"Natural minimum among organisms grown in pure culture (App. B.4.2). γ(own) 1.1–1.3 and τ_div/τ_regen ≈ 1.2 are estimates, the latter without an independent calculation of ν_info. As a prokaryote it has frozen memory via Mechanism B, like syn3.0; τ_div/τ_regen is an informational indicator and does not set the memory regime (§15.3.2)."
+    note:"Natural minimum among organisms grown in pure culture (App. B.4.3). γ(own) 1.1–1.3 and τ_div/τ_regen ≈ 1.2 are estimates, the latter without an independent calculation of ν_info. As a prokaryote it has frozen memory via Mechanism B, like syn3.0; τ_div/τ_regen is an informational indicator and does not set the memory regime (§15.3.2)."
   }],
   "2-3": [{
     name:"JCVI-syn3.0", italic:false, star:true,

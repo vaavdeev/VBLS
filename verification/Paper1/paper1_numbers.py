@@ -37,14 +37,17 @@ Outputs (printed and written to paper1_numbers.out.txt):
      alpha_bar and the rate of exit over a scan of [0, alpha_bar];
   5. the setting of 3 with Phi_cap alternating around the same mean: the
      worst-phase margin of Proposition 1(b) and the resulting lifetimes;
-  6. the two counterexamples of Section 6 of the paper (also in Appendix G of
+  6. the two counterexamples of Supplementary Sections S27 and S15 of the paper
+     (also in Appendix G of
      the monograph): unsaturated restoration, where t_B(alpha) decreases from
      alpha = 0, and a maximum of t_B inside the reserve branch, at a kink of
      the field rather than at the switch of the death channel; for the second,
      the conditions of Proposition 4 (Supplementary S15);
   7. the integrator settings of every run, logged from the calls themselves:
-     the paper takes its table of settings (Table 2) from this block.
-Figures: paper1_fig1.png and paper1_fig2.png, written next to this script.
+     the Supplementary Material takes its table of settings (Table S1) from this
+     block.
+Figures: paper1_fig1.png and paper1_fig2.png (Figs. 2 and 3 of the paper),
+written next to this script.
 """
 
 import os
@@ -167,7 +170,7 @@ def main():
     phi_cap_c = lambda t: 0.003
 
     # 1. illustrative trajectory ------------------------------------------------
-    label('Fig. 1a')
+    label('Fig. 2a')
     sol, tE, tR = run(P, phi_in_canonical, phi_cap_c, T=400.0)
     tB = min(tE, tR)
     ch = 'R' if tR < tE else 'E'
@@ -189,7 +192,7 @@ def main():
         _, e, r = run(q, phi_in_canonical, phi_cap_c, T=400.0, max_step=0.1, rtol=1e-8, atol=1e-11, n_out=200)
         return e, r
 
-    label('Fig. 1b, with the search for alpha*')
+    label('Fig. 2b, with the search for alpha*')
     alphas = np.linspace(0.005, 0.30, 119)
     tEs, tRs = [], []
     for a in alphas:
@@ -219,7 +222,7 @@ def main():
     T_k = 20000.0
     say('')
     say('== 3. Memory kernel: constant Phi_in = 1, Phi_cap = 0.1, horizon %.0f' % T_k)
-    label('Fig. 2')
+    label('Fig. 3')
     kern = {}
     for name, kappa in (('permanent (K = 1)', 0.0), ('decaying (kappa = 0.01)', 0.01)):
         s, e, r = run(P, phi_in_k, phi_cap_k, T=T_k, kappa=kappa, max_step=2.0, rtol=1e-9, atol=1e-12,
@@ -280,7 +283,7 @@ def main():
         _, ea, ra = run(dict(P, alpha=a), phi_in_canonical, phi_cap_c, T=100.0, **kw)
         say('alpha = %g: t_B = %.6f, (t_B - t_B(0))/alpha = %.1f' % (a, min(ea, ra), (min(ea, ra) - T0) / a))
 
-    # Variational system of Appendix A along the alpha = 0 trajectory; g = 1
+    # Variational system of Supplementary Section S26 along the alpha = 0 trajectory; g = 1
     # there, since E > E_0 on the whole life. u = (u_eta, u_E, u_Sigma, u_R).
     def rhs_var(t, y):
         E, S, H, R = y[:4]
@@ -397,7 +400,7 @@ def main():
 
     say('')
     say('== 5. Worst phase: Phi_in = 1, Phi_cap alternating with half-period 1, low phase first')
-    label('alternating Phi_cap (Section 4)')
+    label('alternating Phi_cap (Supplementary Section S10)')
     for lo, hi in ((0.06, 0.14), (0.08, 0.12)):
         say('Phi_cap %.2f/%.2f: worst phase Phi_cap_min * R_low = %.5f, sigma0 F(E_bar) = %.5f'
             % (lo, hi, lo * R_low, P['sigma0'] * F(E_plus, P)))
@@ -412,11 +415,11 @@ def main():
                 say('  %-24s no exit up to %.0f, Sigma - Sigma0 = %.1e, eta = %.4f, E = %.4f, R = %.4f'
                     % (name, T_k, yb[1] - IC['S'], eta_of(yb[2], P), yb[0], yb[3]))
 
-    # 6. counterexamples of Section 6 -----------------------------------------
+    # 6. counterexamples of Supplementary Sections S27 and S15 -----------------------------------------
     # Initial state E(t_A) = E0 = 0.427, Sigma0 = 0.01, eta0 = 0.96, R0 = 0.99,
     # Phi_cap = 0.01; the remaining values as in Table 1 unless set here.
     say('')
-    say('== 6. Counterexamples of Section 6 (exact field, RK45, rtol 1e-9, atol 1e-12, max_step 0.5)')
+    say('== 6. Counterexamples of Supplementary Sections S27 and S15 (exact field, RK45, rtol 1e-9, atol 1e-12, max_step 0.5)')
     y0_ex = [0.427, 0.01, 0.0, 0.99]
     cap_ex = lambda t: 0.01
     ex1 = dict(P, E0=0.427, nu=0.02, rho=0.0055, E_star=0.20)
@@ -430,7 +433,7 @@ def main():
 
     say('Example 1 (restoration not saturated): nu = 0.02, rho = 0.0055, E* = 0.20, '
         'Phi_in(t) = 0.234 + 0.266 exp(-max(0, t - 20)/20)')
-    label('counterexample of Section 6')
+    label('counterexample of Supplementary Section S27')
     t0, ch0, s0 = tb_ex(ex1, phi_ex1, 0.0)
     tt = np.linspace(200.0, t0, 2001)
     say('  alpha = 0: potential on [200, t_B] between %.4f and %.4f (E0 = 0.427)'
@@ -492,7 +495,7 @@ def main():
     with open(os.path.join(HERE, 'paper1_numbers.out.txt'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(out) + '\n')
 
-    # Figure 1 ---------------------------------------------------------------
+    # Figure 2 of the paper -------------------------------------------------
     fig, ax = plt.subplots(1, 2, figsize=(10.5, 3.8))
     t = np.linspace(0, 130, 2601)
     Y = sol.sol(t)
@@ -520,7 +523,7 @@ def main():
     ax[1].axvline(P['alpha'], color='0.6', lw=0.8, ls='-.')
     ax[1].text(a_star + 0.004, 8, '$\\alpha^*$', fontsize=10, color='0.3')
     ax[1].text(P['alpha'] + 0.004, 8, 'illustrative $\\alpha$', fontsize=9, color='0.4')
-    ax[1].set_ylim(0, 150)
+    ax[1].set_ylim(0, 200)   # t_B^E(0) = 188.4 must stay visible (ARS re-review N15)
     ax[1].set_xlabel('$\\alpha$ (per model time unit)')
     ax[1].set_ylabel('$t_B$ (model units)')
     ax[1].legend(frameon=False, fontsize=9, loc='lower right')   # the upper right is crossed by t_B^R
@@ -529,7 +532,7 @@ def main():
     save_fig(fig, 'paper1_fig1.png')
     plt.close(fig)
 
-    # Figure 2 ---------------------------------------------------------------
+    # Figure 3 of the paper -------------------------------------------------
     fig, ax = plt.subplots(1, 2, figsize=(10.5, 3.8))
     styles = {'permanent (K = 1)': 'k', 'decaying (kappa = 0.01)': 'C2'}
     for name, (s, e, r) in kern.items():
